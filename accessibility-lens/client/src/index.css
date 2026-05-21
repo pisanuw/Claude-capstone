@@ -1,0 +1,62 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  body {
+    @apply bg-paper text-ink font-body antialiased;
+    background-image: radial-gradient(circle at 1px 1px, rgba(24, 20, 16, 0.04) 1px, transparent 0);
+    background-size: 28px 28px;
+  }
+
+  /* A visible, high-contrast focus ring everywhere. The tool must practice
+     what it preaches. */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid theme('colors.accent');
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+}
+
+@layer components {
+  .skip-link {
+    @apply absolute left-2 top-2 z-50 -translate-y-16 rounded bg-accent px-4 py-2 text-panel transition-transform focus:translate-y-0;
+  }
+}
+
+/* Color-vision simulation filters. These approximate how a palette shifts for
+   the three common types of color blindness, used by ColorBlindnessSim. */
+.cb-deuteranopia {
+  filter: url(#deuteranopia);
+}
+.cb-protanopia {
+  filter: url(#protanopia);
+}
+.cb-tritanopia {
+  filter: url(#tritanopia);
+}
+
+/* Low-vision preview treatments. */
+.lv-blur {
+  filter: blur(1.4px) contrast(0.8);
+}

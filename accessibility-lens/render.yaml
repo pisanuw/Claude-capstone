@@ -1,0 +1,18 @@
+# One-click deploy config for Render (https://render.com).
+# Render reads this Blueprint and provisions the service. Set ANTHROPIC_API_KEY
+# in the dashboard if you want AI-generated fixes; the app works without it.
+services:
+  - type: web
+    name: accessibility-lens
+    runtime: node
+    plan: free
+    region: oregon
+    rootDir: accessibility-lens
+    buildCommand: npm ci && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: '20'
+      - key: ANTHROPIC_API_KEY
+        sync: false

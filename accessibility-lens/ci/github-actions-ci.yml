@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------------------
+# To activate CI, move this file to `.github/workflows/ci.yml` at the REPO ROOT.
+# It is stored here because the access token used to push lacked the `workflow`
+# scope needed to create files under .github/workflows/. The paths below are
+# already written for the repo-root location.
+# ---------------------------------------------------------------------------
+name: Accessibility Lens CI
+
+on:
+  push:
+    paths:
+      - 'accessibility-lens/**'
+      - '.github/workflows/ci.yml'
+  pull_request:
+    paths:
+      - 'accessibility-lens/**'
+      - '.github/workflows/ci.yml'
+
+defaults:
+  run:
+    working-directory: accessibility-lens
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: accessibility-lens/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test with coverage
+        run: npm run coverage
+
+      - name: Build
+        run: npm run build
