@@ -52,3 +52,5 @@ netlify:
   # Optional: your Netlify team slug, needed only if your token has multiple
   # teams. Find it in your Netlify team URL/settings.
   accountSlug: ''
+
+# --- deploy trigger: 2026-05-21T22:23Z (run 1, provider=render, plumbing check) ---
