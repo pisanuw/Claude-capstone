@@ -231,6 +231,8 @@ async function deployNetlify(cfg) {
   const plan = {
     action: 'build, create-if-missing, set env, deploy --prod',
     name: cfg.projectName,
+    siteName: n.siteName || cfg.projectName,
+    siteId: n.siteId || process.env.NETLIFY_SITE_ID || '(resolve by name)',
     build: cfg.build,
     publishDir,
     functionsDir,
@@ -245,29 +247,61 @@ async function deployNetlify(cfg) {
   }
   if (!process.env.NETLIFY_AUTH_TOKEN) fail('NETLIFY_AUTH_TOKEN is not set in the environment.');
 
+  // Netlify site subdomains are GLOBALLY unique, so the site name often needs
+  // to differ from the (Render) projectName. Prefer an explicit id when given.
+  const siteName = n.siteName || cfg.projectName;
+
+  try {
+    log('Netlify CLI version:', netlify(['--version'], { capture: true }).trim());
+  } catch {
+    /* non-fatal diagnostic */
+  }
+
   // Netlify uploads a prebuilt directory, so build locally first.
   runBuild(cfg, appDir);
 
-  // Find or create the site.
-  let siteId = '';
-  try {
-    const sitesJson = netlify(['api', 'listSites', '--data', '{}'], { capture: true });
-    const sites = JSON.parse(sitesJson || '[]');
-    siteId = sites.find((s) => s.name === cfg.projectName)?.id ?? '';
-  } catch (e) {
-    log('Could not list sites (will attempt to create):', String(e).slice(0, 160));
+  // Resolve the site id, in order of reliability:
+  //   1. netlify.siteId in target.yml   2. NETLIFY_SITE_ID env
+  //   3. lookup an existing site by name 4. create a new site by name
+  let siteId = n.siteId || process.env.NETLIFY_SITE_ID || '';
+  if (siteId) log(`Using configured Netlify site id ${siteId}`);
+
+  if (!siteId) {
+    try {
+      const sitesJson = netlify(['api', 'listSites', '--data', '{}'], { capture: true });
+      const sites = JSON.parse(sitesJson || '[]');
+      siteId = sites.find((s) => s.name === siteName)?.id ?? '';
+      if (siteId) log(`Found existing site "${siteName}" (${siteId}).`);
+    } catch (e) {
+      log('Could not list sites (will try to create):', String(e).slice(0, 160));
+    }
   }
 
   if (!siteId) {
-    log(`Site "${cfg.projectName}" not found; creating it.`);
-    const createArgs = ['sites:create', '--name', cfg.projectName];
+    log(`Creating Netlify site "${siteName}".`);
+    const createArgs = ['sites:create', '--name', siteName, '--json'];
     if (n.accountSlug) createArgs.push('--account-slug', n.accountSlug);
-    const created = netlify(createArgs, { capture: true });
-    const idMatch = created.match(/Site ID:\s*([a-f0-9-]+)/i);
-    siteId = idMatch ? idMatch[1] : '';
-    if (!siteId) fail('Created the site but could not parse its Site ID from the CLI output.');
+    let created = '';
+    try {
+      created = netlify(createArgs, { capture: true });
+    } catch (e) {
+      fail(
+        `Creating site "${siteName}" failed. The name may be taken globally on Netlify, ` +
+          `or your token may have multiple teams. Fix options: set netlify.siteName to a ` +
+          `unique value, set netlify.accountSlug, or create the site once and set ` +
+          `netlify.siteId in target.yml. Underlying error: ${String(e).slice(0, 200)}`,
+      );
+    }
+    // sites:create --json prints the created site as JSON; fall back to text.
+    try {
+      const obj = JSON.parse(created);
+      siteId = obj.site_id || obj.id || '';
+    } catch {
+      siteId = created.match(/Site ID:\s*([a-f0-9-]+)/i)?.[1] ?? '';
+    }
+    if (!siteId) fail('Created the site but could not determine its Site ID.');
+    log(`Created site ${siteId}.`);
   }
-  log(`Using Netlify site ${siteId}`);
 
   // Forward environment variables to the site (for the serverless function).
   for (const [key, value] of Object.entries(env)) {

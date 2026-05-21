@@ -49,6 +49,12 @@ render:
 # ---- Netlify-specific settings (used when provider: netlify) ----
 netlify:
   functionsDir: netlify/functions
+  # Netlify subdomains are globally unique, so the site name usually must differ
+  # from projectName. Defaults to projectName if blank.
+  siteName: accessibility-lens-pisanuw
+  # Optional: pin an existing site id to skip name lookup/creation entirely
+  # (most reliable). Find it under Site settings -> Site information.
+  siteId: ''
   # Optional: your Netlify team slug, needed only if your token has multiple
   # teams. Find it in your Netlify team URL/settings.
   accountSlug: ''
