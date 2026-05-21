@@ -17,9 +17,10 @@
  *   node deploy.mjs --dry-run       # print the plan, make no API calls
  *   node deploy.mjs --config path   # use a different control file
  */
-import { readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync, execSync } from 'node:child_process';
 import path from 'node:path';
+import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
 
