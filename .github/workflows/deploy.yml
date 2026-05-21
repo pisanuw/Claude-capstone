@@ -1,46 +1,60 @@
-# ===========================================================================
-# PLACE THIS FILE AT THE REPOSITORY ROOT:  .github/workflows/deploy.yml
+# Self-discovering, config-driven deploy.
 #
-# It is stored here (under accessibility-lens/deploy/) because the access token
-# available to the assistant cannot write to .github/workflows/ without the
-# GitHub "workflow" scope. Copy it to the repo root path above with your own
-# credentials (UI or a workflow-scoped token) to activate it.
+# To deploy or retarget any app, edit its `<app>/deploy/target.yml` and push
+# (or run this workflow manually). This workflow finds EVERY `*/deploy/target.yml`
+# in the repo and deploys each via the shared runner. Adding a new app needs no
+# change here: just add its directory with a deploy/target.yml.
 #
-# Required GitHub repo secrets (Settings -> Secrets and variables -> Actions):
-#   RENDER_API_KEY        only needed when target.yml uses provider: render
-#   NETLIFY_AUTH_TOKEN    only needed when target.yml uses provider: netlify
-#   ANTHROPIC_API_KEY     optional; forwarded to the app for AI-written fixes
-# ===========================================================================
-name: Deploy (config-driven)
+# Required repo secrets (only those relevant to your targets are used):
+#   RENDER_API_KEY, NETLIFY_AUTH_TOKEN   deploy targets
+#   ANTHROPIC_API_KEY                    forwarded to accessibility-lens
+#   RESEND_API, ADMIN_EMAIL, COOKIE_SECRET   forwarded to mult-streak apps
+name: Deploy
 
 on:
-  # Editing the control file and pushing triggers a deploy.
   push:
     paths:
-      - 'accessibility-lens/deploy/target.yml'
+      - '**/deploy/target.yml'
       - 'accessibility-lens/deploy/deploy.mjs'
       - '.github/workflows/deploy.yml'
-  # Or run it by hand from the Actions tab.
   workflow_dispatch:
 
 jobs:
-  deploy:
+  discover:
     runs-on: ubuntu-latest
+    outputs:
+      configs: ${{ steps.find.outputs.configs }}
     steps:
       - uses: actions/checkout@v4
+      - id: find
+        name: Discover deploy targets
+        run: |
+          configs=$(ls -1 */deploy/target.yml 2>/dev/null | jq -R . | jq -cs .)
+          echo "Found: $configs"
+          echo "configs=$configs" >> "$GITHUB_OUTPUT"
 
+  deploy:
+    needs: discover
+    if: needs.discover.outputs.configs != '[]'
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config: ${{ fromJSON(needs.discover.outputs.configs) }}
+    steps:
+      - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-
       - name: Install deploy runner dependencies
         run: npm install
         working-directory: accessibility-lens/deploy
-
-      - name: Provision and deploy
-        # Run from the repository root so target.yml's `directory` resolves.
-        run: node accessibility-lens/deploy/deploy.mjs
+      - name: Deploy ${{ matrix.config }}
+        run: node accessibility-lens/deploy/deploy.mjs --config "${{ matrix.config }}"
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          RESEND_API: ${{ secrets.RESEND_API }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}
