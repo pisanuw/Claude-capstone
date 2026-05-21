@@ -14,6 +14,9 @@
 
 [functions]
   node_bundler = "esbuild"
+  # jsdom uses dynamic requires that esbuild cannot bundle cleanly, so load it
+  # from node_modules at runtime instead of inlining it into the bundle.
+  external_node_modules = ["jsdom"]
 
 # Send API traffic to the serverless function. This rule must come before the
 # SPA fallback below.
