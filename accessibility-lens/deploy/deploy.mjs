@@ -41,7 +41,17 @@ function log(...m) {
   console.log('[deploy]', ...m);
 }
 
+/** Emit a GitHub Actions error annotation (readable via the API, unlike logs). */
+function ghError(message) {
+  const escaped = String(message)
+    .replace(/%/g, '%25')
+    .replace(/\r/g, '%0D')
+    .replace(/\n/g, '%0A');
+  console.log(`::error title=deploy::${escaped}`);
+}
+
 function fail(message) {
+  ghError(message);
   console.error('[deploy] ERROR:', message);
   process.exit(1);
 }
@@ -207,12 +217,25 @@ async function deployRender(cfg) {
 // --------------------------------------------------------------------------
 
 function netlify(argv, opts = {}) {
-  return execFileSync('npx', ['--yes', 'netlify-cli@latest', ...argv], {
-    encoding: 'utf8',
-    stdio: opts.capture ? ['ignore', 'pipe', 'inherit'] : 'inherit',
-    cwd: opts.cwd ?? process.cwd(),
-    env: process.env,
-  });
+  try {
+    return execFileSync('npx', ['--yes', 'netlify-cli@latest', ...argv], {
+      encoding: 'utf8',
+      // Capture stderr always so failures carry the real CLI message; stream
+      // stdout to the log unless the caller needs to parse it.
+      stdio: opts.capture ? ['ignore', 'pipe', 'pipe'] : ['ignore', 'inherit', 'pipe'],
+      cwd: opts.cwd ?? process.cwd(),
+      env: process.env,
+      maxBuffer: 64 * 1024 * 1024,
+    });
+  } catch (e) {
+    const detail = [e.stdout, e.stderr]
+      .filter(Boolean)
+      .map(String)
+      .join('\n')
+      .trim()
+      .slice(-1800);
+    throw new Error(`netlify ${argv.join(' ')} failed.\n${detail || e.message}`);
+  }
 }
 
 /** Run the configured build command inside the app directory. */
