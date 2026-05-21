@@ -327,17 +327,41 @@ async function deployNetlify(cfg) {
     log(`Created site ${siteId}.`);
   }
 
+  // The Netlify CLI refuses to run inside an npm workspaces root ("Projects
+  // detected: @accessibility-lens/server, ..."). Run all site-scoped commands
+  // from a clean staging directory with no package.json and a self-contained
+  // netlify.toml. The prebuilt --dir/--functions are absolute, and the
+  // function's imports resolve from its own location, so nothing depends on the
+  // staging dir's contents besides the config.
+  const stageDir = path.join(os.tmpdir(), 'al-netlify-stage');
+  mkdirSync(stageDir, { recursive: true });
+  writeFileSync(
+    path.join(stageDir, 'netlify.toml'),
+    '[functions]\n  node_bundler = "esbuild"\n  external_node_modules = ["jsdom"]\n',
+  );
+  // Redirects via a _redirects file in the publish dir: most reliable for
+  // prebuilt deploys (API to the function first, then SPA fallback).
+  writeFileSync(
+    path.join(publishDir, '_redirects'),
+    '/api/*  /.netlify/functions/api/:splat  200\n/*      /index.html                     200\n',
+  );
+  const run = { cwd: stageDir };
+
   // Forward environment variables to the site (for the serverless function).
+  // Best-effort: the app works without them, so a failure must not abort.
   for (const [key, value] of Object.entries(env)) {
-    log(`Setting Netlify env ${key}`);
-    netlify(['env:set', key, value, '--site', siteId], { cwd: appDir });
+    try {
+      log(`Setting Netlify env ${key}`);
+      netlify(['env:set', key, value, '--site', siteId], run);
+    } catch (e) {
+      log(`warning: could not set env ${key}; continuing. ${String(e).slice(0, 160)}`);
+    }
   }
 
-  // Deploy to production. Run from appDir so netlify.toml (redirects) is read;
-  // pass absolute dir/functions so path resolution is unambiguous.
+  // Deploy to production with absolute paths and the explicit site id.
   netlify(
     ['deploy', '--prod', '--site', siteId, '--dir', publishDir, '--functions', functionsDir],
-    { cwd: appDir },
+    run,
   );
   log('Netlify production deploy complete.');
 }
