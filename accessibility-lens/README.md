@@ -120,9 +120,15 @@ npm run coverage    # with coverage thresholds enforced
 
 Current state: **102 tests passing**. Server coverage ~96% (threshold 85%), client
 ~96% (threshold 70%). A ready-to-use GitHub Actions workflow lives at
-[`ci/github-actions-ci.yml`](./ci/github-actions-ci.yml); move it to
-`.github/workflows/ci.yml` at the repo root to activate it (it runs lint,
-typecheck, coverage, and build on every push).
+[`.github/workflows/ci.yml`](./.github/workflows/ci.yml) (inside this project
+folder) and runs lint, typecheck, coverage, and build on every push.
+
+> **To actually activate CI**, this file must sit at the **repository root**
+> (`Claude-capstone/.github/workflows/ci.yml`). GitHub Actions only reads
+> workflows from the repo-root `.github/workflows/` directory, never from a
+> subdirectory, so the copy under `accessibility-lens/` will not run until it is
+> relocated. Its `working-directory`, path filters, and cache path are already
+> written for the root location, so no content changes are needed.
 
 ## Limitations (the honest list)
 
@@ -131,6 +137,44 @@ content injected by client-side JavaScript, and the contrast check only inspects
 inline styles. It is a fast, deployable, deterministic *complement* to a real audit
 and a manual screen-reader walkthrough, not a replacement. The full reasoning is in
 [`ASSUMPTIONS.md`](./ASSUMPTIONS.md).
+
+## Roadmap: natural extensions
+
+The current build is a complete, deployable v1. The most valuable directions from
+here, roughly in order of payoff:
+
+1. **Headless-browser rendering (Playwright).** The single biggest upgrade. Render
+   the page in real Chromium instead of fetching raw HTML. This unlocks two things
+   at once: support for JavaScript-rendered SPAs, and a *true* computed-contrast
+   check against the full CSS cascade (replacing today's inline-style heuristic).
+   It is isolated behind `engine/fetchPage.ts`, so the swap is contained.
+2. **Real visual overlays.** With a rendered screenshot from Playwright, apply the
+   color-blindness and low-vision filters to the *actual page image* (the "visual
+   overlays" the original idea called for), not just to a sample palette.
+3. **Shareable, persisted reports.** Store each scan and mint a permalink so
+   students can attach a report to an assignment submission. Needs a small
+   datastore (SQLite, Postgres, or Supabase) and turns the app from stateless to
+   stateful; keep it optional behind a feature flag.
+4. **CLI and CI gate.** A `lens scan <url> --fail-under 90` command plus a
+   reusable GitHub Action, so a student's own pipeline fails when accessibility
+   regresses. This fits the teaching context especially well.
+5. **Multi-page crawl.** Follow same-origin links to a configurable depth and
+   aggregate one site-wide report instead of scanning a single page.
+6. **Classroom / professor mode.** Submit a roster of student URLs and get a
+   dashboard of scores and common failures across the class, mirroring the
+   "professor mode" in the sibling ideas from the same day.
+7. **Broader rule coverage.** Move toward fuller WCAG 2.2: table header
+   associations, ARIA role and attribute validity, landmark uniqueness, `reflow`
+   at 320px, autocomplete tokens, and media captions. The one-file-per-rule
+   registry makes each addition cheap.
+8. **Regression tracking.** Persist scores per URL over time and show the trend,
+   so a team can see accessibility improving (or slipping) release over release.
+
+Operational hardening worth doing before any high-traffic public deploy: request
+rate limiting, a short-lived response cache keyed by URL, and running the fetcher
+in a network-restricted egress sandbox (the SSRF guard is a first line, not the
+last). The handful of `npm audit` advisories are in the dev/build toolchain
+(Vite/esbuild), not the runtime path; worth tracking but not shipping blockers.
 
 ## License
 
