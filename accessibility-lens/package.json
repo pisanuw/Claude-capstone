@@ -21,5 +21,8 @@
     "coverage": "npm run coverage --workspace server && npm run coverage --workspace client",
     "lint": "npm run lint --workspace server && npm run lint --workspace client",
     "typecheck": "npm run typecheck --workspace server && npm run typecheck --workspace client"
+  },
+  "dependencies": {
+    "serverless-http": "^3.2.0"
   }
 }

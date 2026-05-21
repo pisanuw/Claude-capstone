@@ -1,0 +1,46 @@
+# ===========================================================================
+# PLACE THIS FILE AT THE REPOSITORY ROOT:  .github/workflows/deploy.yml
+#
+# It is stored here (under accessibility-lens/deploy/) because the access token
+# available to the assistant cannot write to .github/workflows/ without the
+# GitHub "workflow" scope. Copy it to the repo root path above with your own
+# credentials (UI or a workflow-scoped token) to activate it.
+#
+# Required GitHub repo secrets (Settings -> Secrets and variables -> Actions):
+#   RENDER_API_KEY        only needed when target.yml uses provider: render
+#   NETLIFY_AUTH_TOKEN    only needed when target.yml uses provider: netlify
+#   ANTHROPIC_API_KEY     optional; forwarded to the app for AI-written fixes
+# ===========================================================================
+name: Deploy (config-driven)
+
+on:
+  # Editing the control file and pushing triggers a deploy.
+  push:
+    paths:
+      - 'accessibility-lens/deploy/target.yml'
+      - 'accessibility-lens/deploy/deploy.mjs'
+      - '.github/workflows/deploy.yml'
+  # Or run it by hand from the Actions tab.
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deploy runner dependencies
+        run: npm install
+        working-directory: accessibility-lens/deploy
+
+      - name: Provision and deploy
+        # Run from the repository root so target.yml's `directory` resolves.
+        run: node accessibility-lens/deploy/deploy.mjs
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}

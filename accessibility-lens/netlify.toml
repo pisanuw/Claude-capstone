@@ -1,0 +1,29 @@
+# Netlify configuration for Accessibility Lens.
+#
+# This app is NOT a static site: it has a server-side API that fetches and
+# analyzes pages. On Netlify the React build is served as static files from the
+# CDN, and the API runs as a serverless function (see netlify/functions/api.mjs).
+#
+# `base` points Netlify at the app subdirectory inside the Claude-capstone repo.
+
+[build]
+  base = "accessibility-lens"
+  command = "npm run build"
+  publish = "client/dist"
+  functions = "netlify/functions"
+
+[functions]
+  node_bundler = "esbuild"
+
+# Send API traffic to the serverless function. This rule must come before the
+# SPA fallback below.
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/api/:splat"
+  status = 200
+
+# Single-page-app fallback: any other path serves the built index.html.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

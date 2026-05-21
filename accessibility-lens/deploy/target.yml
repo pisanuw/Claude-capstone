@@ -1,0 +1,54 @@
+# Deploy control file for Accessibility Lens.
+#
+# This is the single knob that drives automated deployment. Edit it and push,
+# and the GitHub Actions "deploy" workflow reads it and provisions + deploys to
+# the chosen host. No secrets live here: the API tokens are GitHub repo secrets
+# injected into the workflow at run time.
+#
+# Switch `provider` between "render" and "netlify" to retarget.
+
+# Which host to deploy to. One of: render | netlify
+provider: render
+
+# The service/site name on the host. Must be unique within your workspace/team.
+# The workflow creates it if missing, otherwise deploys to the existing one.
+projectName: accessibility-lens
+
+# Path within the repo to the app (the monorepo root for this project).
+directory: accessibility-lens
+
+# Build command run from `directory` before deploying.
+build: npm ci && npm run build
+
+# Directory of built static assets to publish, relative to `directory`.
+# Used by Netlify (CDN) and as the web root.
+publish: client/dist
+
+# Names of environment variables to pass through from GitHub/host secrets to the
+# deployed app. VALUES ARE NOT STORED HERE, only the names. The workflow reads
+# each value from its own environment (populated from GitHub secrets) and
+# forwards it to the host. Leave empty to deploy with no extra env.
+envPassthrough:
+  - ANTHROPIC_API_KEY
+
+# ---- Render-specific settings (used when provider: render) ----
+render:
+  type: web_service
+  runtime: node
+  plan: free
+  region: oregon
+  startCommand: npm start
+  healthCheckPath: /api/health
+  branch: main
+  # Optional: set explicitly to skip auto-detection. Find it on your Render
+  # workspace Settings page. If omitted, the workflow uses your first workspace.
+  ownerId: ''
+  # Optional: defaults to this repo's https remote if omitted.
+  repo: ''
+
+# ---- Netlify-specific settings (used when provider: netlify) ----
+netlify:
+  functionsDir: netlify/functions
+  # Optional: your Netlify team slug, needed only if your token has multiple
+  # teams. Find it in your Netlify team URL/settings.
+  accountSlug: ''

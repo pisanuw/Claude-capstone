@@ -109,6 +109,16 @@ It is a single Node service, so any host that runs Node works. Two ready paths:
 
 Health check: `GET /api/health`.
 
+### Automated, config-driven deploy
+
+There is also a one-file deploy system: edit [`deploy/target.yml`](./deploy/target.yml)
+(provider, project name, directory, build) and push, and a GitHub Actions
+workflow provisions and deploys to Render or Netlify, creating the project if it
+does not exist. Provider tokens live as GitHub repo secrets, never in the repo.
+Netlify support ships the API as a serverless function (the app is not static),
+wired up by [`netlify.toml`](./netlify.toml). Full setup and a safe `--dry-run`
+mode are documented in [`deploy/README.md`](./deploy/README.md).
+
 ## Quality gates
 
 ```bash

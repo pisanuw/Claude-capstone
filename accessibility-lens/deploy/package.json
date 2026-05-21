@@ -1,0 +1,14 @@
+{
+  "name": "@accessibility-lens/deploy",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Config-driven deploy runner: reads target.yml and provisions + deploys to Render or Netlify.",
+  "scripts": {
+    "deploy": "node deploy.mjs",
+    "plan": "node deploy.mjs --dry-run"
+  },
+  "dependencies": {
+    "yaml": "^2.6.1"
+  }
+}
