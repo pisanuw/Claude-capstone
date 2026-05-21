@@ -8,7 +8,7 @@
 # Switch `provider` between "render" and "netlify" to retarget.
 
 # Which host to deploy to. One of: render | netlify
-provider: render
+provider: netlify
 
 # The service/site name on the host. Must be unique within your workspace/team.
 # The workflow creates it if missing, otherwise deploys to the existing one.
@@ -53,4 +53,4 @@ netlify:
   # teams. Find it in your Netlify team URL/settings.
   accountSlug: ''
 
-# --- deploy trigger: 2026-05-21T22:23Z (run 1, provider=render, plumbing check) ---
+# --- deploy trigger: run 2, provider=netlify (exercise the serverless adapter) ---
