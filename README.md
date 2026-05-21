@@ -17,3 +17,13 @@ TypeScript monorepo (Express + a pure analysis engine on the server, React + Vit
 Tailwind on the client), 102 tests, deployable as a single Node service. See its
 [README](./accessibility-lens/README.md) and
 [ASSUMPTIONS](./accessibility-lens/ASSUMPTIONS.md).
+
+### [`mult-streak/`](./mult-streak) and [`mult-streak-edge/`](./mult-streak-edge)
+
+A multiplication-streak game: solve two 2-3 digit factors, ten correct in a row
+wins a 24-hour crown, a wrong answer resets the streak. Anonymous cookie identity,
+game state in a signed cookie, and a "player stopped" email to the admin via
+Resend. `mult-streak` deploys to **Render** (where the idle email is reliable);
+`mult-streak-edge` is the same game on **Netlify** (game works fully; email is
+Render-only, by the nature of serverless). Both built from the config-driven
+deploy pipeline.

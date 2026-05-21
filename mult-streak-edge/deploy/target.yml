@@ -1,0 +1,24 @@
+# Deploy control file for mult-streak-edge (Netlify).
+provider: netlify
+projectName: mult-streak-edge
+directory: mult-streak-edge
+build: npm ci && npm run build
+
+# Static publish dir (the built game page) relative to `directory`.
+publish: dist/public
+
+env:
+  IDLE_MINUTES: '5'
+  FROM_EMAIL: mult-streak-edge@pisan.me
+
+envPassthrough:
+  - RESEND_API
+  - ADMIN_EMAIL
+  - COOKIE_SECRET
+
+netlify:
+  functionsDir: netlify/functions
+  # Netlify subdomains are globally unique, so use a distinct site name.
+  siteName: mult-streak-edge-pisan
+  siteId: ''
+  accountSlug: ''

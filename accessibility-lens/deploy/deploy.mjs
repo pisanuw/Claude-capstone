@@ -79,9 +79,16 @@ function loadConfig() {
   return cfg;
 }
 
-/** Collect the env vars named in envPassthrough that are actually set. */
+/** Collect env to forward: literal `env` map (non-secret) plus the values of
+ *  the secret names listed in `envPassthrough` that are actually set. */
 function collectEnv(cfg) {
   const out = {};
+  // Literal, non-secret values declared directly in the control file.
+  if (cfg.env && typeof cfg.env === 'object') {
+    for (const [k, v] of Object.entries(cfg.env)) {
+      if (v !== null && v !== undefined && String(v).length > 0) out[k] = String(v);
+    }
+  }
   for (const name of cfg.envPassthrough) {
     const value = process.env[name];
     if (value && value.length > 0) out[name] = value;

@@ -1,0 +1,52 @@
+# ===========================================================================
+# PLACE THIS FILE AT THE REPOSITORY ROOT:  .github/workflows/deploy-apps.yml
+#
+# It is stored here because the assistant's token cannot write under
+# .github/workflows/ without the GitHub "workflow" scope. Move it with your own
+# credentials (UI or a workflow-scoped token) to activate it.
+#
+# Deploys both mult-streak (Render) and mult-streak-edge (Netlify) in parallel,
+# reusing the proven config-driven runner. Required GitHub repo secrets:
+#   RENDER_API_KEY, NETLIFY_AUTH_TOKEN   (deploy targets)
+#   RESEND_API, ADMIN_EMAIL              (forwarded to the apps for email)
+#   COOKIE_SECRET                        (optional; signs the game cookie)
+# ===========================================================================
+name: Deploy apps
+
+on:
+  push:
+    paths:
+      - 'mult-streak/**'
+      - 'mult-streak-edge/**'
+      - 'accessibility-lens/deploy/deploy.mjs'
+      - '.github/workflows/deploy-apps.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - mult-streak/deploy/target.yml
+          - mult-streak-edge/deploy/target.yml
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install deploy runner dependencies
+        run: npm install
+        working-directory: accessibility-lens/deploy
+
+      - name: Deploy ${{ matrix.config }}
+        run: node accessibility-lens/deploy/deploy.mjs --config ${{ matrix.config }}
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          RESEND_API: ${{ secrets.RESEND_API }}
+          ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
+          COOKIE_SECRET: ${{ secrets.COOKIE_SECRET }}

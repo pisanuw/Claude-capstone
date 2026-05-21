@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Streak: the multiplication game</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Space+Grotesk:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --ink: #14110d;
+        --paper: #f3efe6;
+        --card: #fbf9f4;
+        --line: #e0d8c8;
+        --accent: #b3431f;
+        --good: #2f6d3b;
+        --gold: #b8860b;
+        color-scheme: light;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Space Grotesk', system-ui, sans-serif;
+        background: var(--paper);
+        background-image: radial-gradient(circle at 1px 1px, rgba(20, 17, 13, 0.05) 1px, transparent 0);
+        background-size: 26px 26px;
+        color: var(--ink);
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+      .card {
+        width: 100%;
+        max-width: 460px;
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        padding: 32px 28px 28px;
+        box-shadow: 0 12px 40px rgba(20, 17, 13, 0.08);
+        text-align: center;
+      }
+      h1 {
+        font-family: 'Fraunces', Georgia, serif;
+        font-weight: 700;
+        font-size: 28px;
+        margin: 0 0 4px;
+      }
+      .sub { color: #6b6256; margin: 0 0 24px; font-size: 14px; }
+      .streak {
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: #6b6256;
+      }
+      .streak b { color: var(--accent); font-size: 18px; }
+      .dots { margin: 10px 0 22px; font-size: 20px; letter-spacing: 4px; min-height: 24px; }
+      .problem {
+        font-family: 'Fraunces', Georgia, serif;
+        font-size: 44px;
+        font-weight: 700;
+        margin: 6px 0 20px;
+      }
+      input[type='number'] {
+        width: 100%;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 28px;
+        text-align: center;
+        padding: 14px;
+        border: 2px solid var(--line);
+        border-radius: 12px;
+        background: #fff;
+        color: var(--ink);
+      }
+      input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
+      button {
+        margin-top: 14px;
+        width: 100%;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 17px;
+        font-weight: 700;
+        padding: 14px;
+        border: none;
+        border-radius: 12px;
+        background: var(--accent);
+        color: #fff;
+        cursor: pointer;
+      }
+      button:hover { background: #93351699; background: #933516; }
+      button:disabled { opacity: 0.5; cursor: not-allowed; }
+      .feedback { margin-top: 16px; min-height: 24px; font-weight: 500; }
+      .feedback.good { color: var(--good); }
+      .feedback.bad { color: var(--accent); }
+      .banner {
+        font-family: 'Fraunces', Georgia, serif;
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--gold);
+        margin: 8px 0;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .problem { transition: opacity 0.12s; }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card" aria-live="polite">
+      <h1>Streak</h1>
+      <p class="sub">Solve the multiplication. Ten in a row wins.</p>
+      <div id="game">
+        <p class="streak">Current streak <b id="streak">0</b> / 10</p>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+        <div class="problem" id="problem">&hellip;</div>
+        <label for="answer" style="position:absolute;left:-9999px">Your answer</label>
+        <input id="answer" type="number" inputmode="numeric" autocomplete="off" placeholder="?" />
+        <button id="submit" type="button">Check answer</button>
+        <p class="feedback" id="feedback"></p>
+      </div>
+    </main>
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const state = { problem: null, locked: false };
+
+      function renderDots(streak) {
+        $('dots').textContent = '\u25CF'.repeat(streak) + '\u25CB'.repeat(Math.max(0, 10 - streak));
+      }
+
+      function showProblem(p, streak) {
+        state.problem = p;
+        state.locked = false;
+        $('streak').textContent = streak;
+        renderDots(streak);
+        $('problem').textContent = `${p.a} \u00D7 ${p.b}`;
+        $('answer').disabled = false;
+        $('submit').disabled = false;
+        $('answer').value = '';
+        $('answer').focus();
+      }
+
+      function showLocked(ms, streak) {
+        state.locked = true;
+        $('streak').textContent = streak;
+        renderDots(10);
+        const hrs = Math.ceil(ms / 3600000);
+        $('problem').innerHTML = '<span class="banner">\uD83C\uDFC6 You win!</span>';
+        $('answer').disabled = true;
+        $('submit').disabled = true;
+        $('feedback').className = 'feedback good';
+        $('feedback').textContent = `Come back in about ${hrs} hour(s) to play again.`;
+      }
+
+      function apply(data) {
+        if (data.status === 'locked') {
+          showLocked(data.lockoutRemainingMs, data.streak);
+        } else {
+          showProblem(data.problem, data.streak);
+        }
+      }
+
+      async function load() {
+        const res = await fetch('/api/state');
+        apply(await res.json());
+      }
+
+      async function submit() {
+        if (state.locked || !state.problem) return;
+        const answer = Number($('answer').value);
+        if (!Number.isFinite(answer)) return;
+        $('submit').disabled = true;
+        const res = await fetch('/api/answer', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ answer }),
+        });
+        const data = await res.json();
+        const fb = $('feedback');
+        if (data.outcome === 'correct' || data.outcome === 'won') {
+          fb.className = 'feedback good';
+          fb.textContent = 'Correct!';
+        } else if (data.outcome === 'wrong') {
+          fb.className = 'feedback bad';
+          fb.textContent = `Not quite \u2014 the answer was ${data.correctValue}. Streak reset.`;
+        }
+        apply(data);
+      }
+
+      $('submit').addEventListener('click', submit);
+      $('answer').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') submit();
+      });
+      load();
+    </script>
+  </body>
+</html>

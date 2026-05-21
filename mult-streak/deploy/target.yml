@@ -1,0 +1,30 @@
+# Deploy control file for mult-streak (Render web service).
+# Deployed by the proven config-driven runner (accessibility-lens/deploy/deploy.mjs --config ...).
+
+provider: render
+projectName: mult-streak
+directory: mult-streak
+build: npm ci && npm run build
+
+# Non-secret runtime values set directly on the service.
+env:
+  # Idle threshold before the "player stopped" email fires. Kept at 5 minutes so
+  # the email reliably sends before a free Render instance spins down (~15 min).
+  IDLE_MINUTES: '5'
+  FROM_EMAIL: mult-streak@pisan.me
+
+# Secret values forwarded from the workflow environment (GitHub repo secrets).
+# Names only; values never live in this file.
+envPassthrough:
+  - RESEND_API
+  - ADMIN_EMAIL
+  - COOKIE_SECRET
+
+render:
+  type: web_service
+  runtime: node
+  plan: free
+  region: oregon
+  startCommand: npm start
+  healthCheckPath: /api/health
+  branch: main
