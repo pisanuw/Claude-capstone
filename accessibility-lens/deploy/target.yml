@@ -59,4 +59,4 @@ netlify:
   # teams. Find it in your Netlify team URL/settings.
   accountSlug: ''
 
-# --- deploy trigger: run 2, provider=netlify (exercise the serverless adapter) ---
+# --- deploy trigger: manual run to create the Netlify site (observable run) ---
