@@ -57,6 +57,12 @@ function fail(message) {
   process.exit(1);
 }
 
+/** Emit a GitHub Actions notice annotation (readable via the API). */
+function ghNotice(message) {
+  const escaped = String(message).replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A');
+  console.log(`::notice title=deploy-url::${escaped}`);
+}
+
 /** Load and validate the control file. */
 function loadConfig() {
   let raw;
@@ -188,6 +194,8 @@ async function deployRender(cfg) {
       body: JSON.stringify({ clearCache: 'do_not_clear' }),
     });
     log(`Deploy triggered: ${deploy?.id ?? '(no id)'} status=${deploy?.status ?? 'queued'}`);
+    const url = found.serviceDetails?.url;
+    if (url) ghNotice(`${cfg.projectName} (render): ${url}`);
     return;
   }
 
@@ -217,7 +225,8 @@ async function deployRender(cfg) {
   });
   const svc = created?.service ?? created;
   log(`Created service ${svc?.id ?? '(unknown id)'}. Render will build and deploy it.`);
-  if (svc?.serviceDetails?.url) log(`URL: ${svc.serviceDetails.url}`);
+  const createdUrl = svc?.serviceDetails?.url;
+  if (createdUrl) ghNotice(`${cfg.projectName} (render): ${createdUrl}`);
 }
 
 // --------------------------------------------------------------------------
@@ -366,11 +375,19 @@ async function deployNetlify(cfg) {
   }
 
   // Deploy to production with absolute paths and the explicit site id.
-  netlify(
-    ['deploy', '--prod', '--site', siteId, '--dir', publishDir, '--functions', functionsDir],
-    run,
+  // --json gives us the live URL to report back.
+  const out = netlify(
+    ['deploy', '--prod', '--json', '--site', siteId, '--dir', publishDir, '--functions', functionsDir],
+    { ...run, capture: true },
   );
   log('Netlify production deploy complete.');
+  try {
+    const info = JSON.parse(out);
+    const url = info.ssl_url || info.url || info.deploy_ssl_url || info.deploy_url;
+    if (url) ghNotice(`${cfg.projectName} (netlify): ${url}`);
+  } catch {
+    ghNotice(`${cfg.projectName} (netlify): https://${siteName}.netlify.app`);
+  }
 }
 
 // --------------------------------------------------------------------------
