@@ -381,12 +381,48 @@ async function deployNetlify(cfg) {
     { ...run, capture: true },
   );
   log('Netlify production deploy complete.');
+  let url = `https://${siteName}.netlify.app`;
   try {
     const info = JSON.parse(out);
-    const url = info.ssl_url || info.url || info.deploy_ssl_url || info.deploy_url;
-    if (url) ghNotice(`${cfg.projectName} (netlify): ${url}`);
+    url = info.ssl_url || info.url || info.deploy_ssl_url || info.deploy_url || url;
   } catch {
-    ghNotice(`${cfg.projectName} (netlify): https://${siteName}.netlify.app`);
+    /* fall back to the conventional site URL */
+  }
+  ghNotice(`${cfg.projectName} (netlify): ${url}`);
+
+  // Verify the live API actually works (the CI runner can reach it, unlike a
+  // local sandbox). This catches function/routing failures that a successful
+  // upload would otherwise hide.
+  await verifyHealth(url, cfg.projectName);
+}
+
+/** Fetch <url>/api/health and report the result as an annotation. */
+async function verifyHealth(url, projectName) {
+  const target = `${url.replace(/\/$/, '')}/api/health`;
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      const res = await fetch(target, { headers: { accept: 'application/json' } });
+      const body = (await res.text()).slice(0, 200);
+      const ok = res.ok && body.includes('"status"');
+      if (ok) {
+        ghNotice(`${projectName} health OK: ${target} -> ${res.status} ${body}`);
+        return;
+      }
+      if (attempt === 4) {
+        ghError(
+          `${projectName} deployed but /api/health did not return JSON ` +
+            `(HTTP ${res.status}). The serverless function or its routing is not working. ` +
+            `Body started: ${body}`,
+        );
+        return;
+      }
+    } catch (e) {
+      if (attempt === 4) {
+        ghError(`${projectName} health check could not reach ${target}: ${String(e).slice(0, 160)}`);
+        return;
+      }
+    }
+    await new Promise((r) => setTimeout(r, 3000));
   }
 }
 
