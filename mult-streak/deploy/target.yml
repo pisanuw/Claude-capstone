@@ -28,3 +28,5 @@ render:
   startCommand: npm start
   healthCheckPath: /api/health
   branch: main
+
+# redeploy: app.ts bundle-safe fix + UI spinner fix

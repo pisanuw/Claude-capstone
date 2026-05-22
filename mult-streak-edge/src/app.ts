@@ -1,5 +1,6 @@
 import express, { type Express, type Request, type Response } from 'express';
 import path from 'node:path';
+import fs from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import {
   applyAnswer,
@@ -45,8 +46,18 @@ function viewState(state: GameState, now: number) {
 export function createApp(deps: AppDeps): Express {
   const now = deps.now ?? (() => Date.now());
   const rng = deps.rng ?? Math.random;
-  const here = path.dirname(fileURLToPath(import.meta.url));
-  const publicDir = deps.publicDir ?? path.join(here, 'public');
+  // Resolve the static dir defensively. When this module is bundled into a
+  // serverless function, import.meta.url can be undefined, so guard it: in that
+  // case we simply do not serve static files (the CDN serves the page) and only
+  // the /api routes run here.
+  let publicDir = deps.publicDir;
+  if (!publicDir) {
+    try {
+      publicDir = path.join(path.dirname(fileURLToPath(import.meta.url)), 'public');
+    } catch {
+      publicDir = undefined;
+    }
+  }
 
   const app = express();
   app.use(express.json({ limit: '16kb' }));
@@ -106,6 +117,8 @@ export function createApp(deps: AppDeps): Express {
     });
   });
 
-  app.use(express.static(publicDir));
+  if (publicDir && fs.existsSync(publicDir)) {
+    app.use(express.static(publicDir));
+  }
   return app;
 }

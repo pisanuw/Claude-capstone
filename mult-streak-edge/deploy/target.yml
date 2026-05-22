@@ -22,3 +22,5 @@ netlify:
   siteName: mult-streak-edge-pisan
   siteId: ''
   accountSlug: ''
+
+# redeploy: app.ts bundle-safe fix (fixes 502) + UI spinner fix
