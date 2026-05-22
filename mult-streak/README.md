@@ -5,7 +5,7 @@ digits, i.e. 10-999). Type the product. Right answers grow your streak; a wrong
 answer resets it to zero. Reach **10 in a row** and you win a crown and are
 **locked out for 24 hours**.
 
-- **Live site:** https://mult-streak.onrender.com  *(Render; confirmed after first deploy)*
+- **Live site:** https://mult-streak.onrender.com  *(Render, live)*
 - **Source:** https://github.com/pisanuw/Claude-capstone/tree/main/mult-streak
 - **Host:** Render (persistent Node web service). A Netlify variant lives in
   [`../mult-streak-edge`](../mult-streak-edge).
