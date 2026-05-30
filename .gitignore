@@ -1,2 +1,5 @@
 
+# Local env files — never commit. .env.example is the tracked template.
 .env
+.env.status
+
