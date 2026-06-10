@@ -24,10 +24,32 @@ export class FetchError extends Error {
   }
 }
 
-const BLOCKED_HOSTNAMES = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1', 'metadata.google.internal']);
+// IPv6 literals in URL hostnames keep their brackets: [::1], [fc00::1], etc.
+const BLOCKED_HOSTNAMES = new Set(['localhost', '127.0.0.1', '0.0.0.0', '::1', '[::1]', 'metadata.google.internal']);
 const MAX_BYTES = 4 * 1024 * 1024; // 4 MB cap
 const TIMEOUT_MS = 12_000;
 const MAX_REDIRECTS = 5;
+
+// Blocks IPv4-mapped IPv6 (::ffff:*), unique-local fc00::/7 (fc**/fd**), and
+// link-local fe80::/10 (fe80..febf). Node.js URL parser keeps brackets on IPv6
+// literals, so hostnames look like [fd00::1] — the regex includes the opening [.
+const PRIVATE_IPV6_RE = /^\[(::ffff:|fc[\da-f][\da-f]:|fd[\da-f][\da-f]:|fe[89ab][\da-f]:)/i;
+
+/** Block non-dotted decimal IPv4 encodings (e.g. http://2130706433/ == 127.0.0.1). */
+function isDecimalIpPrivate(host: string): boolean {
+  if (!/^\d+$/.test(host)) return false;
+  const ip = Number(host);
+  if (!Number.isInteger(ip) || ip < 0 || ip > 0xFFFFFFFF) return false;
+  const a = (ip >>> 24) & 0xFF;
+  const b = (ip >>> 16) & 0xFF;
+  return (
+    a === 0 || a === 10 || a === 127 ||
+    (a === 100 && b >= 64 && b <= 127) ||
+    (a === 169 && b === 254) ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168)
+  );
+}
 
 /** Validate and normalize a user-supplied URL, throwing FetchError if unsafe. */
 export function assertSafeUrl(input: string): URL {
@@ -48,6 +70,12 @@ export function assertSafeUrl(input: string): URL {
   // and the actual connect cannot be prevented without pinning the TCP socket to
   // the validated IP — document in ASSUMPTIONS.md rather than pretend otherwise.
   if (/^(10\.|192\.168\.|169\.254\.|172\.(1[6-9]|2\d|3[01])\.|100\.(6[4-9]|[7-9]\d|1[01]\d|12[0-7])\.)/.test(host)) {
+    throw new FetchError('Refusing to fetch private network addresses.');
+  }
+  if (PRIVATE_IPV6_RE.test(host)) {
+    throw new FetchError('Refusing to fetch private or link-local IPv6 addresses.');
+  }
+  if (isDecimalIpPrivate(host)) {
     throw new FetchError('Refusing to fetch private network addresses.');
   }
   return url;

@@ -39,6 +39,7 @@ export function decodeState(value: string | undefined, secret: string): GameStat
     const json = Buffer.from(body, 'base64url').toString('utf8');
     const parsed = JSON.parse(json) as GameState;
     if (typeof parsed.id !== 'string' || typeof parsed.streak !== 'number') return null;
+    if (parsed.v !== 1) return null;
     return parsed;
   } catch {
     return null;

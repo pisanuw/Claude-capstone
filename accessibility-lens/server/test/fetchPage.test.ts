@@ -32,6 +32,21 @@ describe('assertSafeUrl', () => {
     expect(() => assertSafeUrl('http://100.64.0.1/')).toThrow(FetchError);
     expect(() => assertSafeUrl('http://100.127.255.255/')).toThrow(FetchError);
   });
+
+  it('blocks IPv6 ULA (unique-local fc00::/7) addresses', () => {
+    expect(() => assertSafeUrl('http://[fd00::1]/')).toThrow(FetchError);
+    expect(() => assertSafeUrl('http://[fc00::1]/')).toThrow(FetchError);
+  });
+
+  it('blocks IPv4-mapped IPv6 addresses', () => {
+    expect(() => assertSafeUrl('http://[::ffff:10.0.0.1]/')).toThrow(FetchError);
+    expect(() => assertSafeUrl('http://[::ffff:192.168.1.1]/')).toThrow(FetchError);
+  });
+
+  it('blocks non-dotted decimal IPv4 encodings', () => {
+    expect(() => assertSafeUrl('http://2130706433/')).toThrow(FetchError); // 127.0.0.1
+    expect(() => assertSafeUrl('http://3232235521/')).toThrow(FetchError); // 192.168.0.1
+  });
 });
 
 function mockResponse(body: string, init: Partial<Response> & { headers?: Record<string, string> } = {}): Response {
@@ -113,6 +128,28 @@ describe('fetchPage', () => {
     const fakeFetch = vi.fn().mockResolvedValueOnce({
       status: 301,
       headers: new Headers({ location: 'http://169.254.169.254/latest/meta-data/' }),
+      ok: false,
+    } as unknown as Response);
+    await expect(
+      fetchPage('https://example.com', fakeFetch as unknown as typeof fetch),
+    ).rejects.toThrow(FetchError);
+  });
+
+  it('rejects a redirect to an IPv6 ULA address', async () => {
+    const fakeFetch = vi.fn().mockResolvedValueOnce({
+      status: 302,
+      headers: new Headers({ location: 'http://[fd00::1]/secret' }),
+      ok: false,
+    } as unknown as Response);
+    await expect(
+      fetchPage('https://example.com', fakeFetch as unknown as typeof fetch),
+    ).rejects.toThrow(FetchError);
+  });
+
+  it('rejects a redirect to a decimal IPv4 address', async () => {
+    const fakeFetch = vi.fn().mockResolvedValueOnce({
+      status: 302,
+      headers: new Headers({ location: 'http://2130706433/' }),
       ok: false,
     } as unknown as Response);
     await expect(

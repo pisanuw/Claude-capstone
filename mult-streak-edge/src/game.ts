@@ -13,6 +13,8 @@ export interface Problem {
 
 /** The full per-player state we keep (in a signed cookie). */
 export interface GameState {
+  /** Cookie schema version. Must equal 1; absent or mismatched cookies are discarded. */
+  v?: number;
   /** Stable per-browser id. */
   id: string;
   streak: number;
@@ -51,7 +53,7 @@ export function isLocked(state: GameState, now: number): boolean {
 
 /** Create a fresh game state for a new player id. */
 export function newGame(id: string, rng: () => number = Math.random): GameState {
-  return { id, streak: 0, lockoutUntil: 0, problem: generateProblem(rng) };
+  return { v: 1, id, streak: 0, lockoutUntil: 0, problem: generateProblem(rng) };
 }
 
 /**
