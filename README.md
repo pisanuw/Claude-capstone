@@ -1,5 +1,7 @@
 # Claude-capstone
 
+[![CI](https://github.com/pisanuw/Claude-capstone/actions/workflows/ci.yml/badge.svg)](https://github.com/pisanuw/Claude-capstone/actions/workflows/ci.yml)
+
 Capstone projects built by Claude from prompts in
 [`pisanuw/daily-project-ideas`](https://github.com/pisanuw/daily-project-ideas).
 
@@ -14,8 +16,9 @@ keyboard-only navigation, and screen readers experience it, with a suggested fix
 every issue and optional Claude-generated code rewrites.
 
 TypeScript monorepo (Express + a pure analysis engine on the server, React + Vite +
-Tailwind on the client), 102 tests, deployable as a single Node service. See its
-[README](./accessibility-lens/README.md) and
+Tailwind on the client), 107 tests, deployable as a single Node service.
+Live: [accessibility-lens-pisanuw.netlify.app](https://accessibility-lens-pisanuw.netlify.app).
+See its [README](./accessibility-lens/README.md) and
 [ASSUMPTIONS](./accessibility-lens/ASSUMPTIONS.md).
 
 ### [`mult-streak/`](./mult-streak) and [`mult-streak-edge/`](./mult-streak-edge)

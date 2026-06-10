@@ -14,9 +14,13 @@ export interface Config {
 }
 
 export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
+  const rawSecret = env.COOKIE_SECRET?.trim();
+  if (!rawSecret && env.NODE_ENV === 'production') {
+    throw new Error('COOKIE_SECRET must be set in production. Refusing to start.');
+  }
   return {
     port: Number(env.PORT ?? 3000),
-    cookieSecret: env.COOKIE_SECRET?.trim() || 'dev-insecure-cookie-secret',
+    cookieSecret: rawSecret || 'dev-insecure-cookie-secret',
     idleMinutes: Number(env.IDLE_MINUTES ?? 15),
     activityFile: env.ACTIVITY_FILE?.trim() || './data/activity.json',
     // Accept RESEND_API (the name the user configured) or RESEND_API_KEY.

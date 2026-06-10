@@ -40,7 +40,7 @@ The app runs fully without any configuration; email is simply disabled until
 `RESEND_API` and `ADMIN_EMAIL` are set. See [`.env.example`](./.env.example).
 
 ```bash
-npm test         # 34 tests
+npm test         # 42 tests
 npm run coverage # ~94% statements
 npm run build && npm start   # production build + run
 ```

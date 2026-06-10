@@ -46,7 +46,7 @@ production):
 cd mult-streak-edge
 npm install
 npm run dev      # http://localhost:3000
-npm test         # 34 tests
+npm test         # 42 tests
 ```
 
 ## Deploy

@@ -58,7 +58,6 @@ export class MemoryActivityStore implements ActivityStore {
     return [...this.map.values()];
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   protected persist(): void {}
 }
 

@@ -27,6 +27,11 @@ describe('assertSafeUrl', () => {
     expect(() => assertSafeUrl('http://192.168.1.1/')).toThrow(FetchError);
     expect(() => assertSafeUrl('http://172.16.0.1/')).toThrow(FetchError);
   });
+
+  it('blocks carrier-grade NAT range (100.64.0.0/10)', () => {
+    expect(() => assertSafeUrl('http://100.64.0.1/')).toThrow(FetchError);
+    expect(() => assertSafeUrl('http://100.127.255.255/')).toThrow(FetchError);
+  });
 });
 
 function mockResponse(body: string, init: Partial<Response> & { headers?: Record<string, string> } = {}): Response {
@@ -91,5 +96,55 @@ describe('fetchPage', () => {
       fetchPage('http://localhost', fakeFetch as unknown as typeof fetch),
     ).rejects.toThrow(FetchError);
     expect(fakeFetch).not.toHaveBeenCalled();
+  });
+
+  it('rejects a redirect to a private IP address', async () => {
+    const fakeFetch = vi.fn().mockResolvedValueOnce({
+      status: 302,
+      headers: new Headers({ location: 'http://192.168.1.1/secret' }),
+      ok: false,
+    } as unknown as Response);
+    await expect(
+      fetchPage('https://example.com', fakeFetch as unknown as typeof fetch),
+    ).rejects.toThrow(FetchError);
+  });
+
+  it('rejects a redirect to the link-local metadata address', async () => {
+    const fakeFetch = vi.fn().mockResolvedValueOnce({
+      status: 301,
+      headers: new Headers({ location: 'http://169.254.169.254/latest/meta-data/' }),
+      ok: false,
+    } as unknown as Response);
+    await expect(
+      fetchPage('https://example.com', fakeFetch as unknown as typeof fetch),
+    ).rejects.toThrow(FetchError);
+  });
+
+  it('rejects after too many redirects', async () => {
+    const fakeFetch = vi.fn().mockResolvedValue({
+      status: 302,
+      headers: new Headers({ location: 'https://example.com/loop' }),
+      ok: false,
+    } as unknown as Response);
+    await expect(
+      fetchPage('https://example.com/loop', fakeFetch as unknown as typeof fetch),
+    ).rejects.toThrow(/redirects/);
+  });
+
+  it('follows a safe redirect and returns the final response', async () => {
+    const finalResponse = mockResponse('<html><body>final</body></html>', {
+      url: 'https://example.com/final',
+    });
+    const fakeFetch = vi
+      .fn()
+      .mockResolvedValueOnce({
+        status: 301,
+        headers: new Headers({ location: 'https://example.com/final' }),
+        ok: false,
+      } as unknown as Response)
+      .mockResolvedValueOnce(finalResponse);
+    const page = await fetchPage('https://example.com/', fakeFetch as unknown as typeof fetch);
+    expect(page.html).toContain('final');
+    expect(fakeFetch).toHaveBeenCalledTimes(2);
   });
 });

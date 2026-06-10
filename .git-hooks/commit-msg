@@ -1,0 +1,13 @@
+#!/bin/sh
+# Enforce Conventional Commits: type(scope)?: subject
+# Types: feat, fix, chore, docs, style, refactor, test, perf, ci, build, revert
+MSG=$(cat "$1")
+PATTERN='^(feat|fix|chore|docs|style|refactor|test|perf|ci|build|revert)(\([a-z0-9._-]+\))?!?: .+'
+if ! echo "$MSG" | grep -qE "$PATTERN"; then
+  echo "ERROR: commit message does not follow Conventional Commits."
+  echo "  Expected: type(scope)?: subject"
+  echo "  Types: feat fix chore docs style refactor test perf ci build revert"
+  echo "  Example: feat(mult-streak): add hint button"
+  echo "  Got: $MSG"
+  exit 1
+fi

@@ -1,0 +1,6 @@
+# Briefing
+
+- Purpose: Capstone showcase — Claude autonomously picks, builds, tests, and deploys project ideas sourced from `pisanuw/daily-project-ideas` into subdirectories of this repo.
+- Current scope: Two shipped projects: `accessibility-lens` (WCAG 2.1 analyzer, TypeScript monorepo, Express + React, 107 tests) and `mult-streak` / `mult-streak-edge` (multiplication-streak game, 42 tests each, deployed to Render and Netlify respectively). Next project: find oldest un-implemented idea from the ideas repo and build it.
+- Key decisions: Projects must have tests with good coverage (≥85% threshold), a documented `.env.example`, and be deployable to Netlify or Render. No interactive guidance — Claude owns delivery. Use `claude` CLI (not API key) for LLM calls in scripts. Conventional Commits enforced via `.git-hooks/commit-msg`. CI (`.github/workflows/ci.yml`) covers all three packages. Security: COOKIE_SECRET must be set in production (fail-closed); SSRF guard uses manual redirect following. ESLint flat config present in all packages.
+- Non-goals: No manual guidance or approval loops during project construction; no monolithic single-app approach (each idea gets its own subdirectory).

@@ -1,5 +1,7 @@
 # Accessibility Lens
 
+**Live:** [accessibility-lens-pisanuw.netlify.app](https://accessibility-lens-pisanuw.netlify.app) | TypeScript monorepo | 107 tests | MIT
+
 **See your page through four kinds of eyes.** Paste a public URL and Accessibility
 Lens fetches the markup, runs a deterministic subset of WCAG 2.1 checks, and
 replays the page the way users with **low vision**, **color blindness**,
@@ -128,17 +130,9 @@ npm test            # Vitest, both workspaces
 npm run coverage    # with coverage thresholds enforced
 ```
 
-Current state: **102 tests passing**. Server coverage ~96% (threshold 85%), client
-~96% (threshold 70%). A ready-to-use GitHub Actions workflow lives at
-[`.github/workflows/ci.yml`](./.github/workflows/ci.yml) (inside this project
-folder) and runs lint, typecheck, coverage, and build on every push.
-
-> **To actually activate CI**, this file must sit at the **repository root**
-> (`Claude-capstone/.github/workflows/ci.yml`). GitHub Actions only reads
-> workflows from the repo-root `.github/workflows/` directory, never from a
-> subdirectory, so the copy under `accessibility-lens/` will not run until it is
-> relocated. Its `working-directory`, path filters, and cache path are already
-> written for the root location, so no content changes are needed.
+Current state: **107 tests passing**. Server coverage ~96% (threshold 85%), client
+~96% (threshold 70%). CI runs lint, typecheck, coverage, and build on every push
+via the repo-root [`.github/workflows/ci.yml`](../.github/workflows/ci.yml).
 
 ## Limitations (the honest list)
 
