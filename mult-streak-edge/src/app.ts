@@ -7,7 +7,9 @@ import {
   ensureProblem,
   isLocked,
   newGame,
+  setMode,
   type GameState,
+  type Mode,
 } from './game.js';
 import { COOKIE_NAME, decodeState, encodeState, newId } from './cookie.js';
 import type { ActivityStore } from './store.js';
@@ -32,12 +34,14 @@ function viewState(state: GameState, now: number) {
   if (isLocked(state, now)) {
     return {
       status: 'locked' as const,
+      mode: state.mode,
       streak: state.streak,
       lockoutRemainingMs: state.lockoutUntil - now,
     };
   }
   return {
     status: 'playing' as const,
+    mode: state.mode,
     streak: state.streak,
     problem: state.problem,
   };
@@ -94,7 +98,7 @@ export function createApp(deps: AppDeps): Express {
 
   app.get('/api/state', async (req, res) => {
     const current = decodeState(readCookie(req), deps.cookieSecret);
-    const state = ensureProblem(current ?? newGame(newId(), rng), now(), rng);
+    const state = ensureProblem(current ?? newGame(newId(), 'mult', rng), now(), rng);
     writeCookie(res, state);
     await recordAndSweep(state);
     res.json(viewState(state, now()));
@@ -106,7 +110,7 @@ export function createApp(deps: AppDeps): Express {
       res.status(400).json({ error: 'No game in progress. Reload to start.' });
       return;
     }
-    const answer = Number(req.body?.answer);
+    const answer = (req.body?.answer ?? '') as number | string;
     const result = applyAnswer(current, answer, now(), rng);
     writeCookie(res, result.state);
     await recordAndSweep(result.state);
@@ -114,7 +118,29 @@ export function createApp(deps: AppDeps): Express {
       ...viewState(result.state, now()),
       outcome: result.outcome,
       correctValue: result.outcome === 'wrong' ? result.correctValue : undefined,
+      correctFactors: result.outcome === 'wrong' ? result.correctFactors : undefined,
     });
+  });
+
+  app.post('/api/mode', async (req, res) => {
+    const current = decodeState(readCookie(req), deps.cookieSecret);
+    if (!current) {
+      res.status(400).json({ error: 'No game in progress. Reload to start.' });
+      return;
+    }
+    if (current.streak > 0 || isLocked(current, now())) {
+      res.status(400).json({ error: 'Mode can only be changed at the start of a streak.' });
+      return;
+    }
+    const mode = req.body?.mode as Mode | undefined;
+    if (mode !== 'mult' && mode !== 'factor') {
+      res.status(400).json({ error: 'mode must be "mult" or "factor".' });
+      return;
+    }
+    const state = setMode(current, mode, rng);
+    writeCookie(res, state);
+    await recordAndSweep(state);
+    res.json(viewState(state, now()));
   });
 
   if (publicDir && fs.existsSync(publicDir)) {

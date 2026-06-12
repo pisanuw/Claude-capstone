@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Streak: the multiplication game</title>
+    <title>Streak: the multiplication &amp; factoring game</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -50,7 +50,36 @@
         font-size: 28px;
         margin: 0 0 4px;
       }
-      .sub { color: #6b6256; margin: 0 0 24px; font-size: 14px; }
+      .sub { color: #6b6256; margin: 0 0 20px; font-size: 14px; }
+      .mode-btns {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .mode-btn {
+        flex: 1;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 10px 12px;
+        border: 2px solid var(--line);
+        border-radius: 10px;
+        background: transparent;
+        color: var(--ink);
+        cursor: pointer;
+        margin-top: 0;
+        width: auto;
+        transition: border-color 0.1s, color 0.1s;
+      }
+      .mode-btn.active {
+        background: var(--accent);
+        color: #fff;
+        border-color: var(--accent);
+      }
+      .mode-btn:hover:not(.active) {
+        border-color: var(--accent);
+        color: var(--accent);
+      }
       .streak {
         font-size: 13px;
         text-transform: uppercase;
@@ -64,11 +93,22 @@
         font-size: 44px;
         font-weight: 700;
         margin: 6px 0 20px;
+        line-height: 1.2;
       }
-      input[type='number'] {
+      .factor-label {
+        display: block;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 12px;
+        font-weight: 500;
+        color: #6b6256;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        margin-bottom: 2px;
+      }
+      input[type='text'] {
         width: 100%;
         font-family: 'Space Grotesk', sans-serif;
-        font-size: 28px;
+        font-size: 22px;
         text-align: center;
         padding: 14px;
         border: 2px solid var(--line);
@@ -76,9 +116,6 @@
         background: #fff;
         color: var(--ink);
       }
-      input[type='number']::-webkit-inner-spin-button,
-      input[type='number']::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
-      input[type='number'] { -moz-appearance: textfield; appearance: textfield; }
       input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-color: var(--accent); }
       button {
         margin-top: 14px;
@@ -93,7 +130,7 @@
         color: #fff;
         cursor: pointer;
       }
-      button:hover { background: #93351699; background: #933516; }
+      button:hover { background: #933516; }
       button:disabled { opacity: 0.5; cursor: not-allowed; }
       .feedback { margin-top: 16px; min-height: 24px; font-weight: 500; }
       .feedback.good { color: var(--good); }
@@ -113,54 +150,87 @@
   <body>
     <main class="card" aria-live="polite">
       <h1>Streak</h1>
-      <p class="sub">Solve the multiplication. Ten in a row wins.</p>
+      <p class="sub" id="sub">Ten in a row wins.</p>
+      <div id="mode-select" style="display:none">
+        <div class="mode-btns">
+          <button class="mode-btn" id="mode-mult" type="button">&times; Multiplication</button>
+          <button class="mode-btn" id="mode-factor" type="button">&#247; Factoring</button>
+        </div>
+      </div>
       <div id="game">
         <p class="streak">Current streak <b id="streak">0</b> / 10</p>
         <div class="dots" id="dots" aria-hidden="true"></div>
         <div class="problem" id="problem">&hellip;</div>
         <label for="answer" style="position:absolute;left:-9999px">Your answer</label>
-        <input id="answer" type="number" inputmode="numeric" autocomplete="off" placeholder="?" />
+        <input id="answer" type="text" autocomplete="off" placeholder="?" />
         <button id="submit" type="button">Check answer</button>
         <p class="feedback" id="feedback"></p>
       </div>
     </main>
     <script>
       const $ = (id) => document.getElementById(id);
-      const state = { problem: null, locked: false };
+      const state = { problem: null, locked: false, mode: 'mult', streak: 0 };
 
       function renderDots(streak) {
-        $('dots').textContent = '\u25CF'.repeat(streak) + '\u25CB'.repeat(Math.max(0, 10 - streak));
+        $('dots').textContent = '●'.repeat(streak) + '○'.repeat(Math.max(0, 10 - streak));
       }
 
-      function showProblem(p, streak) {
+      function updateModeSelect() {
+        const show = !state.locked && state.streak === 0;
+        $('mode-select').style.display = show ? 'block' : 'none';
+        $('mode-mult').classList.toggle('active', state.mode === 'mult');
+        $('mode-factor').classList.toggle('active', state.mode === 'factor');
+      }
+
+      function showProblem(p, streak, mode) {
         state.problem = p;
         state.locked = false;
+        state.mode = mode;
+        state.streak = streak;
         $('streak').textContent = streak;
         renderDots(streak);
-        $('problem').textContent = `${p.a} \u00D7 ${p.b}`;
+
+        if (mode === 'mult') {
+          $('sub').textContent = 'Solve the multiplication. Ten in a row wins.';
+          $('problem').textContent = `${p.a} × ${p.b}`;
+          $('answer').inputMode = 'numeric';
+          $('answer').placeholder = '?';
+        } else {
+          $('sub').textContent = 'Enter the prime factorization. Ten in a row wins.';
+          $('problem').innerHTML =
+            '<span class="factor-label">Factor this number</span>' +
+            p.n.toLocaleString();
+          $('answer').inputMode = 'text';
+          $('answer').placeholder = 'e.g. 2 × 3 × 5';
+        }
+
         $('answer').disabled = false;
         $('submit').disabled = false;
         $('answer').value = '';
         $('answer').focus();
+        updateModeSelect();
       }
 
-      function showLocked(ms, streak) {
+      function showLocked(ms, streak, mode) {
         state.locked = true;
+        state.streak = streak;
+        state.mode = mode ?? state.mode;
         $('streak').textContent = streak;
         renderDots(10);
         const hrs = Math.ceil(ms / 3600000);
-        $('problem').innerHTML = '<span class="banner">\uD83C\uDFC6 You win!</span>';
+        $('problem').innerHTML = '<span class="banner">🏆 You win!</span>';
         $('answer').disabled = true;
         $('submit').disabled = true;
         $('feedback').className = 'feedback good';
         $('feedback').textContent = `Come back in about ${hrs} hour(s) to play again.`;
+        updateModeSelect();
       }
 
       function apply(data) {
         if (data.status === 'locked') {
-          showLocked(data.lockoutRemainingMs, data.streak);
+          showLocked(data.lockoutRemainingMs, data.streak, data.mode);
         } else {
-          showProblem(data.problem, data.streak);
+          showProblem(data.problem, data.streak, data.mode);
         }
       }
 
@@ -169,7 +239,7 @@
           const res = await fetch('/api/state');
           if (!res.ok) throw new Error('HTTP ' + res.status);
           apply(await res.json());
-        } catch (err) {
+        } catch {
           $('problem').textContent = 'Could not load a problem';
           $('feedback').className = 'feedback bad';
           $('feedback').textContent = 'The server is not responding. Please refresh in a moment.';
@@ -178,8 +248,14 @@
 
       async function submit() {
         if (state.locked || !state.problem) return;
-        const answer = Number($('answer').value);
-        if (!Number.isFinite(answer)) return;
+        let answer;
+        if (state.mode === 'mult') {
+          answer = Number($('answer').value);
+          if (!Number.isFinite(answer)) return;
+        } else {
+          answer = $('answer').value.trim();
+          if (!answer) return;
+        }
         $('submit').disabled = true;
         const res = await fetch('/api/answer', {
           method: 'POST',
@@ -193,15 +269,37 @@
           fb.textContent = 'Correct!';
         } else if (data.outcome === 'wrong') {
           fb.className = 'feedback bad';
-          fb.textContent = `Not quite \u2014 the answer was ${data.correctValue}. Streak reset.`;
+          if (data.correctFactors) {
+            const factorsStr = data.correctFactors.join(' × ');
+            fb.textContent = `Not quite — ${data.correctValue} = ${factorsStr}. Streak reset.`;
+          } else {
+            fb.textContent = `Not quite — the answer was ${data.correctValue}. Streak reset.`;
+          }
         }
         apply(data);
       }
 
+      async function selectMode(mode) {
+        try {
+          const res = await fetch('/api/mode', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ mode }),
+          });
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          $('feedback').className = 'feedback';
+          $('feedback').textContent = '';
+          apply(await res.json());
+        } catch {
+          $('feedback').className = 'feedback bad';
+          $('feedback').textContent = 'Could not switch mode. Please refresh.';
+        }
+      }
+
       $('submit').addEventListener('click', submit);
-      $('answer').addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') submit();
-      });
+      $('answer').addEventListener('keydown', (e) => { if (e.key === 'Enter') submit(); });
+      $('mode-mult').addEventListener('click', () => selectMode('mult'));
+      $('mode-factor').addEventListener('click', () => selectMode('factor'));
       load();
     </script>
   </body>

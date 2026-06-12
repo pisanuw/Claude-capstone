@@ -15,3 +15,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-06-10 [code] security: hardened assertSafeUrl to block IPv6 ULA/link-local (fc00::/7, fe80::/10), IPv4-mapped IPv6 (::ffff:*), and decimal IPv4 encodings; fixed pre-existing [::1] bypass (Node.js URL parser keeps brackets); added 5 new tests.
 2026-06-10 [code] security: added schema version field (v:1) to GameState in mult-streak and mult-streak-edge; decodeState rejects cookies where v !== 1, degrading old cookies gracefully; added 3 version tests per package.
+
+2026-06-12 [feat] mult-streak + mult-streak-edge: added factoring mode (factor composites 1000-1000000 into prime factorization). Mode selector shown at streak=0; cookie schema bumped to v:2. 77 tests each, 97.87% coverage.
