@@ -30,3 +30,10 @@ Resend. `mult-streak` deploys to **Render** (where the idle email is reliable);
 `mult-streak-edge` is the same game on **Netlify** (game works fully; email is
 Render-only, by the nature of serverless). Both built from the config-driven
 deploy pipeline.
+
+### [`emoji-lingua/`](./emoji-lingua)
+
+Translate English into emoji and emoji back into English, with a hybrid engine: a
+curated dictionary (deterministic, always available) plus optional Claude-powered
+translation for context-aware results and interpretive readings. Deployed on
+**Netlify** (static page + serverless API).

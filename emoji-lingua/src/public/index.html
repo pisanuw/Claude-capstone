@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Emoji Lingua: translate English and emoji</title>
+    <meta
+      name="description"
+      content="Translate English into emoji and emoji back into English."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --bg: #0f1020;
+        --panel: #191b33;
+        --panel-2: #21243f;
+        --line: #32365a;
+        --text: #f0efff;
+        --muted: #a7a6c8;
+        --accent: #ffd166;
+        --accent-2: #7cf3c4;
+        color-scheme: dark;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: 'Outfit', system-ui, sans-serif;
+        background:
+          radial-gradient(900px 500px at 15% -10%, #2b2f5d 0%, transparent 60%),
+          radial-gradient(700px 400px at 100% 0%, #3a2350 0%, transparent 55%),
+          var(--bg);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        padding: 32px 20px 56px;
+      }
+      .wrap { width: 100%; max-width: 720px; }
+      header { text-align: center; margin-bottom: 28px; }
+      h1 { font-size: 34px; margin: 0 0 8px; letter-spacing: -0.02em; }
+      h1 .em { filter: saturate(1.2); }
+      .sub { color: var(--muted); margin: 0; font-size: 15px; }
+      .switch {
+        display: flex; gap: 8px; justify-content: center; margin: 22px 0 16px; flex-wrap: wrap;
+      }
+      .switch button {
+        font-family: inherit; font-size: 14px; font-weight: 600;
+        padding: 9px 16px; border-radius: 999px; cursor: pointer;
+        background: var(--panel); color: var(--muted);
+        border: 1px solid var(--line);
+      }
+      .switch button[aria-pressed='true'] {
+        background: var(--accent); color: #221a00; border-color: var(--accent);
+      }
+      .panel {
+        background: var(--panel); border: 1px solid var(--line);
+        border-radius: 16px; padding: 18px; margin-bottom: 14px;
+      }
+      label { display: block; font-size: 13px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+      textarea {
+        width: 100%; min-height: 110px; resize: vertical;
+        font-family: inherit; font-size: 18px; line-height: 1.5;
+        color: var(--text); background: var(--panel-2);
+        border: 1px solid var(--line); border-radius: 12px; padding: 14px;
+      }
+      textarea:focus-visible, button:focus-visible {
+        outline: 3px solid var(--accent-2); outline-offset: 2px;
+      }
+      .row { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 10px; }
+      .count { font-size: 12px; color: var(--muted); font-family: 'Space Mono', monospace; }
+      .go {
+        font-family: inherit; font-size: 16px; font-weight: 700;
+        padding: 12px 22px; border: none; border-radius: 12px; cursor: pointer;
+        background: var(--accent-2); color: #04241a;
+      }
+      .go:disabled { opacity: 0.45; cursor: not-allowed; }
+      .out {
+        min-height: 90px; font-size: 26px; line-height: 1.5; word-break: break-word;
+        background: var(--panel-2); border: 1px solid var(--line);
+        border-radius: 12px; padding: 16px; white-space: pre-wrap;
+      }
+      .out.small { font-size: 19px; }
+      .meta { display: flex; gap: 10px; align-items: center; margin-top: 10px; flex-wrap: wrap; }
+      .tag {
+        font-family: 'Space Mono', monospace; font-size: 11px; text-transform: uppercase;
+        letter-spacing: 0.08em; color: var(--muted);
+        border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px;
+      }
+      .copy {
+        font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer;
+        background: transparent; color: var(--accent); border: 1px solid var(--line);
+        border-radius: 8px; padding: 6px 12px; margin-left: auto;
+      }
+      .err { color: #ff9b9b; font-size: 14px; margin-top: 10px; min-height: 18px; }
+      .examples { text-align: center; color: var(--muted); font-size: 13px; margin-top: 18px; }
+      .examples button {
+        font-family: inherit; font-size: 13px; background: none; border: none;
+        color: var(--accent); cursor: pointer; text-decoration: underline; padding: 2px 4px;
+      }
+      footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 26px; }
+      @media (prefers-reduced-motion: no-preference) {
+        .go, .switch button { transition: transform 0.08s ease, background 0.15s ease; }
+        .go:active { transform: scale(0.98); }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1><span class="em">🔤</span> Emoji Lingua <span class="em">😀</span></h1>
+        <p class="sub">Translate English into emoji, and emoji back into English.</p>
+      </header>
+
+      <div class="switch" role="group" aria-label="Translation direction">
+        <button type="button" id="dir-to-emoji" aria-pressed="true">English → Emoji</button>
+        <button type="button" id="dir-to-english" aria-pressed="false">Emoji → English</button>
+      </div>
+
+      <div class="switch" id="mode-row" role="group" aria-label="Emoji reading mode" hidden>
+        <button type="button" id="mode-interpretive" aria-pressed="true">Interpret meaning</button>
+        <button type="button" id="mode-literal" aria-pressed="false">Literal gloss</button>
+      </div>
+
+      <div class="panel">
+        <label for="input" id="input-label">Your text</label>
+        <textarea id="input" maxlength="500" placeholder="I love pizza on a rainy night"></textarea>
+        <div class="row">
+          <span class="count"><span id="count">0</span>/500</span>
+          <button class="go" id="go" type="button">Translate</button>
+        </div>
+        <p class="err" id="error" role="alert"></p>
+      </div>
+
+      <div class="panel">
+        <label for="output">Translation</label>
+        <div class="out" id="output" aria-live="polite"></div>
+        <div class="meta">
+          <span class="tag" id="engine-tag" hidden></span>
+          <span class="tag" id="hint-tag" hidden></span>
+          <button class="copy" id="copy" type="button" hidden>Copy</button>
+        </div>
+      </div>
+
+      <p class="examples">
+        Try:
+        <button type="button" data-ex="I love pizza on a rainy night">English example</button>
+        <button type="button" data-ex="🐱🍕🌧️😢">Emoji example</button>
+      </p>
+
+      <footer>Dictionary translation always works; when an AI key is configured, translations get smarter.</footer>
+    </div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      let direction = 'to-emoji';
+      let mode = 'interpretive';
+
+      function setDirection(next) {
+        direction = next;
+        $('dir-to-emoji').setAttribute('aria-pressed', String(next === 'to-emoji'));
+        $('dir-to-english').setAttribute('aria-pressed', String(next === 'to-english'));
+        $('mode-row').hidden = next !== 'to-english';
+        $('input-label').textContent = next === 'to-emoji' ? 'English text' : 'Emoji';
+        $('input').placeholder =
+          next === 'to-emoji' ? 'I love pizza on a rainy night' : '🐱🍕🌧️😢';
+        $('output').classList.toggle('small', next === 'to-english');
+      }
+
+      function setMode(next) {
+        mode = next;
+        $('mode-interpretive').setAttribute('aria-pressed', String(next === 'interpretive'));
+        $('mode-literal').setAttribute('aria-pressed', String(next === 'literal'));
+      }
+
+      $('dir-to-emoji').onclick = () => setDirection('to-emoji');
+      $('dir-to-english').onclick = () => setDirection('to-english');
+      $('mode-interpretive').onclick = () => setMode('interpretive');
+      $('mode-literal').onclick = () => setMode('literal');
+
+      $('input').addEventListener('input', () => {
+        $('count').textContent = $('input').value.length;
+      });
+
+      document.querySelectorAll('[data-ex]').forEach((b) => {
+        b.onclick = () => {
+          $('input').value = b.dataset.ex;
+          $('count').textContent = $('input').value.length;
+          setDirection(/[\p{Extended_Pictographic}]/u.test(b.dataset.ex) ? 'to-english' : 'to-emoji');
+          translate();
+        };
+      });
+
+      async function translate() {
+        const text = $('input').value.trim();
+        $('error').textContent = '';
+        if (!text) {
+          $('error').textContent = 'Enter some text first.';
+          return;
+        }
+        $('go').disabled = true;
+        $('output').textContent = '…';
+        try {
+          const res = await fetch('/api/translate', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ text, direction, mode }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error || 'Translation failed');
+          $('output').textContent = data.output;
+          $('engine-tag').hidden = false;
+          $('engine-tag').textContent = data.engine === 'ai' ? 'AI translation' : 'dictionary';
+          const missed = (data.untranslated || []).length;
+          $('hint-tag').hidden = missed === 0;
+          if (missed) $('hint-tag').textContent = missed + ' word(s) had no emoji';
+          $('copy').hidden = !data.output;
+        } catch (err) {
+          $('output').textContent = '';
+          $('error').textContent = err.message || 'Something went wrong.';
+        } finally {
+          $('go').disabled = false;
+        }
+      }
+
+      $('go').onclick = translate;
+      $('input').addEventListener('keydown', (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') translate();
+      });
+
+      $('copy').onclick = async () => {
+        try {
+          await navigator.clipboard.writeText($('output').textContent);
+          $('copy').textContent = 'Copied!';
+          setTimeout(() => ($('copy').textContent = 'Copy'), 1400);
+        } catch {
+          $('error').textContent = 'Could not copy to clipboard.';
+        }
+      };
+
+      setDirection('to-emoji');
+    </script>
+  </body>
+</html>

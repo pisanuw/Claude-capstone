@@ -1,0 +1,15 @@
+# Deploy control file for emoji-lingua (Netlify).
+provider: netlify
+projectName: emoji-lingua
+directory: emoji-lingua
+build: npm ci && npm run build
+publish: dist/public
+
+envPassthrough:
+  - ANTHROPIC_API_KEY
+
+netlify:
+  functionsDir: netlify/functions
+  siteName: emoji-lingua-pisan
+  siteId: ''
+  accountSlug: ''
