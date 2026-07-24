@@ -364,13 +364,24 @@ async function deployNetlify(cfg) {
   const run = { cwd: stageDir };
 
   // Forward environment variables to the site (for the serverless function).
-  // Best-effort: the app works without them, so a failure must not abort.
+  // Explicit --scope/--context: Netlify's defaults can omit the functions
+  // runtime, which silently leaves the function without the variable.
+  // Best-effort (the app degrades gracefully), but report the outcome loudly so
+  // a failure is visible instead of mysterious.
   for (const [key, value] of Object.entries(env)) {
     try {
       log(`Setting Netlify env ${key}`);
-      netlify(['env:set', key, value, '--site', siteId], run);
+      netlify(
+        ['env:set', key, value, '--site', siteId, '--scope', 'functions,builds,runtime', '--context', 'production'],
+        run,
+      );
     } catch (e) {
-      log(`warning: could not set env ${key}; continuing. ${String(e).slice(0, 160)}`);
+      // Older CLI versions reject the flags; retry without them before warning.
+      try {
+        netlify(['env:set', key, value, '--site', siteId], run);
+      } catch (e2) {
+        ghNotice(`warning: could not set env ${key} on ${cfg.projectName}: ${String(e2).slice(0, 200)}`);
+      }
     }
   }
 
