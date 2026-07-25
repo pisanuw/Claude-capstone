@@ -15,3 +15,5 @@ netlify:
   accountSlug: ''
 
 # redeploy: pick up ANTHROPIC_API_KEY in the function runtime
+
+# redeploy: 18k-entry CLDR-generated dictionary

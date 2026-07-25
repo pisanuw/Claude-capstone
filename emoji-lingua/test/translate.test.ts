@@ -58,7 +58,8 @@ describe('englishToEmoji', () => {
   });
 
   it('matches multi-word phrases before single words', () => {
-    expect(englishToEmoji('ice cream').output).toBe('🍦');
+    // CLDR's canonical "ice cream" is 🍨 (🍦 is "soft ice cream").
+    expect(englishToEmoji('ice cream').output).toBe('🍨');
     expect(englishToEmoji('good morning').output).toBe('🌅');
   });
 
@@ -82,10 +83,11 @@ describe('emojiToEnglish', () => {
     expect(emojiToEnglish('🐱🍕').output).toBe('cat pizza');
   });
 
-  it('passes unknown emoji through', () => {
-    const out = emojiToEnglish('🐱🛼').output;
+  it('passes unknown symbols through', () => {
+    // The dictionary now covers ~4,200 emoji, so use a non-emoji symbol.
+    const out = emojiToEnglish('🐱§').output;
     expect(out).toContain('cat');
-    expect(out).toContain('🛼');
+    expect(out).toContain('§');
   });
 
   it('handles variation selectors', () => {
