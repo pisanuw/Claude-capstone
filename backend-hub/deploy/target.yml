@@ -35,6 +35,13 @@ envPassthrough:
 render:
   type: web_service
   runtime: node
+  # mult-streak refuses to boot in production without COOKIE_SECRET. The
+  # COOKIE_SECRET repo secret is currently unset, so have the deploy runner
+  # generate a strong random value once on the service. Setting the repo
+  # secret later overrides it on the next deploy (players lose in-flight
+  # cookies once, which for a game is fine).
+  generateEnv:
+    - COOKIE_SECRET
   plan: free
   region: oregon
   startCommand: npm start

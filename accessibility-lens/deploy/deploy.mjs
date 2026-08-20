@@ -18,6 +18,7 @@
  *   node deploy.mjs --config path   # use a different control file
  */
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { randomBytes } from 'node:crypto';
 import { execFileSync, execSync } from 'node:child_process';
 import path from 'node:path';
 import os from 'node:os';
@@ -146,7 +147,12 @@ async function deployRender(cfg) {
   const token = process.env.RENDER_API_KEY;
   const r = cfg.render ?? {};
   const repo = r.repo || cfg.repo || gitRemoteUrl();
-  const envVars = Object.entries(collectEnv(cfg)).map(([key, value]) => ({ key, value }));
+  const desiredEnv = collectEnv(cfg);
+  const envVars = Object.entries(desiredEnv).map(([key, value]) => ({ key, value }));
+  // render.generateEnv: keys the service cannot boot without. When no
+  // passthrough value is present (repo secret unset), generate a random value
+  // once instead of shipping a service that crash-loops on startup.
+  const generateKeys = (r.generateEnv ?? []).filter((k) => !(k in desiredEnv));
 
   const plan = {
     action: 'create-if-missing then deploy',
@@ -161,6 +167,7 @@ async function deployRender(cfg) {
     startCommand: r.startCommand ?? 'npm start',
     healthCheckPath: r.healthCheckPath ?? '/api/health',
     envVarsForwarded: envVars.map((e) => e.key),
+    envVarsGenerated: generateKeys,
   };
   log('Render plan:\n' + JSON.stringify(plan, null, 2));
 
@@ -188,7 +195,8 @@ async function deployRender(cfg) {
   const found = existing?.[0]?.service;
 
   if (found) {
-    log(`Service "${cfg.projectName}" exists (${found.id}); triggering a deploy.`);
+    log(`Service "${cfg.projectName}" exists (${found.id}); syncing env then triggering a deploy.`);
+    await ensureRenderEnv(token, found.id, desiredEnv, generateKeys);
     const deploy = await renderFetch(token, `/services/${found.id}/deploys`, {
       method: 'POST',
       body: JSON.stringify({ clearCache: 'do_not_clear' }),
@@ -203,6 +211,10 @@ async function deployRender(cfg) {
   }
 
   log(`Service "${cfg.projectName}" not found; creating it.`);
+  for (const key of generateKeys) {
+    log(`Generating env ${key} for the new service (no passthrough value was set).`);
+    envVars.push({ key, value: randomBytes(32).toString('hex') });
+  }
   const created = await renderFetch(token, '/services', {
     method: 'POST',
     body: JSON.stringify({
@@ -232,6 +244,32 @@ async function deployRender(cfg) {
   if (createdUrl) {
     ghNotice(`${cfg.projectName} (render): ${createdUrl}`);
     await verifyRenderHealth(createdUrl, r.healthCheckPath ?? '/api/health', cfg.projectName);
+  }
+}
+
+/**
+ * Bring an existing service's env vars in line with target.yml: upsert every
+ * declared/passthrough var (previously env was only applied at creation, so
+ * config changes never reached live services), then generate any
+ * `render.generateEnv` key the service is still missing.
+ */
+async function ensureRenderEnv(token, serviceId, desired, generateKeys) {
+  for (const [key, value] of Object.entries(desired)) {
+    await renderFetch(token, `/services/${serviceId}/env-vars/${encodeURIComponent(key)}`, {
+      method: 'PUT',
+      body: JSON.stringify({ value }),
+    });
+  }
+  if (generateKeys.length === 0) return;
+  const current = await renderFetch(token, `/services/${serviceId}/env-vars?limit=100`);
+  const present = new Set((current ?? []).map((e) => e?.envVar?.key).filter(Boolean));
+  for (const key of generateKeys) {
+    if (present.has(key)) continue;
+    log(`Generating missing env ${key} on the service (no passthrough value was set).`);
+    await renderFetch(token, `/services/${serviceId}/env-vars/${encodeURIComponent(key)}`, {
+      method: 'PUT',
+      body: JSON.stringify({ value: randomBytes(32).toString('hex') }),
+    });
   }
 }
 
