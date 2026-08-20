@@ -34,3 +34,11 @@ Verbatim user instruction (credential redacted):
 > Publish at the above url
 
 Work: pushed project to pisanuw/c1 main, enabled GitHub Pages (Actions source), verified live deploy.
+
+## 2026-08-19 (netlify)
+
+Verbatim user instruction (credential redacted):
+
+> Use nfp_[REDACTED] to put it on netlify
+
+Work: created site game-palette-inspector.netlify.app via API, zip-deployed the production build, verified live. Repo not linked for auto-deploys (UI step; netlify.toml is ready for it).
