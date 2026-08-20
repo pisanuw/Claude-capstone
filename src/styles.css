@@ -1,0 +1,563 @@
+/* Game Palette Inspector
+   Design notes: color-evaluation tools live on neutral dark gray so the
+   swatches read true (the same reason grading suites and image editors do).
+   The interface accent is a protan/deutan-safe cyan, and no meaning in this
+   UI is carried by color alone; the tool practices what it measures. */
+
+:root {
+  --bg: #17181c;
+  --surface: #1e2026;
+  --surface-2: #24272e;
+  --line: #31343d;
+  --line-soft: #282b32;
+  --text: #e9ebee;
+  --muted: #9aa1ac;
+  --faint: #6d7480;
+  --accent: #4cc2ff;
+  --accent-ink: #0a2a3d;
+  --ok: #57c9a2;
+  --bad: #ff8d6b;
+  --radius: 10px;
+  --display: 'Chakra Petch', 'Avenir Next Condensed', sans-serif;
+  --body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { color-scheme: dark; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 15px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+
+a { color: var(--accent); }
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Masthead                                                            */
+/* ------------------------------------------------------------------ */
+
+.masthead {
+  padding: 44px 0 28px;
+  border-bottom: 1px solid var(--line-soft);
+}
+
+.masthead__top {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin: 0 0 10px;
+}
+
+.masthead h1 {
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: clamp(30px, 5vw, 46px);
+  line-height: 1.02;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.masthead__tagline {
+  margin: 12px 0 0;
+  max-width: 560px;
+  color: var(--muted);
+}
+
+.masthead__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* The signature: the title is underlined by the live palette, seen twice -
+   once as the designer sees it, once through deuteranopia. */
+.vision-underline {
+  margin-top: 22px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.vision-underline__row {
+  display: flex;
+  align-items: stretch;
+  height: 26px;
+}
+
+.vision-underline__row + .vision-underline__row {
+  border-top: 1px solid var(--line);
+}
+
+.vision-underline__label {
+  flex: 0 0 168px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.vision-underline__strip { display: flex; flex: 1; }
+.vision-underline__strip span { flex: 1; }
+
+/* ------------------------------------------------------------------ */
+/* Sections                                                            */
+/* ------------------------------------------------------------------ */
+
+.section { padding: 34px 0 8px; }
+
+.section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.section h2 {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: 20px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.section h2 .tick { color: var(--accent); margin-right: 8px; }
+
+.section__sub {
+  margin: 2px 0 18px;
+  color: var(--muted);
+  max-width: 640px;
+}
+
+/* ------------------------------------------------------------------ */
+/* Buttons & inputs                                                    */
+/* ------------------------------------------------------------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 13.5px;
+  font-weight: 500;
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.btn:hover { border-color: var(--faint); background: var(--surface-2); }
+
+.btn--primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--accent-ink);
+  font-weight: 600;
+}
+
+.btn--primary:hover { background: #6fd0ff; border-color: #6fd0ff; }
+
+.btn--ghost { border-color: transparent; background: transparent; color: var(--muted); }
+.btn--ghost:hover { color: var(--text); background: var(--surface); border-color: var(--line); }
+
+.btn--small { padding: 5px 10px; font-size: 12.5px; border-radius: 7px; }
+
+.field {
+  font-family: var(--mono);
+  font-size: 13.5px;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+.field:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.field--invalid { border-color: var(--bad); }
+
+select.field { font-family: var(--body); }
+
+/* ------------------------------------------------------------------ */
+/* Bench                                                               */
+/* ------------------------------------------------------------------ */
+
+.bench {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+  gap: 12px;
+}
+
+.chip {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chip__swatch {
+  position: relative;
+  height: 92px;
+  width: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+.chip__swatch input[type='color'] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.chip__bg-tag {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  font-family: var(--mono);
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  padding: 2px 6px;
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.chip__meta { padding: 8px; display: grid; gap: 6px; }
+
+.chip__hex {
+  width: 100%;
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--text);
+  padding: 4px 6px;
+}
+
+.chip__hex:hover { border-color: var(--line); }
+.chip__hex:focus { border-color: var(--accent); outline: none; }
+.chip__hex--invalid { border-color: var(--bad); color: var(--bad); }
+
+.chip__row { display: flex; justify-content: space-between; gap: 6px; }
+
+.chip__action {
+  font-size: 11px;
+  color: var(--muted);
+  padding: 3px 6px;
+  border-radius: 5px;
+  border: 1px solid transparent;
+}
+
+.chip__action:hover { color: var(--text); border-color: var(--line); background: var(--surface-2); }
+.chip__action--on { color: var(--accent); }
+
+.bench-add {
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  min-height: 158px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  color: var(--muted);
+}
+
+.bench-add .field { width: 100%; text-align: center; }
+
+.bench-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.bench-tools__label {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--faint);
+  margin-right: 2px;
+}
+
+.dropzone {
+  margin-top: 18px;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  color: var(--muted);
+  transition: border-color 120ms ease, background 120ms ease;
+}
+
+.dropzone--over { border-color: var(--accent); background: rgba(76, 194, 255, 0.06); }
+
+.dropzone__thumb {
+  height: 56px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+}
+
+/* ------------------------------------------------------------------ */
+/* Vision lab                                                          */
+/* ------------------------------------------------------------------ */
+
+.contact-sheet {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.contact-sheet__row { display: flex; min-height: 44px; }
+.contact-sheet__row + .contact-sheet__row { border-top: 1px solid var(--line-soft); }
+.contact-sheet__row--normal { background: var(--surface); }
+
+.contact-sheet__label {
+  flex: 0 0 232px;
+  padding: 8px 12px;
+  border-right: 1px solid var(--line-soft);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-sheet__name { font-weight: 600; font-size: 13.5px; }
+.contact-sheet__note { font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
+
+.contact-sheet__strip { flex: 1; display: flex; }
+.contact-sheet__strip span { flex: 1; }
+
+.image-lab {
+  margin-top: 22px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 12px;
+}
+
+.image-lab figure {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.image-lab canvas { display: block; width: 100%; height: auto; }
+
+.image-lab figcaption {
+  padding: 6px 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--muted);
+  border-top: 1px solid var(--line-soft);
+}
+
+/* ------------------------------------------------------------------ */
+/* Contrast matrix                                                     */
+/* ------------------------------------------------------------------ */
+
+.matrix-scroll { overflow-x: auto; padding-bottom: 6px; }
+
+.matrix {
+  border-collapse: collapse;
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.matrix th, .matrix td {
+  border: 1px solid var(--line-soft);
+  text-align: center;
+  min-width: 74px;
+  padding: 0;
+}
+
+.matrix thead th, .matrix tbody th { background: var(--surface); padding: 6px; }
+
+.matrix .swatch-head {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  color: var(--muted);
+}
+
+.matrix .swatch-head i {
+  display: block;
+  width: 34px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1px solid var(--line);
+}
+
+.matrix td { padding: 7px 6px; color: var(--muted); }
+.matrix td.diag { background: var(--surface); }
+
+.cell-pass { color: var(--text); font-weight: 500; }
+.cell-pass .mark { color: var(--ok); }
+.cell-fail .mark { color: var(--bad); }
+.mark { margin-left: 5px; }
+
+/* ------------------------------------------------------------------ */
+/* Findings (confusions + fixes)                                       */
+/* ------------------------------------------------------------------ */
+
+.finding {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 12px 14px;
+}
+
+.finding + .finding { margin-top: 10px; }
+
+.pairbox { display: flex; align-items: center; gap: 8px; }
+
+.pairbox__duo { display: flex; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.pairbox__duo i { width: 34px; height: 30px; display: block; }
+.pairbox__arrow { color: var(--faint); font-size: 15px; }
+
+.finding__text { flex: 1; min-width: 220px; color: var(--muted); }
+.finding__text strong { color: var(--text); font-weight: 600; }
+.finding__text code { font-family: var(--mono); font-size: 12px; color: var(--text); }
+
+.tag {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 4px;
+  padding: 3px 7px;
+  border: 1px solid var(--line);
+  color: var(--muted);
+  white-space: nowrap;
+}
+
+.tag--critical { border-color: var(--bad); color: var(--bad); }
+.tag--warning { border-color: #d8b45a; color: #d8b45a; }
+.tag--ok { border-color: var(--ok); color: var(--ok); }
+
+.fix-swap { display: flex; align-items: center; gap: 8px; }
+
+.fix-swap i {
+  width: 44px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  display: block;
+}
+
+.empty {
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  color: var(--muted);
+}
+
+.empty .mark { color: var(--ok); margin-right: 8px; margin-left: 0; }
+
+/* ------------------------------------------------------------------ */
+/* Footer                                                              */
+/* ------------------------------------------------------------------ */
+
+.footer {
+  margin-top: 48px;
+  padding: 22px 0 40px;
+  border-top: 1px solid var(--line-soft);
+  color: var(--faint);
+  font-size: 13px;
+}
+
+.footer p { margin: 6px 0; max-width: 760px; }
+
+/* ------------------------------------------------------------------ */
+/* Responsive                                                          */
+/* ------------------------------------------------------------------ */
+
+@media (max-width: 640px) {
+  .vision-underline__label, .contact-sheet__label { flex-basis: 128px; }
+  .contact-sheet__note { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}
+
+/* ------------------------------------------------------------------ */
+/* Print: a light, ink-friendly report                                 */
+/* ------------------------------------------------------------------ */
+
+@media print {
+  html { color-scheme: light; }
+  body { background: #ffffff; color: #16181c; font-size: 12px; }
+  :root { --text: #16181c; --muted: #4a505a; --faint: #6a7078; --surface: #ffffff; --surface-2: #f2f3f5; --line: #c9ccd2; --line-soft: #dfe1e5; }
+  .masthead__actions, .bench-tools, .dropzone, .bench-add, .chip__row,
+  .section__head .field, .fix-swap .btn, .no-print { display: none !important; }
+  .chip__hex { border: none; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .section { break-inside: avoid; padding: 18px 0 4px; }
+  a { color: inherit; text-decoration: none; }
+}
