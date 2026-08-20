@@ -42,3 +42,11 @@ Verbatim user instruction (credential redacted):
 > Use nfp_[REDACTED] to put it on netlify
 
 Work: created site game-palette-inspector.netlify.app via API, zip-deployed the production build, verified live. Repo not linked for auto-deploys (UI step; netlify.toml is ready for it).
+
+## 2026-08-19 (netlify auto-deploy)
+
+Verbatim user instruction:
+
+> Can you not link it in netlify ?
+
+Work: true Netlify repo linking is blocked headlessly (adding the Netlify deploy key and webhook to the repo requires GitHub admin/webhook scopes the PAT lacks; Netlify's SSH clone then fails). Implemented the equivalent instead: NETLIFY_AUTH_TOKEN stored as an encrypted GitHub Actions secret, CI now zip-deploys the built dist to the Netlify site on every push to main, and Netlify-side builds are disabled (stop_builds). Net effect is identical: push to main updates both GitHub Pages and Netlify.

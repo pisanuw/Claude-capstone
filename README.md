@@ -4,6 +4,8 @@ Check a game palette against WCAG contrast and 8 types of color vision deficienc
 
 Everything runs in the browser. No accounts, no uploads, no API keys, no tracking.
 
+**Live**: [game-palette-inspector.netlify.app](https://game-palette-inspector.netlify.app) · [pisanuw.github.io/c1](https://pisanuw.github.io/c1/)
+
 Idea source: [Daily Project Ideas](https://daily-project-ideas.netlify.app/), 2026-06-19, Weekend tier.
 
 ## What it does
