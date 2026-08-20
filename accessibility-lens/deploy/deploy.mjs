@@ -418,10 +418,37 @@ async function deployNetlify(cfg) {
   }
   ghNotice(`${cfg.projectName} (netlify): ${url}`);
 
-  // Verify the live API actually works (the CI runner can reach it, unlike a
-  // local sandbox). This catches function/routing failures that a successful
-  // upload would otherwise hide.
-  await verifyHealth(url, cfg.projectName);
+  // Verify the live site actually works (the CI runner can reach it, unlike a
+  // local sandbox). Sites with functions get the /api/health JSON check; a
+  // static site has no API, so the page itself coming back is the health check.
+  if (functionsDir) await verifyHealth(url, cfg.projectName);
+  else await verifyPage(url, cfg.projectName);
+}
+
+/** Fetch the site root and report the result as an annotation (static sites). */
+async function verifyPage(url, projectName) {
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    try {
+      const res = await fetch(url, { headers: { accept: 'text/html' } });
+      const body = (await res.text()).slice(0, 200);
+      if (res.ok && /<[a-z!]/i.test(body)) {
+        ghNotice(`${projectName} page OK: ${url} -> ${res.status}`);
+        return;
+      }
+      if (attempt === 4) {
+        ghError(
+          `${projectName} deployed but ${url} returned HTTP ${res.status}. Body started: ${body}`,
+        );
+        return;
+      }
+    } catch (e) {
+      if (attempt === 4) {
+        ghError(`${projectName} page check could not reach ${url}: ${String(e).slice(0, 160)}`);
+        return;
+      }
+    }
+    await new Promise((r) => setTimeout(r, 3000));
+  }
 }
 
 /** Fetch <url>/api/health and report the result as an annotation. */
