@@ -265,7 +265,11 @@ async function deployNetlify(cfg) {
   const n = cfg.netlify ?? {};
   const appDir = path.resolve(process.cwd(), cfg.directory);
   const publishDir = path.resolve(appDir, cfg.publish ?? 'client/dist');
-  const functionsDir = path.resolve(appDir, n.functionsDir ?? 'netlify/functions');
+  // functionsDir: '' in target.yml means "static site, no functions". Resolving
+  // '' would yield appDir itself, making the CLI bundle the whole project as
+  // functions, so keep it empty and skip everything functions-related below.
+  const functionsDir =
+    n.functionsDir === '' ? '' : path.resolve(appDir, n.functionsDir ?? 'netlify/functions');
   const env = collectEnv(cfg);
 
   const plan = {
@@ -353,13 +357,17 @@ async function deployNetlify(cfg) {
   mkdirSync(stageDir, { recursive: true });
   writeFileSync(
     path.join(stageDir, 'netlify.toml'),
-    '[functions]\n  node_bundler = "esbuild"\n  external_node_modules = ["jsdom"]\n',
+    functionsDir
+      ? '[functions]\n  node_bundler = "esbuild"\n  external_node_modules = ["jsdom"]\n'
+      : '# static site: no functions\n',
   );
   // Redirects via a _redirects file in the publish dir: most reliable for
-  // prebuilt deploys (API to the function first, then SPA fallback).
+  // prebuilt deploys (API to the function first when one exists, then SPA
+  // fallback).
   writeFileSync(
     path.join(publishDir, '_redirects'),
-    '/api/*  /.netlify/functions/api/:splat  200\n/*      /index.html                     200\n',
+    (functionsDir ? '/api/*  /.netlify/functions/api/:splat  200\n' : '') +
+      '/*      /index.html                     200\n',
   );
   const run = { cwd: stageDir };
 
@@ -388,7 +396,16 @@ async function deployNetlify(cfg) {
   // Deploy to production with absolute paths and the explicit site id.
   // --json gives us the live URL to report back.
   const out = netlify(
-    ['deploy', '--prod', '--json', '--site', siteId, '--dir', publishDir, '--functions', functionsDir],
+    [
+      'deploy',
+      '--prod',
+      '--json',
+      '--site',
+      siteId,
+      '--dir',
+      publishDir,
+      ...(functionsDir ? ['--functions', functionsDir] : []),
+    ],
     { ...run, capture: true },
   );
   log('Netlify production deploy complete.');
