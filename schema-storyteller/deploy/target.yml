@@ -17,5 +17,8 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: schema-storyteller
-  siteId: ''
-  accountSlug: ''
+  # The site already exists on Netlify. Pinning the id skips the listSites
+  # lookup and the create-site fallback, so a deploy cannot fail by trying to
+  # re-create a name that is already taken.
+  siteId: '0fe0b047-2ef4-40ec-aded-1a35dc15e076'
+  accountSlug: yusuf-pisan
