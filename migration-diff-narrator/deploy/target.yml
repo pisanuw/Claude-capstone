@@ -1,0 +1,20 @@
+# Deploy control file for Migration Diff Narrator (Netlify, static site).
+#
+# No backend and no environment variables: parsing, diffing, and narration are
+# deterministic client-side logic. The deploy workflow auto-discovers this file
+# via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: migration-diff-narrator
+directory: migration-diff-narrator
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: migration-diff-narrator
+  accountSlug: yusuf-pisan

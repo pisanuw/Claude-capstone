@@ -57,3 +57,16 @@ so the output is free, offline, and reproducible. Deployed on **Netlify**
 
 Live: [schema-storyteller.netlify.app](https://schema-storyteller.netlify.app).
 See its [README](./schema-storyteller/README.md).
+
+### [`migration-diff-narrator/`](./migration-diff-narrator)
+
+Paste two versions of a SQL schema or TypeScript interfaces and get an
+annotated breaking-change diff: every change classified safe / caution /
+breaking with a one-sentence migration note, plus rename detection and a
+Markdown-checklist export for PR descriptions. A deterministic rule set
+replaces the idea's suggested Claude API classification, so verdicts are
+instant, offline, and reproducible. Deployed on **Netlify** (static site, no
+backend).
+
+Live: [migration-diff-narrator.netlify.app](https://migration-diff-narrator.netlify.app).
+See its [README](./migration-diff-narrator/README.md).
