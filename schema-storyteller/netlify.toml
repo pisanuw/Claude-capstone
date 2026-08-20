@@ -1,0 +1,15 @@
+# Netlify config for Schema Storyteller.
+#
+# This is a pure static single-page app built by Vite. There is no server and no
+# serverless function: everything runs in the browser. Netlify just serves the
+# built assets from the CDN and falls back to index.html for client routing.
+
+[build]
+  base = "schema-storyteller"
+  command = "npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

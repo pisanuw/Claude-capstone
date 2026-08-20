@@ -37,3 +37,15 @@ Translate English into emoji and emoji back into English, with a hybrid engine: 
 curated dictionary (deterministic, always available) plus optional Claude-powered
 translation for context-aware results and interpretive readings. Deployed on
 **Netlify** (static page + serverless API).
+
+### [`schema-storyteller/`](./schema-storyteller)
+
+Paste a SQL, Prisma, or JSON Schema and get a plain-English entity-relationship
+narrative plus a rule-based review of likely-missing primary keys, foreign-key
+indexes, and constraints, exportable as Markdown. Everything runs client-side: a
+hand-written parser and a fixed rule set replace the idea's suggested LLM calls,
+so the output is free, offline, and reproducible. Deployed on **Netlify**
+(static site, no backend).
+
+Live: [schema-storyteller.netlify.app](https://schema-storyteller.netlify.app).
+See its [README](./schema-storyteller/README.md).

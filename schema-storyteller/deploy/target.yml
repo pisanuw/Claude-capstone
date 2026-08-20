@@ -1,0 +1,21 @@
+# Deploy control file for Schema Storyteller (Netlify, static site).
+#
+# This app has no backend and no environment variables: parsing, narration, and
+# the rule-based review are all deterministic client-side logic. The deploy
+# workflow auto-discovers this file via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: schema-storyteller
+directory: schema-storyteller
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: schema-storyteller
+  siteId: ''
+  accountSlug: ''
