@@ -10,7 +10,11 @@ idle $7/month services collapse into one.
 |---|---|---|
 | `/mult-streak/` | [mult-streak](../mult-streak/) multiplication-streak game | live |
 | `/chat/` | chatwithdigitalme (separate repo) | reserved, answers 501 |
-| `/dsa/` | dsa-instructor (separate repo) | reserved, answers 501 |
+| `/dsa/` | dsa-instructor (separate repo) | **stays standalone** — redirects to <https://ypdsa.pisan.me> |
+
+dsa-instructor will NOT move into the hub (decided 2026-08): it is a
+Python/FastAPI Docker service with a 2 GB persistent disk and 2 GB memory
+needs, which doesn't fit this Node hub's shared 512 MB free instance.
 
 `GET /` renders an index of the mounts; `GET /api/health` is the hub-wide
 health check Render probes.

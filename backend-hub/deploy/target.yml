@@ -2,8 +2,9 @@
 #
 # One Render instance serving several low-traffic backends behind path
 # prefixes ($7/service/month adds up when each idle app has its own service).
-# Currently mounted: /mult-streak. Reserved: /chat (chatwithdigitalme),
-# /dsa (dsa-instructor); see backend-hub/README.md for the migration recipe.
+# Currently mounted: /mult-streak. Reserved: /chat (chatwithdigitalme).
+# /dsa (dsa-instructor) stays standalone and redirects to ypdsa.pisan.me;
+# see backend-hub/README.md for the migration recipe.
 #
 # This file replaces mult-streak/deploy/target.yml: the standalone mult-streak
 # Render service is superseded by this hub and can be deleted in the Render

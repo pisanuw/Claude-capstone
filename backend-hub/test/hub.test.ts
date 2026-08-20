@@ -56,10 +56,19 @@ describe('createHub', () => {
 
   it('answers 501 with an explanation on reserved mounts', async () => {
     const { app } = createHub({ multStreak: fakeMultStreak() });
-    for (const path of ['/chat', '/chat/api/anything', '/dsa', '/dsa/x']) {
+    for (const path of ['/chat', '/chat/api/anything']) {
       const res = await request(app).get(path);
       expect(res.status).toBe(501);
       expect(res.body.error).toContain('reserved mount');
+    }
+  });
+
+  it('redirects /dsa to the standalone ypdsa service', async () => {
+    const { app } = createHub({ multStreak: fakeMultStreak() });
+    for (const path of ['/dsa', '/dsa/', '/dsa/anything']) {
+      const res = await request(app).get(path);
+      expect(res.status).toBe(301);
+      expect(res.headers.location).toBe('https://ypdsa.pisan.me');
     }
   });
 
