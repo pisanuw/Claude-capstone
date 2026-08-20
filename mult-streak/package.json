@@ -6,6 +6,12 @@
   "description": "A multiplication-streak game: 10 correct answers in a row wins a 24h crown.",
   "engines": { "node": ">=20" },
   "main": "dist/index.js",
+  "exports": {
+    ".": {
+      "types": "./dist/serve.d.ts",
+      "default": "./dist/serve.js"
+    }
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc -p tsconfig.json && node -e \"require('fs').cpSync('src/public','dist/public',{recursive:true})\"",

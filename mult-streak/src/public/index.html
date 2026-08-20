@@ -236,7 +236,7 @@
 
       async function load() {
         try {
-          const res = await fetch('/api/state');
+          const res = await fetch('api/state');
           if (!res.ok) throw new Error('HTTP ' + res.status);
           apply(await res.json());
         } catch {
@@ -257,7 +257,7 @@
           if (!answer) return;
         }
         $('submit').disabled = true;
-        const res = await fetch('/api/answer', {
+        const res = await fetch('api/answer', {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify({ answer }),
@@ -281,7 +281,7 @@
 
       async function selectMode(mode) {
         try {
-          const res = await fetch('/api/mode', {
+          const res = await fetch('api/mode', {
             method: 'POST',
             headers: { 'content-type': 'application/json' },
             body: JSON.stringify({ mode }),
