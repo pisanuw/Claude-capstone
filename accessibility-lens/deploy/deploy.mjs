@@ -195,7 +195,10 @@ async function deployRender(cfg) {
     });
     log(`Deploy triggered: ${deploy?.id ?? '(no id)'} status=${deploy?.status ?? 'queued'}`);
     const url = found.serviceDetails?.url;
-    if (url) ghNotice(`${cfg.projectName} (render): ${url}`);
+    if (url) {
+      ghNotice(`${cfg.projectName} (render): ${url}`);
+      await verifyRenderHealth(url, r.healthCheckPath ?? '/api/health', cfg.projectName);
+    }
     return;
   }
 
@@ -226,7 +229,44 @@ async function deployRender(cfg) {
   const svc = created?.service ?? created;
   log(`Created service ${svc?.id ?? '(unknown id)'}. Render will build and deploy it.`);
   const createdUrl = svc?.serviceDetails?.url;
-  if (createdUrl) ghNotice(`${cfg.projectName} (render): ${createdUrl}`);
+  if (createdUrl) {
+    ghNotice(`${cfg.projectName} (render): ${createdUrl}`);
+    await verifyRenderHealth(createdUrl, r.healthCheckPath ?? '/api/health', cfg.projectName);
+  }
+}
+
+/**
+ * Poll the live health endpoint until Render finishes building (best-effort,
+ * like the Netlify page/health checks: an error annotation, not a job
+ * failure). Render builds take minutes, so this waits up to ~10 minutes.
+ */
+async function verifyRenderHealth(baseUrl, healthPath, projectName) {
+  const target = `${baseUrl.replace(/\/$/, '')}${healthPath}`;
+  const attempts = 40;
+  for (let attempt = 1; attempt <= attempts; attempt++) {
+    try {
+      const res = await fetch(target, { headers: { accept: 'application/json' } });
+      const body = (await res.text()).slice(0, 200);
+      if (res.ok && body.includes('"status"')) {
+        ghNotice(`${projectName} health OK: ${target} -> ${res.status} ${body}`);
+        return;
+      }
+      if (attempt === attempts) {
+        ghError(
+          `${projectName}: ${target} still not healthy after ~10min ` +
+            `(HTTP ${res.status}). The Render build may have failed; check the dashboard. ` +
+            `Body started: ${body}`,
+        );
+        return;
+      }
+    } catch (e) {
+      if (attempt === attempts) {
+        ghError(`${projectName} health check could not reach ${target}: ${String(e).slice(0, 160)}`);
+        return;
+      }
+    }
+    await new Promise((resolve) => setTimeout(resolve, 15_000));
+  }
 }
 
 // --------------------------------------------------------------------------
