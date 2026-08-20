@@ -25,13 +25,20 @@ export const MOUNTS = {
    */
   chat: 'reserved',
   /**
-   * RESERVED for dsa-instructor (Render service dsa-instructor). Same recipe
-   * as /chat: export an app factory, depend on it, mount it here.
+   * dsa-instructor WILL STAY STANDALONE (decided 2026-08: not moving into the
+   * hub). It is a Python/FastAPI Docker service with a 2 GB persistent disk
+   * and 2 GB memory needs — a different shape from the Node apps mounted
+   * here. /dsa redirects to the live service instead.
    */
-  dsa: 'reserved',
+  dsa: 'standalone',
 } as const;
 
 export type MountName = keyof typeof MOUNTS;
+
+/** Live homes of apps that deliberately stay outside the hub. */
+const STANDALONE_URLS: Partial<Record<MountName, string>> = {
+  dsa: 'https://ypdsa.pisan.me',
+};
 
 export interface HubDeps {
   /** Injectable mult-streak service, for tests. Defaults to the real one. */
@@ -46,11 +53,15 @@ export interface Hub {
 
 function indexPage(): string {
   const rows = (Object.entries(MOUNTS) as [MountName, string][])
-    .map(([name, status]) =>
-      status === 'mounted'
-        ? `<li><a href="/${name}/">/${name}/</a> &mdash; live</li>`
-        : `<li>/${name}/ &mdash; reserved, not yet mounted</li>`,
-    )
+    .map(([name, status]) => {
+      if (status === 'mounted') {
+        return `<li><a href="/${name}/">/${name}/</a> &mdash; live</li>`;
+      }
+      if (status === 'standalone') {
+        return `<li><a href="${STANDALONE_URLS[name]}">/${name}/</a> &mdash; stays standalone at ${STANDALONE_URLS[name]}</li>`;
+      }
+      return `<li>/${name}/ &mdash; reserved, not yet mounted</li>`;
+    })
     .join('\n      ');
   return `<!doctype html>
 <html lang="en">
@@ -92,6 +103,16 @@ export function createHub(deps: HubDeps = {}): Hub {
     res.redirect(301, '/mult-streak/');
   });
   hub.use('/mult-streak', multStreak.app);
+
+  // Standalone apps live elsewhere on purpose; send visitors to the real home.
+  for (const [name, status] of Object.entries(MOUNTS) as [MountName, string][]) {
+    if (status !== 'standalone') continue;
+    const home = STANDALONE_URLS[name];
+    if (!home) continue;
+    hub.use(`/${name}`, (_req, res) => {
+      res.redirect(301, home);
+    });
+  }
 
   // Reserved mounts respond loudly instead of 404ing, so a half-done
   // migration is visible the moment someone hits the URL.
