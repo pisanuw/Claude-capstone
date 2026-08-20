@@ -1,0 +1,113 @@
+import express, { type Express } from 'express';
+import { createService, type Service } from 'mult-streak';
+
+/**
+ * Mount points served by the hub. Each app lives under a path prefix so one
+ * Render instance (one monthly fee, one warm process) serves them all.
+ *
+ * Conventions for adding an app (see README for the full checklist):
+ *  - mount it under its own prefix with `hub.use('/<name>', app)`
+ *  - the app's frontend must use RELATIVE fetch paths ('api/state', not
+ *    '/api/state') so they resolve under the prefix
+ *  - cookies must either be scoped with `path: '/<name>'` or use names that
+ *    cannot collide with the other mounted apps
+ *  - env vars must be prefixed with the app name (DSA_..., CHAT_...);
+ *    mult-streak predates the hub and keeps its historical unprefixed names
+ */
+export const MOUNTS = {
+  /** Multiplication-streak game, moved here from the standalone Render service. */
+  'mult-streak': 'mounted',
+  /**
+   * RESERVED for chatwithdigitalme (https://github.com/pisanorg/... , Render
+   * service chatwithdigitalme). Not yet moved: its repo is separate. Export an
+   * app factory from that project, add it as a file:/git dependency, and mount
+   * it here.
+   */
+  chat: 'reserved',
+  /**
+   * RESERVED for dsa-instructor (Render service dsa-instructor). Same recipe
+   * as /chat: export an app factory, depend on it, mount it here.
+   */
+  dsa: 'reserved',
+} as const;
+
+export type MountName = keyof typeof MOUNTS;
+
+export interface HubDeps {
+  /** Injectable mult-streak service, for tests. Defaults to the real one. */
+  multStreak?: Service;
+}
+
+export interface Hub {
+  app: Express;
+  /** Arm background jobs of mounted apps (currently mult-streak's idle sweep). */
+  startBackgroundJobs: () => void;
+}
+
+function indexPage(): string {
+  const rows = (Object.entries(MOUNTS) as [MountName, string][])
+    .map(([name, status]) =>
+      status === 'mounted'
+        ? `<li><a href="/${name}/">/${name}/</a> &mdash; live</li>`
+        : `<li>/${name}/ &mdash; reserved, not yet mounted</li>`,
+    )
+    .join('\n      ');
+  return `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>backend-hub</title>
+  </head>
+  <body>
+    <h1>backend-hub</h1>
+    <p>One Render service, several small backends:</p>
+    <ul>
+      ${rows}
+    </ul>
+  </body>
+</html>
+`;
+}
+
+/** Build the hub app: a root index, a root health check, and the mounts. */
+export function createHub(deps: HubDeps = {}): Hub {
+  const multStreak = deps.multStreak ?? createService();
+
+  const hub = express();
+
+  hub.get('/', (_req, res) => {
+    res.type('html').send(indexPage());
+  });
+
+  hub.get('/api/health', (_req, res) => {
+    res.json({ status: 'ok', apps: MOUNTS });
+  });
+
+  // The game page must live at a trailing-slash URL so its relative
+  // 'api/*' fetches resolve inside the mount. Non-strict routing means this
+  // route also matches '/mult-streak/', so fall through in that case.
+  hub.get('/mult-streak', (req, res, next) => {
+    if (req.path.endsWith('/')) return next();
+    res.redirect(301, '/mult-streak/');
+  });
+  hub.use('/mult-streak', multStreak.app);
+
+  // Reserved mounts respond loudly instead of 404ing, so a half-done
+  // migration is visible the moment someone hits the URL.
+  for (const [name, status] of Object.entries(MOUNTS)) {
+    if (status !== 'reserved') continue;
+    hub.use(`/${name}`, (_req, res) => {
+      res.status(501).json({
+        error: `/${name} is a reserved mount: the app has not been moved into backend-hub yet.`,
+      });
+    });
+  }
+
+  return {
+    app: hub,
+    startBackgroundJobs: () => {
+      multStreak.startSweep();
+    },
+  };
+}

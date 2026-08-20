@@ -10,7 +10,7 @@ type(scope)?: subject
 
 Types: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `test`, `perf`, `ci`, `build`, `revert`
 
-Scope is the affected package: `accessibility-lens`, `mult-streak`, `mult-streak-edge`, `ci`, `deploy`.
+Scope is the affected package: `accessibility-lens`, `mult-streak`, `mult-streak-edge`, `backend-hub`, `schema-storyteller`, `emoji-lingua`, `ci`, `deploy`.
 
 Examples:
 - `feat(mult-streak): add hint button`
@@ -32,7 +32,8 @@ This is a monorepo of capstone projects built autonomously from prompts in
 | Package | Description | Host |
 |---|---|---|
 | `accessibility-lens/` | WCAG 2.1 analyzer + 4-profile replay | Netlify |
-| `mult-streak/` | Multiplication-streak game | Render |
+| `mult-streak/` | Multiplication-streak game | Render (via `backend-hub`) |
+| `backend-hub/` | One Render service hosting several backends under path prefixes | Render |
 | `mult-streak-edge/` | Same game, serverless variant | Netlify |
 
 ## Adding a new project

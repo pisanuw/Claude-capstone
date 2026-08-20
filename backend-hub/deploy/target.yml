@@ -1,0 +1,42 @@
+# Deploy control file for backend-hub (Render web service).
+#
+# One Render instance serving several low-traffic backends behind path
+# prefixes ($7/service/month adds up when each idle app has its own service).
+# Currently mounted: /mult-streak. Reserved: /chat (chatwithdigitalme),
+# /dsa (dsa-instructor); see backend-hub/README.md for the migration recipe.
+#
+# This file replaces mult-streak/deploy/target.yml: the standalone mult-streak
+# Render service is superseded by this hub and can be deleted in the Render
+# dashboard once the hub is verified live.
+
+provider: render
+projectName: backend-hub
+directory: backend-hub
+# The hub consumes mult-streak as a file:../mult-streak dependency, so the
+# dependency must be installed and built first (npm run deps does exactly
+# that). Render clones the full repo; rootDir only sets the working directory.
+build: npm run deps && npm ci && npm run build
+
+# Non-secret runtime values (all for the mounted mult-streak; the hub itself
+# only reads PORT, which Render injects).
+env:
+  # Idle threshold before the "player stopped" email fires. Kept at 5 minutes
+  # so the email reliably sends before a free Render instance spins down.
+  IDLE_MINUTES: '5'
+  FROM_EMAIL: mult-streak@pisan.me
+
+# Secret values forwarded from the workflow environment (GitHub repo secrets).
+# Names only; values never live in this file.
+envPassthrough:
+  - RESEND_API
+  - ADMIN_EMAIL
+  - COOKIE_SECRET
+
+render:
+  type: web_service
+  runtime: node
+  plan: free
+  region: oregon
+  startCommand: npm start
+  healthCheckPath: /api/health
+  branch: main

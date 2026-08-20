@@ -26,10 +26,18 @@ See its [README](./accessibility-lens/README.md) and
 A multiplication-streak game: solve two 2-3 digit factors, ten correct in a row
 wins a 24-hour crown, a wrong answer resets the streak. Anonymous cookie identity,
 game state in a signed cookie, and a "player stopped" email to the admin via
-Resend. `mult-streak` deploys to **Render** (where the idle email is reliable);
-`mult-streak-edge` is the same game on **Netlify** (game works fully; email is
-Render-only, by the nature of serverless). Both built from the config-driven
-deploy pipeline.
+Resend. `mult-streak` runs on **Render** behind the shared
+[`backend-hub`](./backend-hub) service at `/mult-streak/` (where the idle email
+is reliable); `mult-streak-edge` is the same game on **Netlify** (game works
+fully; email is Render-only, by the nature of serverless). Both built from the
+config-driven deploy pipeline.
+
+### [`backend-hub/`](./backend-hub)
+
+One **Render** web service hosting several low-traffic backends behind path
+prefixes, because Render bills per idle service instance. Currently serves
+`mult-streak` at `/mult-streak/`; `/chat` (chatwithdigitalme) and `/dsa`
+(dsa-instructor) are documented, reserved mount points for future moves.
 
 ### [`emoji-lingua/`](./emoji-lingua)
 

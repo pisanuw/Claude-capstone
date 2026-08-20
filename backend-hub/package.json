@@ -1,0 +1,37 @@
+{
+  "name": "backend-hub",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Single Render web service hosting multiple low-traffic backends behind path prefixes.",
+  "engines": { "node": ">=20" },
+  "main": "dist/index.js",
+  "scripts": {
+    "deps": "npm --prefix ../mult-streak ci && npm --prefix ../mult-streak run build",
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "mult-streak": "file:../mult-streak"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.16.5",
+    "@types/supertest": "^6.0.2",
+    "@vitest/coverage-v8": "^2.1.8",
+    "eslint": "^9.39.4",
+    "globals": "^16.0.0",
+    "supertest": "^7.0.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.59.4",
+    "vitest": "^2.1.8"
+  }
+}
