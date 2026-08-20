@@ -50,3 +50,12 @@ Verbatim user instruction:
 > Can you not link it in netlify ?
 
 Work: true Netlify repo linking is blocked headlessly (adding the Netlify deploy key and webhook to the repo requires GitHub admin/webhook scopes the PAT lacks; Netlify's SSH clone then fails). Implemented the equivalent instead: NETLIFY_AUTH_TOKEN stored as an encrypted GitHub Actions secret, CI now zip-deploys the built dist to the Netlify site on every push to main, and Netlify-side builds are disabled (stop_builds). Net effect is identical: push to main updates both GitHub Pages and Netlify.
+
+## 2026-08-19 (true netlify linking)
+
+Verbatim user instruction (credential redacted):
+
+> Use this to connect to netlify so it updates when repo is updated
+> GitHub access token: ghp_[REDACTED]
+
+Work: with the classic token, installed a Netlify deploy key (read-only) and a push webhook on the repo, linked the repo on the Netlify site (build: npm run build, publish: dist), re-enabled builds, verified a linked build clones and deploys. Removed the interim CI zip-deploy job and deleted the NETLIFY_AUTH_TOKEN Actions secret as no longer needed. Netlify now builds automatically on every push to main.
