@@ -1,9 +1,13 @@
 # Self-discovering, config-driven deploy.
 #
 # To deploy or retarget any app, edit its `<app>/deploy/target.yml` and push
-# (or run this workflow manually). This workflow finds EVERY `*/deploy/target.yml`
-# in the repo and deploys each via the shared runner. Adding a new app needs no
-# change here: just add its directory with a deploy/target.yml.
+# (or run this workflow manually). A push deploys ONLY the targets whose
+# target.yml changed in that push, so adding one project does not redeploy the
+# others. Everything is deployed when: the workflow is run manually
+# (workflow_dispatch), the shared runner (deploy.mjs) or this workflow file
+# changed, or the changed-file diff cannot be computed (force push, new
+# branch). Adding a new app needs no change here: just add its directory with
+# a deploy/target.yml.
 #
 # Required repo secrets (only those relevant to your targets are used):
 #   RENDER_API_KEY, NETLIFY_AUTH_TOKEN   deploy targets
@@ -26,11 +30,41 @@ jobs:
       configs: ${{ steps.find.outputs.configs }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Full history so the push's before..after diff is always computable.
+          fetch-depth: 0
       - id: find
         name: Discover deploy targets
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BEFORE_SHA: ${{ github.event.before }}
+          AFTER_SHA: ${{ github.sha }}
         run: |
-          configs=$(ls -1 */deploy/target.yml 2>/dev/null | jq -R . | jq -cs .)
-          echo "Found: $configs"
+          all=$(ls -1 */deploy/target.yml 2>/dev/null)
+
+          selected=""
+          if [ "$EVENT_NAME" != "push" ]; then
+            echo "Manual run: deploying every target."
+            selected=$all
+          elif ! git cat-file -e "$BEFORE_SHA" 2>/dev/null; then
+            echo "Base commit $BEFORE_SHA unavailable (force push or new branch): deploying every target."
+            selected=$all
+          else
+            changed=$(git diff --name-only "$BEFORE_SHA" "$AFTER_SHA")
+            printf 'Changed files:\n%s\n' "$changed"
+            if printf '%s\n' "$changed" | grep -qxE 'accessibility-lens/deploy/deploy\.mjs|\.github/workflows/deploy\.yml'; then
+              echo "Deploy runner or workflow changed: deploying every target."
+              selected=$all
+            else
+              # Only the target.ymls touched by this push, skipping deleted ones.
+              for f in $(printf '%s\n' "$changed" | grep -xE '[^/]+/deploy/target\.yml' || true); do
+                [ -f "$f" ] && selected="$selected$f"$'\n'
+              done
+            fi
+          fi
+
+          configs=$(printf '%s\n' $selected | grep . | jq -R . | jq -cs .)
+          echo "Deploying: $configs"
           echo "configs=$configs" >> "$GITHUB_OUTPUT"
 
   deploy:
