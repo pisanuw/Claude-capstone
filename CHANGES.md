@@ -21,3 +21,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-08-20 [code] schema-storyteller: pinned netlify siteId + accountSlug in deploy/target.yml so deploy skips the create-site fallback once NETLIFY_AUTH_TOKEN is rotated.
 
 2026-08-20 [code] migration-diff-narrator: new package (idea 2026-08-17 n1). Rule-based schema diff for SQL DDL + TS interfaces, 74 vitest tests, 97% stmt coverage; deterministic severity rules replace the suggested Claude API calls.
+
+2026-08-20 [code] shortcut-sprint: new package (idea 2026-08-13 n1). SM-2 shortcut trainer for VS Code/DevTools/Figma/Vim + custom JSON sets, 78 vitest tests, 98.6% stmt coverage; localStorage replaces the suggested Supabase backend.

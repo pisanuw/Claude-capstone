@@ -70,3 +70,16 @@ backend).
 
 Live: [migration-diff-narrator.netlify.app](https://migration-diff-narrator.netlify.app).
 See its [README](./migration-diff-narrator/README.md).
+
+### [`shortcut-sprint/`](./shortcut-sprint)
+
+A Duolingo-style trainer for keyboard shortcuts: a task prompt ("Go to
+definition"), you press the shortcut, and an SM-2 spaced-repetition scheduler
+decides when you see it again. Bundled libraries for VS Code, Chrome DevTools,
+Figma, and Vim (multi-chord sequences included), custom JSON sets uploadable,
+per-tool mastery radar chart and a daily streak. Entirely client-side: SM-2
+replaces the idea's suggested backend, progress lives in localStorage.
+Deployed on **Netlify** (static site, no backend).
+
+Live: [shortcut-sprint.netlify.app](https://shortcut-sprint.netlify.app).
+See its [README](./shortcut-sprint/README.md).
