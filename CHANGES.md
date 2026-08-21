@@ -29,3 +29,6 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-08-21 [code] ui-diff-lens: new package (idea 2026-08-16 n1). Classified screenshot diff: YIQ pixel diff + AA detection, clustering, 7-type heuristic classifier; 56 vitest tests, 96.4% stmt coverage.
 2026-08-21 [decision] ui-diff-lens: replaced the idea's Claude Vision classification with deterministic heuristics (displacement search, opacity fit, edge correlation); free, offline, private.
+
+2026-08-21 [code] code-review-gauntlet: new package (idea 2026-08-11 n1). Timed bug-spotting game: seeded mutation engine, 11 templates/51 defects, daily challenge, skill radar; 46 vitest tests, 99.8% stmt coverage.
+2026-08-21 [decision] code-review-gauntlet: replaced the idea's Claude puzzle generation with a seeded single-line mutation engine and the Supabase leaderboard with a date-seeded daily + localStorage profile.

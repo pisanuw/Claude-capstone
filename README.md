@@ -98,3 +98,18 @@ Exports an annotated PNG or a standalone HTML report. Deployed on **Netlify**
 
 Live: [ui-diff-lens.netlify.app](https://ui-diff-lens.netlify.app).
 See its [README](./ui-diff-lens/README.md).
+
+### [`code-review-gauntlet/`](./code-review-gauntlet)
+
+A code-review reflex game: a realistic snippet appears with 1-3 planted
+defects and a countdown; click every line you would flag, then get an
+annotated explainer of every bug, security hole, and code smell — found or
+missed. A seeded mutation engine over 11 hand-written templates (JavaScript,
+Python, SQL; 51 catalogued single-line defects) replaces the idea's suggested
+Claude API generation, and a date-seeded daily challenge plus localStorage
+skill radar replace the suggested Supabase leaderboard, so the game is
+deterministic, offline, and free. Deployed on **Netlify** (static site, no
+backend).
+
+Live: [code-review-gauntlet.netlify.app](https://code-review-gauntlet.netlify.app).
+See its [README](./code-review-gauntlet/README.md).

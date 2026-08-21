@@ -10,7 +10,7 @@ type(scope)?: subject
 
 Types: `feat`, `fix`, `chore`, `docs`, `style`, `refactor`, `test`, `perf`, `ci`, `build`, `revert`
 
-Scope is the affected package: `accessibility-lens`, `mult-streak`, `mult-streak-edge`, `backend-hub`, `schema-storyteller`, `emoji-lingua`, `migration-diff-narrator`, `shortcut-sprint`, `ui-diff-lens`, `ci`, `deploy`.
+Scope is the affected package: `accessibility-lens`, `mult-streak`, `mult-streak-edge`, `backend-hub`, `schema-storyteller`, `emoji-lingua`, `migration-diff-narrator`, `shortcut-sprint`, `ui-diff-lens`, `code-review-gauntlet`, `ci`, `deploy`.
 
 Examples:
 - `feat(mult-streak): add hint button`

@@ -1,0 +1,21 @@
+# Deploy control file for Code Review Gauntlet (Netlify, static site).
+#
+# No backend and no environment variables: puzzle generation, scoring, and
+# the daily challenge are deterministic client-side logic with progress in
+# localStorage. The deploy workflow auto-discovers this file via the
+# `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: code-review-gauntlet
+directory: code-review-gauntlet
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: code-review-gauntlet
+  accountSlug: yusuf-pisan
