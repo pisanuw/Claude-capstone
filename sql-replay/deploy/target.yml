@@ -1,0 +1,20 @@
+# Deploy control file for SQL Replay (Netlify, static site).
+#
+# This app has no backend and no environment variables: parsing, execution,
+# and narration are all deterministic client-side code. The deploy workflow
+# auto-discovers this file via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: sql-replay
+directory: sql-replay
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: sql-replay
+  accountSlug: yusuf-pisan

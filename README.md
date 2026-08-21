@@ -129,3 +129,19 @@ backend).
 
 Live: [sound-sketchpad.netlify.app](https://sound-sketchpad.netlify.app).
 See its [README](./sound-sketchpad/README.md).
+
+### [`sql-replay/`](./sql-replay)
+
+**SQL Replay** implements idea #1 ("SQL Replay") from the ideas day of
+2026-07-30. Type a SQL SELECT, paste sample CSV data (or use the built-in
+demo tables), and watch execution unfold one stage at a time: rows
+materialize at FROM, pair up at JOIN (LEFT JOIN survivors get NULL padding),
+fail WHERE with the evaluated condition shown, collapse into groups, get
+filtered by HAVING, projected, deduplicated, ordered, and trimmed by LIMIT.
+A deterministic narrator generates a plain-English sentence per stage from
+the real execution stats, replacing the idea's suggested Claude API narrator,
+and share links encode the whole workspace into the URL hash. Deployed on
+**Netlify** (static site, no backend).
+
+Live: [sql-replay.netlify.app](https://sql-replay.netlify.app).
+See its [README](./sql-replay/README.md).

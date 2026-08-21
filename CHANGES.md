@@ -35,3 +35,6 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-08-21 [code] sound-sketchpad: new package (idea 2026-08-09 n1). Text-to-sound-effect synthesizer: word-to-DSP lexicon (20 bases, 18 modifiers), pure sample renderer, WAV export; 59 vitest tests, 100% stmt coverage.
 2026-08-21 [decision] sound-sketchpad: replaced the idea's Claude API code generation with a deterministic keyword lexicon + seeded DSP engine; same words always yield the same sound, free and offline.
+
+2026-08-21 [code] sql-replay: new package (idea 2026-07-30 n1). Step-by-step SQL SELECT replay: tokenizer/parser/3VL evaluator/staged executor emitting a narrated Step trace; 86 vitest tests, 99.7% stmt coverage.
+2026-08-21 [decision] sql-replay: replaced the idea's optional Claude narrator with deterministic per-stage narration generated from execution stats, and Framer Motion with CSS animations; zero runtime deps.
