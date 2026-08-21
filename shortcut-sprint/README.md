@@ -16,6 +16,7 @@ lives in `localStorage`.
 | Chrome DevTools | 14 |
 | Figma basics | 18 |
 | Vim survival kit | 21 |
+| Emacs essentials | 20 |
 
 Combos are the Windows/Linux defaults. macOS mode (auto-detected, toggleable
 in **Sets**) translates Ctrl→⌘ and uses explicit per-shortcut overrides where
@@ -74,7 +75,7 @@ npm install
 npm run dev        # local dev server
 npm run lint       # eslint
 npm run typecheck  # tsc --noEmit
-npm run coverage   # vitest, 78 tests, thresholds 85% (currently ~98% stmts)
+npm run coverage   # vitest, 79 tests, thresholds 85% (currently ~98% stmts)
 npm run build      # typecheck + vite build → dist/
 ```
 

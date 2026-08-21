@@ -77,6 +77,6 @@ describe('allSets', () => {
   it('lists bundled then custom', () => {
     const p = sample();
     const sets = allSets(bundledSets, p);
-    expect(sets.map((s) => s.id)).toEqual(['vscode', 'devtools', 'figma', 'vim', 'custom']);
+    expect(sets.map((s) => s.id)).toEqual(['vscode', 'devtools', 'figma', 'vim', 'emacs', 'custom']);
   });
 });

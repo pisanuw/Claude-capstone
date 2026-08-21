@@ -119,4 +119,33 @@ export const vimSet: ShortcutSet = {
   ],
 };
 
-export const bundledSets: ShortcutSet[] = [vscodeSet, devtoolsSet, figmaSet, vimSet];
+export const emacsSet: ShortcutSet = {
+  id: 'emacs',
+  name: 'Emacs essentials',
+  tool: 'Emacs',
+  version: 1,
+  shortcuts: [
+    { id: 'forward-char', task: 'Move forward one character', combo: 'Ctrl+F', mac: 'Ctrl+F' },
+    { id: 'backward-char', task: 'Move backward one character', combo: 'Ctrl+B', mac: 'Ctrl+B' },
+    { id: 'next-page', task: 'Move to the next screenful of text', combo: 'Ctrl+V', mac: 'Ctrl+V' },
+    { id: 'previous-line', task: 'Move to the previous line', combo: 'Ctrl+P', mac: 'Ctrl+P' },
+    { id: 'beginning-line', task: 'Move to the beginning of the line', combo: 'Ctrl+A', mac: 'Ctrl+A' },
+    { id: 'end-line', task: 'Move to the end of the line', combo: 'Ctrl+E', mac: 'Ctrl+E' },
+    { id: 'forward-word', task: 'Move forward one word', combo: 'Alt+F' },
+    { id: 'backward-word', task: 'Move backward one word', combo: 'Alt+B' },
+    { id: 'delete-char', task: 'Delete the next character', combo: 'Ctrl+D', mac: 'Ctrl+D' },
+    { id: 'delete-backward-char', task: 'Delete the previous character', combo: 'Backspace' },
+    { id: 'kill-line', task: 'Kill text to the end of the line', combo: 'Ctrl+K', mac: 'Ctrl+K' },
+    { id: 'yank', task: 'Yank the most recently killed text', combo: 'Ctrl+Y', mac: 'Ctrl+Y' },
+    { id: 'search-forward', task: 'Start an incremental forward search', combo: 'Ctrl+S', mac: 'Ctrl+S' },
+    { id: 'search-backward', task: 'Start an incremental backward search', combo: 'Ctrl+R', mac: 'Ctrl+R' },
+    { id: 'keyboard-quit', task: 'Cancel the current command', combo: 'Ctrl+G', mac: 'Ctrl+G' },
+    { id: 'execute-command', task: 'Execute an extended command', combo: 'Alt+X' },
+    { id: 'set-mark', task: 'Set the mark at point', combo: 'Ctrl+Space', mac: 'Ctrl+Space' },
+    { id: 'universal-argument', task: 'Start a universal argument', combo: 'Ctrl+U', mac: 'Ctrl+U' },
+    { id: 'open-line', task: 'Open a new line below point', combo: 'Ctrl+O', mac: 'Ctrl+O' },
+    { id: 'undo', task: 'Undo the last change', combo: 'Ctrl+/' },
+  ],
+};
+
+export const bundledSets: ShortcutSet[] = [vscodeSet, devtoolsSet, figmaSet, vimSet, emacsSet];

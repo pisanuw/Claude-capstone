@@ -121,7 +121,16 @@ describe('bundled sets', () => {
     }
   });
 
-  it('has the four advertised tools', () => {
-    expect(bundledSets.map((s) => s.id)).toEqual(['vscode', 'devtools', 'figma', 'vim']);
+  it('has the advertised tools', () => {
+    expect(bundledSets.map((s) => s.id)).toEqual(['vscode', 'devtools', 'figma', 'vim', 'emacs']);
+  });
+
+  it('keeps Emacs control bindings on macOS', () => {
+    const emacs = bundledSets.find((set) => set.id === 'emacs');
+    expect(emacs?.shortcuts).toHaveLength(20);
+    expect(emacs?.shortcuts.find((shortcut) => shortcut.id === 'forward-char')).toMatchObject({
+      combo: 'Ctrl+F',
+      mac: 'Ctrl+F',
+    });
   });
 });
