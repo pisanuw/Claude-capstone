@@ -17,4 +17,8 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: sound-sketchpad
+  # The site already exists on Netlify. Pinning the id skips the listSites
+  # lookup and the create-site fallback, so a deploy cannot fail by trying to
+  # re-create a name that is already taken.
+  siteId: '6fea23bd-5815-4069-9107-7dac4efb22ed'
   accountSlug: yusuf-pisan
