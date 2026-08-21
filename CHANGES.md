@@ -32,3 +32,6 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-08-21 [code] code-review-gauntlet: new package (idea 2026-08-11 n1). Timed bug-spotting game: seeded mutation engine, 11 templates/51 defects, daily challenge, skill radar; 46 vitest tests, 99.8% stmt coverage.
 2026-08-21 [decision] code-review-gauntlet: replaced the idea's Claude puzzle generation with a seeded single-line mutation engine and the Supabase leaderboard with a date-seeded daily + localStorage profile.
+
+2026-08-21 [code] sound-sketchpad: new package (idea 2026-08-09 n1). Text-to-sound-effect synthesizer: word-to-DSP lexicon (20 bases, 18 modifiers), pure sample renderer, WAV export; 59 vitest tests, 100% stmt coverage.
+2026-08-21 [decision] sound-sketchpad: replaced the idea's Claude API code generation with a deterministic keyword lexicon + seeded DSP engine; same words always yield the same sound, free and offline.

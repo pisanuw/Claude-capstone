@@ -113,3 +113,19 @@ backend).
 
 Live: [code-review-gauntlet.netlify.app](https://code-review-gauntlet.netlify.app).
 See its [README](./code-review-gauntlet/README.md).
+
+### [`sound-sketchpad/`](./sound-sketchpad)
+
+**Sound Sketchpad** implements idea #1 ("Procedural Sound Sketchpad") from the
+ideas day of 2026-08-09. Describe a sound effect in plain words ("muffled
+explosion heard from underground", "tiny retro laser") and hear it synthesized
+instantly: a deterministic word-to-DSP recipe book (20 base sounds, 18
+modifiers) replaces the idea's suggested Claude API code generation, and a
+pure sample-by-sample DSP engine (oscillators, seeded noise, ADSR, biquad
+filters, echo, bit crush) replaces Web Audio graphs, so tests assert on the
+exact samples the user hears. Oscilloscope, signal-chain view, tuning
+sliders, and 16/24-bit WAV export. Deployed on **Netlify** (static site, no
+backend).
+
+Live: [sound-sketchpad.netlify.app](https://sound-sketchpad.netlify.app).
+See its [README](./sound-sketchpad/README.md).

@@ -1,0 +1,20 @@
+# Deploy control file for Sound Sketchpad (Netlify, static site).
+#
+# This app has no backend and no environment variables: parsing, synthesis,
+# and WAV export are all deterministic client-side DSP. The deploy workflow
+# auto-discovers this file via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: sound-sketchpad
+directory: sound-sketchpad
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: sound-sketchpad
+  accountSlug: yusuf-pisan
