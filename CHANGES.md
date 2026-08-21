@@ -26,3 +26,6 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-08-20 [code] ci: deploy workflow now deploys only the target.ymls changed in the push; full redeploy on manual dispatch, runner/workflow changes, or uncomputable diffs.
 2026-08-20 [code] ci: shortcut-sprint source changes now select its deployment target so bundled shortcut updates reach Netlify.
+
+2026-08-21 [code] ui-diff-lens: new package (idea 2026-08-16 n1). Classified screenshot diff: YIQ pixel diff + AA detection, clustering, 7-type heuristic classifier; 56 vitest tests, 96.4% stmt coverage.
+2026-08-21 [decision] ui-diff-lens: replaced the idea's Claude Vision classification with deterministic heuristics (displacement search, opacity fit, edge correlation); free, offline, private.

@@ -1,0 +1,20 @@
+# Deploy control file for UI Diff Lens (Netlify, static site).
+#
+# No backend and no environment variables: the pixel diff, clustering, and
+# change classification are deterministic client-side logic. The deploy
+# workflow auto-discovers this file via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: ui-diff-lens
+directory: ui-diff-lens
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: ui-diff-lens
+  accountSlug: yusuf-pisan

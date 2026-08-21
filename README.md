@@ -83,3 +83,18 @@ Deployed on **Netlify** (static site, no backend).
 
 Live: [shortcut-sprint.netlify.app](https://shortcut-sprint.netlify.app).
 See its [README](./shortcut-sprint/README.md).
+
+### [`ui-diff-lens/`](./ui-diff-lens)
+
+Drag two UI screenshots into the browser and get a classified visual diff:
+every changed region labeled as layout shift, spacing nudge, color restyle,
+text edit, visibility fade, added, or removed element, each with a confidence
+and the measured evidence. A perceptual pixel diff with anti-aliasing
+detection, region clustering, and structural heuristics (displacement search,
+opacity fit, edge correlation) replace the idea's suggested Claude Vision
+calls, so results are deterministic and screenshots never leave the machine.
+Exports an annotated PNG or a standalone HTML report. Deployed on **Netlify**
+(static site, no backend).
+
+Live: [ui-diff-lens.netlify.app](https://ui-diff-lens.netlify.app).
+See its [README](./ui-diff-lens/README.md).
