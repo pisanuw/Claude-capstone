@@ -19,6 +19,7 @@ on:
   push:
     paths:
       - '**/deploy/target.yml'
+      - 'shortcut-sprint/**'
       - 'accessibility-lens/deploy/deploy.mjs'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
@@ -60,6 +61,10 @@ jobs:
               for f in $(printf '%s\n' "$changed" | grep -xE '[^/]+/deploy/target\.yml' || true); do
                 [ -f "$f" ] && selected="$selected$f"$'\n'
               done
+              if printf '%s\n' "$changed" | grep -q '^shortcut-sprint/' \
+                && ! printf '%s\n' "$changed" | grep -qx 'shortcut-sprint/deploy/target.yml'; then
+                selected="$selected"shortcut-sprint/deploy/target.yml$'\n'
+              fi
             fi
           fi
 
