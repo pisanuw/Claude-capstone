@@ -18,4 +18,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: code-review-gauntlet
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '508840fa-2b4a-4e05-b48c-e0c44df0c9c6'
   accountSlug: yusuf-pisan
