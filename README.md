@@ -145,3 +145,18 @@ and share links encode the whole workspace into the URL hash. Deployed on
 
 Live: [sql-replay.netlify.app](https://sql-replay.netlify.app).
 See its [README](./sql-replay/README.md).
+
+### [`har-detective/`](./har-detective)
+
+**HAR Detective** implements idea #1 ("HAR Detective") from the ideas day of
+2026-08-21. Drop a browser HAR file on the page and get an interactive
+request waterfall plus a ranked, plain-English performance report: N+1 call
+patterns, missing cache headers, uncompressed responses, redirect chains,
+serialized API waterfalls, duplicate fetches, failing requests, slow server
+think-time, oversized payloads, and HTTP/1.x connection churn. Ten
+hand-written deterministic detectors replace the idea's suggested Claude API
+analysis, so results are instant, reproducible, and the HAR never leaves the
+browser. Deployed on **Netlify** (static site, no backend).
+
+Live: [har-detective.netlify.app](https://har-detective.netlify.app).
+See its [README](./har-detective/README.md).

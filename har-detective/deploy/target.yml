@@ -1,0 +1,21 @@
+# Deploy control file for HAR Detective (Netlify, static site).
+#
+# No backend and no environment variables: HAR parsing, the waterfall
+# renderer, and every performance detector are deterministic client-side
+# logic. The deploy workflow auto-discovers this file via the
+# `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: har-detective
+directory: har-detective
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: har-detective
+  accountSlug: yusuf-pisan

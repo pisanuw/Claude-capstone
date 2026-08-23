@@ -38,3 +38,6 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-08-21 [code] sql-replay: new package (idea 2026-07-30 n1). Step-by-step SQL SELECT replay: tokenizer/parser/3VL evaluator/staged executor emitting a narrated Step trace; 86 vitest tests, 99.7% stmt coverage.
 2026-08-21 [decision] sql-replay: replaced the idea's optional Claude narrator with deterministic per-stage narration generated from execution stats, and Framer Motion with CSS animations; zero runtime deps.
+
+2026-08-23 [code] har-detective: new package (idea 2026-08-21 n1). Client-side HAR analyzer: forgiving parser, 10 deterministic detectors, SVG waterfall, Markdown report; 56 vitest tests, 100% stmt coverage.
+2026-08-23 [decision] har-detective: replaced the idea's Claude API analysis with hand-written rule detectors (N+1, caching, compression, redirects, serialized calls, duplicates, errors, TTFB, payload size, HTTP/1.x churn); the HAR never leaves the browser.
