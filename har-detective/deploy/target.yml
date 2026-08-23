@@ -18,6 +18,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: har-detective
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '614b8cba-c7dd-4063-a8f1-fafc8df7f74a'
   accountSlug: yusuf-pisan
-
-# redeploy: 2026-08-23 include package-lock.json in checkout
