@@ -19,3 +19,5 @@ netlify:
   functionsDir: ''
   siteName: har-detective
   accountSlug: yusuf-pisan
+
+# redeploy: 2026-08-23 include package-lock.json in checkout
