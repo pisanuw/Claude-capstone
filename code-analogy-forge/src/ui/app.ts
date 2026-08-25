@@ -67,12 +67,18 @@ function shareUrl(analogyId: string, audience: Audience, note?: string): string 
 
 function audiencePicker(onChange: () => void): HTMLElement {
   const group = el('div', { class: 'audience-group', role: 'group', 'aria-label': 'Audience' });
+  const buttons = new Map<Audience, HTMLButtonElement>();
   for (const a of AUDIENCES) {
-    const btn = el('button', { 'aria-pressed': String(a === state.audience) }, [AUDIENCE_LABELS[a]]);
+    const btn = el('button', { type: 'button', 'aria-pressed': String(a === state.audience) }, [AUDIENCE_LABELS[a]]);
     btn.addEventListener('click', () => {
       state.audience = a;
+      // The picker outlives renderResults(), so move the highlight here.
+      for (const [audience, b] of buttons) {
+        b.setAttribute('aria-pressed', String(audience === a));
+      }
       onChange();
     });
+    buttons.set(a, btn);
     group.append(btn);
   }
   return group;

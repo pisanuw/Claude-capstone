@@ -12,6 +12,7 @@ build: npm ci && npm run build
 publish: dist
 
 # No secrets or runtime configuration are needed.
+# (Touch this file to retrigger a deploy: the workflow deploys changed target.ymls.)
 envPassthrough: []
 
 netlify:
