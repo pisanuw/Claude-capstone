@@ -46,6 +46,7 @@ src/core/types.ts        Audience, Analogy, Concept, Detection, SavedAnalogy
 src/core/corpus/         the hand-written analogy corpus (basics, data structures,
                          algorithms, paradigms) + id lookups
 src/core/detect.ts       keyword + code-shape detector, self-call finder
+src/core/examples.ts     the ten bundled example snippets, one per concept family
 src/core/share.ts        base64url share-link encode/decode (versioned, validated)
 src/core/library.ts      localStorage-backed library (storage injected for tests)
 src/core/markdown.ts     Markdown export
