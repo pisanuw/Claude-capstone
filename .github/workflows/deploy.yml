@@ -20,6 +20,7 @@ on:
     paths:
       - '**/deploy/target.yml'
       - 'shortcut-sprint/**'
+      - 'code-analogy-forge/**'
       - 'accessibility-lens/deploy/deploy.mjs'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
@@ -64,6 +65,10 @@ jobs:
               if printf '%s\n' "$changed" | grep -q '^shortcut-sprint/' \
                 && ! printf '%s\n' "$changed" | grep -qx 'shortcut-sprint/deploy/target.yml'; then
                 selected="$selected"shortcut-sprint/deploy/target.yml$'\n'
+              fi
+              if printf '%s\n' "$changed" | grep -q '^code-analogy-forge/' \
+                && ! printf '%s\n' "$changed" | grep -qx 'code-analogy-forge/deploy/target.yml'; then
+                selected="$selected"code-analogy-forge/deploy/target.yml$'\n'
               fi
             fi
           fi
