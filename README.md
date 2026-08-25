@@ -171,7 +171,7 @@ three hand-written analogies from three different everyday domains, each with a
 self-call analysis for recursion) picks the concept; a curated corpus of 14
 concepts x 3 domains x 4 audience variants replaces the idea's suggested Claude
 API generation, and a localStorage library with tags, search, Markdown export,
-and serverless read-only share links replaces Supabase. Deployed on **Netlify**
+and serverless read-only share links replaces Supabase; a ten-example menu covers ten different concepts. Deployed on **Netlify**
 (static site, no backend).
 
 Live: [code-analogy-forge.netlify.app](https://code-analogy-forge.netlify.app).

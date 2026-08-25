@@ -39,7 +39,9 @@ const RULES: ConceptRules[] = [
   },
   {
     conceptId: 'function-return',
-    keywords: ['function', 'functions', 'return value', 'method', 'parameter', 'subroutine'],
+    // "a function" / "functions" catch prose without firing on the JS
+    // `function` keyword, which the patterns below already score.
+    keywords: ['a function', 'functions', 'return value', 'method', 'parameter', 'subroutine'],
     patterns: [
       { re: /\breturn\b/, why: 'uses return' },
       { re: /\bdef\s+\w+\s*\(/, why: 'defines a function (def)' },

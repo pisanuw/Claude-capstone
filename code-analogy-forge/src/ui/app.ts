@@ -5,6 +5,7 @@ import { detectConcepts } from '../core/detect';
 import { encodeShare, decodeShare } from '../core/share';
 import { Library, parseTags } from '../core/library';
 import { analogyToMarkdown } from '../core/markdown';
+import { EXAMPLES } from '../core/examples';
 
 interface State {
   audience: Audience;
@@ -25,11 +26,6 @@ const state: State = {
 };
 
 const library = new Library(window.localStorage);
-
-const EXAMPLE = `def fib(n):
-    if n <= 1:
-        return n
-    return fib(n - 1) + fib(n - 2)`;
 
 function el<K extends keyof HTMLElementTagNameMap>(
   tag: K,
@@ -365,13 +361,20 @@ export function mountApp(root: HTMLElement): void {
   });
   controls.append(forgeBtn);
 
-  const exampleBtn = el('button', { class: 'chip' }, ['Try an example']);
-  exampleBtn.addEventListener('click', () => {
-    input.value = EXAMPLE;
-    state.input = EXAMPLE;
+  const examplePicker = el('select', { id: 'example-picker', 'aria-label': 'Try an example' });
+  examplePicker.append(el('option', { value: '' }, ['Try an example...']));
+  for (const ex of EXAMPLES) {
+    examplePicker.append(el('option', { value: ex.id }, [ex.label]));
+  }
+  examplePicker.addEventListener('change', () => {
+    const ex = EXAMPLES.find((e) => e.id === examplePicker.value);
+    if (!ex) return;
+    input.value = ex.code;
+    state.input = ex.code;
     runDetection();
+    examplePicker.value = '';
   });
-  controls.append(exampleBtn);
+  controls.append(examplePicker);
 
   forge.append(controls);
   wrap.append(forge);

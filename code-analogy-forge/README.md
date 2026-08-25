@@ -10,6 +10,7 @@ Built from idea 2026-08-25 n1 in [pisanuw/daily-project-ideas](https://github.co
 
 - **Audience calibration.** Every analogy is hand-written in four variants: curious child, high school student, CS undergraduate, and non-technical adult. Switching the audience swaps the entire text, not just the vocabulary: the undergraduate variant ties the imagery to formal terms (invariants, O(log n), the call stack), the child variant keeps only the imagery.
 - **Three domains per concept.** Each concept ships analogies from three distinct everyday domains (cooking, sports, city planning, post office, board games, ...), each with a "this maps to that" table connecting code terms to the analogy.
+- **Ten bundled examples.** A "Try an example" menu loads snippets across languages (Fibonacci, binary search, an undo stack, a print queue, bubble sort, async/await, ...), each test-pinned to rank its intended concept first.
 - **Concept detection.** Paste real code and a hand-written detector figures out what it shows: keyword mentions ("hash map", "recursion") plus code-shape patterns (a `while` loop, `lo`/`hi`/`mid` bounds, `.push()` + `.pop()`, a function whose body calls itself, found by brace-matching or Python indentation). Detected concepts are ranked with visible evidence, and chips let you jump between everything that was found.
 - **Personal library.** Save your best analogies with tags and a note; search and filter them later. Stored in `localStorage`.
 - **Shareable read-only links.** Every card can produce a URL that renders the exact analogy, audience, and your note, with no server: the payload is base64url-encoded ids in the URL hash, resolved against the corpus that ships with the app.
@@ -36,7 +37,7 @@ npm run coverage   # vitest with v8 coverage (thresholds: 85%)
 npm run build      # typecheck + vite production build
 ```
 
-61 vitest tests cover the corpus invariants (every concept has 3+ analogies from distinct domains, all four audience variants present and substantial, no em dashes in prose), the detector (keywords, code shapes, self-call analysis in four definition styles), share-link encoding (round trips, tampering, unknown ids), the library (persistence, corrupt-storage recovery, search, tags), and Markdown export. Statement coverage is 99.7%; the DOM layer (`src/ui/`, `src/main.ts`) is exercised end-to-end in headless Chromium instead.
+74 vitest tests cover the corpus invariants (every concept has 3+ analogies from distinct domains, all four audience variants present and substantial, no em dashes in prose), the detector (keywords, code shapes, self-call analysis in four definition styles), share-link encoding (round trips, tampering, unknown ids), the library (persistence, corrupt-storage recovery, search, tags), and Markdown export. Statement coverage is 99.7%; the DOM layer (`src/ui/`, `src/main.ts`) is exercised end-to-end in headless Chromium instead.
 
 ## Architecture
 
