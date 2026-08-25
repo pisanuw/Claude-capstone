@@ -41,3 +41,6 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-08-23 [code] har-detective: new package (idea 2026-08-21 n1). Client-side HAR analyzer: forgiving parser, 10 deterministic detectors, SVG waterfall, Markdown report; 56 vitest tests, 100% stmt coverage.
 2026-08-23 [decision] har-detective: replaced the idea's Claude API analysis with hand-written rule detectors (N+1, caching, compression, redirects, serialized calls, duplicates, errors, TTFB, payload size, HTTP/1.x churn); the HAR never leaves the browser.
+
+2026-08-25 [code] code-analogy-forge: new package (idea 2026-08-25 n1). Audience-calibrated CS analogies: 14 concepts x 3 domains x 4 audiences (168 hand-written texts), keyword + code-shape detector with body-scoped self-call analysis, localStorage library, serverless share links, Markdown export; 61 vitest tests, 99.8% stmt coverage.
+2026-08-25 [decision] code-analogy-forge: replaced the idea's Claude API generation with a curated deterministic corpus and Supabase with localStorage + hash-encoded read-only share links; free, offline, reproducible, honest "not detected" outside its 14 concepts.

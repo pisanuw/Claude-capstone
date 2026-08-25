@@ -160,3 +160,19 @@ browser. Deployed on **Netlify** (static site, no backend).
 
 Live: [har-detective.netlify.app](https://har-detective.netlify.app).
 See its [README](./har-detective/README.md).
+
+### [`code-analogy-forge/`](./code-analogy-forge)
+
+**Code Analogy Forge** implements idea #1 ("Code Analogy Forge") from the ideas
+day of 2026-08-25. Paste code or name a CS concept, pick your audience (curious
+child, high school student, CS undergraduate, or non-technical adult), and get
+three hand-written analogies from three different everyday domains, each with a
+"this maps to that" table. A keyword + code-shape detector (including real
+self-call analysis for recursion) picks the concept; a curated corpus of 14
+concepts x 3 domains x 4 audience variants replaces the idea's suggested Claude
+API generation, and a localStorage library with tags, search, Markdown export,
+and serverless read-only share links replaces Supabase. Deployed on **Netlify**
+(static site, no backend).
+
+Live: [code-analogy-forge.netlify.app](https://code-analogy-forge.netlify.app).
+See its [README](./code-analogy-forge/README.md).

@@ -1,0 +1,21 @@
+# Deploy control file for Code Analogy Forge (Netlify, static site).
+#
+# No backend and no environment variables: concept detection, the analogy
+# corpus, the localStorage library, and share-link encoding are all
+# deterministic client-side logic. The deploy workflow auto-discovers this
+# file via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: code-analogy-forge
+directory: code-analogy-forge
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: code-analogy-forge
+  accountSlug: yusuf-pisan
