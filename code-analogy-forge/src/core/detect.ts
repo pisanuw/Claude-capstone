@@ -284,6 +284,189 @@ const RULES: ConceptRules[] = [
       { re: /\bneighbors?\b/i, why: 'walks neighbors' },
     ],
   },
+  {
+    conceptId: 'linked-list',
+    keywords: ['linked list', 'linked lists', 'singly linked', 'doubly linked', 'listnode'],
+    patterns: [
+      { re: /\.next\s*=|\.next\s*!==?|\w+\s*=\s*\w+\.next\b/, why: 'follows .next links' },
+      { re: /->\s*next\b/, why: 'follows ->next links' },
+      { re: /\bListNode\b/, why: 'names a list node' },
+    ],
+  },
+  {
+    conceptId: 'set',
+    keywords: ['a set', 'hash set', 'hashset', 'unique elements', 'duplicates', 'membership', 'deduplicate'],
+    patterns: [
+      { re: /\bnew\s+Set\b|\bset\s*\(\s*[)[]/, why: 'creates a set' },
+      { re: /\.intersection\b|\.union\b|\bissubset\b|\.difference\b/, why: 'uses set algebra' },
+    ],
+  },
+  {
+    conceptId: 'heap-priority-queue',
+    keywords: ['heap', 'priority queue', 'min-heap', 'max-heap', 'heapq', 'binary heap'],
+    patterns: [
+      { re: /heapq|heappush|heappop|PriorityQueue|BinaryHeap/, why: 'uses a heap structure' },
+      { re: /sift(?:Up|Down)|bubbleUp|percolate/i, why: 'restores the heap property' },
+    ],
+  },
+  {
+    conceptId: 'hashing',
+    keywords: ['hash', 'hashing', 'checksum', 'digest', 'fingerprint', 'sha256', 'md5'],
+    patterns: [
+      { re: /hashlib\.|\bsha-?(?:1|256|512)\b|\bmd5\b/i, why: 'computes a digest' },
+      { re: /\bhashCode\s*\(|\bhash\s*\(/, why: 'calls a hash function' },
+    ],
+  },
+  {
+    conceptId: 'state-machine',
+    keywords: ['state machine', 'finite state', 'transition', 'transitions', 'fsm'],
+    patterns: [
+      { re: /\bstate\s*=\s*['"]\w+['"]/, why: 'tracks a named state' },
+      { re: /switch\s*\(\s*\w*[Ss]tate\s*\)/, why: 'branches on the current state' },
+      { re: /transitions?\s*[:=[{]/, why: 'declares a transition table' },
+    ],
+  },
+  {
+    conceptId: 'boolean-logic',
+    keywords: ['boolean', 'booleans', 'truth table', 'logical operators', 'de morgan', 'and or not'],
+    patterns: [
+      { re: /&&[\s\S]*\|\||\|\|[\s\S]*&&/, why: 'combines AND with OR' },
+      { re: /\b(?:bool|boolean)\b/, why: 'declares a boolean' },
+      { re: /\bnot\s+\(|![a-zA-Z(]/, why: 'negates a condition' },
+    ],
+  },
+  {
+    conceptId: 'scope',
+    keywords: ['scope', 'scopes', 'global variable', 'local variable', 'shadowing', 'shadows'],
+    patterns: [{ re: /\bglobal\s+\w+/, why: 'declares a global' }],
+  },
+  {
+    conceptId: 'abstraction',
+    keywords: ['abstraction', 'abstraction layer', 'implementation details', 'under the hood', 'high-level interface'],
+    patterns: [
+      { re: /\binterface\s+[A-Z]\w*/, why: 'declares an interface' },
+      { re: /\babstract\s+class\b/, why: 'declares an abstract class' },
+    ],
+  },
+  {
+    conceptId: 'regex',
+    keywords: ['regex', 'regexp', 'regular expression', 'regular expressions', 'wildcard'],
+    patterns: [
+      { re: /\bre\.(?:match|search|findall|sub|compile)\s*\(/, why: "uses Python's re module" },
+      { re: /new\s+RegExp\b/, why: 'builds a RegExp' },
+      { re: /\.test\s*\(|\.exec\s*\(/, why: 'tests a pattern' },
+      { re: /\\[dws][{+*]?/, why: 'uses regex character classes' },
+    ],
+  },
+  {
+    conceptId: 'floating-point',
+    keywords: ['floating point', 'floating-point', 'float', 'floats', 'rounding', 'precision', 'rounding error'],
+    patterns: [
+      { re: /0\.1\s*\+\s*0\.2/, why: 'adds 0.1 and 0.2' },
+      { re: /\.toFixed\s*\(|Math\.round\b|\bround\s*\(/, why: 'rounds a value' },
+      { re: /\bNaN\b|\bInfinity\b|\bepsilon\b/i, why: 'handles float edge values' },
+    ],
+  },
+  {
+    conceptId: 'compiler-interpreter',
+    keywords: ['compiler', 'compilers', 'compiled', 'compile', 'interpreter', 'interpreted', 'bytecode', 'source code'],
+    patterns: [
+      { re: /\bgcc\b|\bjavac\b|\btsc\b|\bclang\b/, why: 'invokes a compiler' },
+      { re: /SyntaxError|\.compile\s*\(/, why: 'compiles or fails to parse' },
+    ],
+  },
+  {
+    conceptId: 'sql-database',
+    keywords: ['sql', 'database', 'databases', 'query', 'queries', 'primary key', 'foreign key'],
+    patterns: [
+      { re: /\bSELECT\b[\s\S]*\bFROM\b/i, why: 'has a SELECT ... FROM' },
+      { re: /\bINSERT\s+INTO\b|\bCREATE\s+TABLE\b|\bUPDATE\s+\w+\s+SET\b/i, why: 'writes to tables' },
+      { re: /\bJOIN\b/i, why: 'joins tables' },
+    ],
+  },
+  {
+    conceptId: 'http',
+    keywords: ['http', 'https', 'http request', 'status code', 'get request', 'post request', 'headers'],
+    patterns: [
+      { re: /\b(?:GET|POST|PUT|DELETE|PATCH)\s+\/\S*/, why: 'has a request line' },
+      { re: /HTTP\/\d(?:\.\d)?/, why: 'names the HTTP protocol version' },
+      { re: /status(?:Code)?\s*[:=]\s*\d{3}\b|\b(?:200 OK|404 Not Found|500 Internal)/, why: 'carries a status code' },
+    ],
+  },
+  {
+    conceptId: 'dns',
+    keywords: ['dns', 'domain name', 'nameserver', 'name server', 'dns record', 'resolver'],
+    patterns: [
+      { re: /\bnslookup\b|\bdig\s+(?:\+\w+\s+)?[\w.-]+\.\w{2,}/, why: 'looks up a name' },
+      { re: /\b(?:A|AAAA|CNAME|MX|TXT)\s+record/i, why: 'names a DNS record type' },
+    ],
+  },
+  {
+    conceptId: 'packets-routing',
+    keywords: ['packet', 'packets', 'router', 'routers', 'routing', 'tcp', 'ip address', 'latency', 'bandwidth'],
+    patterns: [
+      { re: /\b\d{1,3}(?:\.\d{1,3}){3}\b/, why: 'contains an IP address' },
+      { re: /\btraceroute\b|\bping\s+[\w.-]/, why: 'traces the network path' },
+      { re: /\bTTL\b|\bhops?\b/i, why: 'talks about hops' },
+    ],
+  },
+  {
+    conceptId: 'event-driven',
+    keywords: ['event', 'events', 'listener', 'listeners', 'event listener', 'subscribe', 'publish', 'emit'],
+    patterns: [
+      { re: /addEventListener\s*\(|\.on\s*\(\s*['"]/, why: 'registers a listener' },
+      { re: /\.emit\s*\(|dispatchEvent\s*\(/, why: 'fires an event' },
+      { re: /\.subscribe\s*\(|\.publish\s*\(/, why: 'uses publish/subscribe' },
+    ],
+  },
+  {
+    conceptId: 'debugging',
+    keywords: ['debug', 'debugging', 'debugger', 'breakpoint', 'stack trace', 'bisect', 'reproduce the bug'],
+    patterns: [
+      { re: /\bbreakpoint\s*\(|\bdebugger\s*;|\bpdb\b/, why: 'sets a breakpoint' },
+      { re: /console\.log\s*\(\s*['"](?:here|got here|debug)/i, why: 'printf-debugs' },
+      { re: /git\s+bisect/, why: 'bisects history' },
+    ],
+  },
+  {
+    conceptId: 'testing',
+    keywords: ['unit test', 'unit tests', 'test case', 'test cases', 'testing', 'assertion', 'assertions', 'tdd', 'regression test'],
+    patterns: [
+      { re: /\bassert(?:\w*\s*\(|\s+\S)|\bexpect\s*\(/, why: 'asserts an outcome' },
+      { re: /\bdef\s+test_\w+|\b(?:it|describe)\s*\(\s*['"`]/, why: 'defines a test' },
+      { re: /\bpytest\b|\bunittest\b|\bvitest\b|\bjest\b|\bjunit\b/i, why: 'names a test framework' },
+    ],
+  },
+  {
+    conceptId: 'refactoring',
+    keywords: ['refactor', 'refactoring', 'refactored', 'code smell', 'clean up the code', 'extract a function'],
+    patterns: [{ re: /TODO[:\s].*refactor/i, why: 'flags a refactor TODO' }],
+  },
+  {
+    conceptId: 'garbage-collection',
+    keywords: ['garbage collection', 'garbage collector', 'memory leak', 'reference counting', 'unreachable', 'heap memory'],
+    patterns: [
+      { re: /=\s*null\b\s*;?\s*(?:\/\/|$)/m, why: 'drops the last reference' },
+      { re: /\bWeakRef\b|\bWeakMap\b|\bfinalize\b|System\.gc\s*\(\)/, why: 'touches the collector' },
+      { re: /\bdel\s+\w+/, why: 'deletes a binding' },
+    ],
+  },
+  {
+    conceptId: 'operating-system',
+    keywords: ['operating system', 'kernel', 'process', 'processes', 'scheduler', 'system call'],
+    patterns: [
+      { re: /\bfork\s*\(\s*\)|\bexecve?\b|\bpid\b/i, why: 'manages processes' },
+      { re: /\bkill\s+-?\d|\bps\s+-|\bsystemctl\b|\bsudo\b/, why: 'drives the OS from a shell' },
+    ],
+  },
+  {
+    conceptId: 'randomness-seed',
+    keywords: ['random', 'randomness', 'seed', 'seeded', 'prng', 'shuffle', 'shuffled'],
+    patterns: [
+      { re: /Math\.random\s*\(|random\.(?:random|randint|choice|shuffle|seed)\s*\(|\brand\s*\(\s*\)/, why: 'draws random numbers' },
+      { re: /\bseed\s*\(/, why: 'sets a seed' },
+    ],
+  },
 ];
 
 const knownConceptIds = new Set(CONCEPTS.map((c) => c.id));

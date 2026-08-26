@@ -1,6 +1,6 @@
 import type { Analogy, Audience, Detection } from '../core/types';
 import { AUDIENCES, AUDIENCE_LABELS } from '../core/types';
-import { CONCEPTS, getAnalogy, getConcept } from '../core/corpus/index';
+import { CONCEPT_GROUPS, getAnalogy, getConcept } from '../core/corpus/index';
 import { detectConcepts } from '../core/detect';
 import { encodeShare, decodeShare } from '../core/share';
 import { Library, parseTags } from '../core/library';
@@ -342,8 +342,12 @@ export function mountApp(root: HTMLElement): void {
 
   const picker = el('select', { id: 'concept-picker', 'aria-label': 'Browse a concept' });
   picker.append(el('option', { value: '' }, ['Browse a concept...']));
-  for (const c of CONCEPTS) {
-    picker.append(el('option', { value: c.id }, [c.name]));
+  for (const group of CONCEPT_GROUPS) {
+    const og = el('optgroup', { label: group.label });
+    for (const c of group.concepts) {
+      og.append(el('option', { value: c.id }, [c.name]));
+    }
+    picker.append(og);
   }
   picker.addEventListener('change', () => {
     if (picker.value === '') return;
@@ -363,8 +367,15 @@ export function mountApp(root: HTMLElement): void {
 
   const examplePicker = el('select', { id: 'example-picker', 'aria-label': 'Try an example' });
   examplePicker.append(el('option', { value: '' }, ['Try an example...']));
-  for (const ex of EXAMPLES) {
-    examplePicker.append(el('option', { value: ex.id }, [ex.label]));
+  for (const group of CONCEPT_GROUPS) {
+    const conceptIds = new Set(group.concepts.map((c) => c.id));
+    const groupExamples = EXAMPLES.filter((ex) => conceptIds.has(ex.highlights));
+    if (groupExamples.length === 0) continue;
+    const og = el('optgroup', { label: group.label });
+    for (const ex of groupExamples) {
+      og.append(el('option', { value: ex.id }, [ex.label]));
+    }
+    examplePicker.append(og);
   }
   examplePicker.addEventListener('change', () => {
     const ex = EXAMPLES.find((e) => e.id === examplePicker.value);

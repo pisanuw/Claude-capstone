@@ -183,6 +183,44 @@ describe('detectConcepts', () => {
     expect(detectConcepts('explain caching to my manager')[0].conceptId).toBe('cache');
   });
 
+  it('detects linked lists from .next chains', () => {
+    const code = `let node = head;\nwhile (node.next !== null) { node = node.next; }`;
+    expect(detectConcepts(code).map((d) => d.conceptId)).toContain('linked-list');
+  });
+
+  it('detects sets, heaps, and state machines', () => {
+    expect(detectConcepts('const uniq = new Set(names); // deduplicate')[0].conceptId).toBe('set');
+    expect(detectConcepts('heapq.heappush(pq, (1, "job"))')[0].conceptId).toBe('heap-priority-queue');
+    const fsm = `// a finite state machine\nlet state = "idle";\nconst transitions = { idle: ["run"] };`;
+    expect(detectConcepts(fsm)[0].conceptId).toBe('state-machine');
+  });
+
+  it('detects SQL, HTTP, and DNS shapes', () => {
+    expect(detectConcepts('SELECT name FROM users JOIN orders ON users.id = orders.uid')[0].conceptId).toBe(
+      'sql-database',
+    );
+    expect(detectConcepts('GET /home HTTP/1.1\nHost: example.com')[0].conceptId).toBe('http');
+    expect(detectConcepts('what is a dns nameserver')[0].conceptId).toBe('dns');
+  });
+
+  it('detects events, tests, and seeded randomness', () => {
+    expect(detectConcepts('button.addEventListener("click", handle)')[0].conceptId).toBe('event-driven');
+    expect(detectConcepts('def test_add():\n    assert add(1, 2) == 3')[0].conceptId).toBe('testing');
+    expect(detectConcepts('random.seed(7)\nrandom.shuffle(deck)')[0].conceptId).toBe('randomness-seed');
+  });
+
+  it('detects floating point trouble and regular expressions', () => {
+    expect(detectConcepts('why does 0.1 + 0.2 have a rounding error')[0].conceptId).toBe('floating-point');
+    expect(detectConcepts('const re = new RegExp("\\\\d+"); re.test(s);')[0].conceptId).toBe('regex');
+  });
+
+  it('detects prose mentions of the systems concepts', () => {
+    expect(detectConcepts('explain garbage collection to a manager')[0].conceptId).toBe('garbage-collection');
+    expect(detectConcepts('what does an operating system kernel do')[0].conceptId).toBe('operating-system');
+    expect(detectConcepts('how does a compiler differ from an interpreter')[0].conceptId).toBe('compiler-interpreter');
+    expect(detectConcepts('what is variable scope and shadowing')[0].conceptId).toBe('scope');
+  });
+
   it('scores every detection positively and sorts descending', () => {
     const results = detectConcepts(BINARY_SEARCH_JS);
     expect(results.length).toBeGreaterThan(0);

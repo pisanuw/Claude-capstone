@@ -168,11 +168,11 @@ day of 2026-08-25. Paste code or name a CS concept, pick your audience (curious
 child, high school student, CS undergraduate, or non-technical adult), and get
 three hand-written analogies from three different everyday domains, each with a
 "this maps to that" table. A keyword + code-shape detector (including real
-self-call analysis for recursion) picks the concept; a curated corpus of 25
-concepts x 3 domains x 4 audience variants (300 hand-written texts) replaces
+self-call analysis for recursion) picks the concept; a curated corpus of 47
+concepts x 3 domains x 4 audience variants (564 hand-written texts) replaces
 the idea's suggested Claude API generation, and a localStorage library with tags, search, Markdown export,
-and serverless read-only share links replaces Supabase; a 25-example menu
-covers every concept. Deployed on **Netlify**
+and serverless read-only share links replaces Supabase; a 47-example menu
+covers every concept, grouped into ten themed sections. Deployed on **Netlify**
 (static site, no backend).
 
 Live: [code-analogy-forge.netlify.app](https://code-analogy-forge.netlify.app).

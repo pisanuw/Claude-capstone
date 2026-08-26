@@ -290,4 +290,211 @@ while frontier:
             visited.add(neighbor)
             frontier.append(neighbor)`,
   },
+  {
+    id: 'playlist-chain',
+    label: 'Song chain (JavaScript)',
+    highlights: 'linked-list',
+    code: `// A singly linked list: each node knows only the next
+const head = { title: "Intro", next: { title: "Verse", next: null } };
+let node = head;
+while (node.next !== null) {
+  node = node.next;
+}`,
+  },
+  {
+    id: 'distinct-tags',
+    label: 'Distinct tags (Python)',
+    highlights: 'set',
+    code: `# A set keeps unique elements: duplicates vanish
+seen = set()
+for tag in tags:
+    seen.add(tag)
+print(len(seen), "distinct tags")`,
+  },
+  {
+    id: 'urgent-jobs',
+    label: 'Urgent jobs first (Python)',
+    highlights: 'heap-priority-queue',
+    code: `# A min-heap priority queue: most urgent job comes out first
+heapq.heappush(jobs, (2, "nightly backup"))
+heapq.heappush(jobs, (0, "page the on-call"))
+priority, job = heapq.heappop(jobs)`,
+  },
+  {
+    id: 'content-digest',
+    label: 'Content digest (Python)',
+    highlights: 'hashing',
+    code: `# Hashing: any input becomes a short digest (a fingerprint)
+digest = hashlib.sha256(b"tuna casserole recipe").hexdigest()
+print(digest[:12])`,
+  },
+  {
+    id: 'player-states',
+    label: 'Player states (JavaScript)',
+    highlights: 'state-machine',
+    code: `// A finite state machine: named states, fixed transitions
+let state = "idle";
+const transitions = { idle: ["playing"], playing: ["paused", "idle"], paused: ["playing"] };
+function canMove(next) {
+  return transitions[state].includes(next);
+}`,
+  },
+  {
+    id: 'ride-rules',
+    label: 'Ride entry rules (JavaScript)',
+    highlights: 'boolean-logic',
+    code: `// Boolean logic: AND, OR, NOT combine yes/no facts
+const canRide = height >= 120 && (age >= 8 || withAdult);
+const turnedAway = !canRide;`,
+  },
+  {
+    id: 'shadowed-count',
+    label: 'Shadowed counter (Python)',
+    highlights: 'scope',
+    code: `# Scope: the local variable shadows the outer one
+count = 0
+def bump():
+    global count
+    count = count + 1`,
+  },
+  {
+    id: 'player-interface',
+    label: 'Player interface (Java)',
+    highlights: 'abstraction',
+    code: `// Abstraction: the interface hides the implementation details
+interface Player {
+    void play();
+    void pause();
+}`,
+  },
+  {
+    id: 'zip-pattern',
+    label: 'ZIP code pattern (JavaScript)',
+    highlights: 'regex',
+    code: `// A regular expression describes the shape of the text
+const zip = /\\d{5}(-\\d{4})?/;
+if (zip.test(address)) {
+  console.log("found a ZIP code");
+}`,
+  },
+  {
+    id: 'tenth-plus-tenths',
+    label: '0.1 + 0.2 (JavaScript)',
+    highlights: 'floating-point',
+    code: `// Floating point: 0.1 + 0.2 is not exactly 0.3
+console.log(0.1 + 0.2);              // 0.30000000000000004
+console.log((0.1 + 0.2).toFixed(2)); // "0.30" after rounding`,
+  },
+  {
+    id: 'compile-then-run',
+    label: 'Compile, then run (shell)',
+    highlights: 'compiler-interpreter',
+    code: `# Compiled ahead of time: the compiler translates source code once
+$ javac Main.java
+$ java Main
+Hello!`,
+  },
+  {
+    id: 'orders-query',
+    label: 'Orders query (SQL)',
+    highlights: 'sql-database',
+    code: `-- A SQL database query joins two tables
+SELECT customers.name, orders.total
+FROM customers
+JOIN orders ON orders.customer_id = customers.id
+WHERE orders.total > 100;`,
+  },
+  {
+    id: 'request-response',
+    label: 'Request and response (HTTP)',
+    highlights: 'http',
+    code: `# An HTTP request and its status code
+GET /index.html HTTP/1.1
+Host: example.com
+
+HTTP/1.1 200 OK
+Content-Type: text/html`,
+  },
+  {
+    id: 'name-lookup',
+    label: 'Name lookup (shell)',
+    highlights: 'dns',
+    code: `# DNS turns a domain name into an address machines use
+$ dig +short uw.edu
+128.95.155.135`,
+  },
+  {
+    id: 'trace-the-path',
+    label: 'Trace the path (shell)',
+    highlights: 'packets-routing',
+    code: `# Packets hop router to router; traceroute shows the hops
+$ traceroute example.com
+ 1  gateway (192.168.1.1)   2 ms
+ 2  isp-core (10.4.0.1)     9 ms`,
+  },
+  {
+    id: 'click-listener',
+    label: 'Click listener (JavaScript)',
+    highlights: 'event-driven',
+    code: `// An event listener reacts when the event fires
+button.addEventListener("click", () => {
+  cart.emit("item-added");
+});`,
+  },
+  {
+    id: 'drop-into-debugger',
+    label: 'Drop into the debugger (Python)',
+    highlights: 'debugging',
+    code: `# Debugging with a breakpoint: pause and read the stack trace
+def total(cart):
+    breakpoint()
+    return sum(item.price for item in cart)`,
+  },
+  {
+    id: 'tip-unit-test',
+    label: 'A unit test (Python)',
+    highlights: 'testing',
+    code: `# A unit test: one assertion about one promise
+def test_tip_rounds_up():
+    assert tip(10.01) == 2.01`,
+  },
+  {
+    id: 'same-menu-cleaner-kitchen',
+    label: 'Same behavior, cleaner code (JavaScript)',
+    highlights: 'refactoring',
+    code: `// Refactoring: same behavior, a code smell removed
+// TODO: refactor the three copy-pasted tax blocks into this
+function priceWithTax(price) {
+  return price * TAX_RATE;
+}`,
+  },
+  {
+    id: 'unreachable-report',
+    label: 'Unreachable object (JavaScript)',
+    highlights: 'garbage-collection',
+    code: `// The garbage collector reclaims unreachable objects
+let report = buildReport();
+publish(report);
+report = null; // nothing can reach the old report now`,
+  },
+  {
+    id: 'seeded-shuffle',
+    label: 'Seeded shuffle (Python)',
+    highlights: 'randomness-seed',
+    code: `# Seeded randomness: the same seed replays the same shuffle
+random.seed(42)
+random.shuffle(deck)
+print(deck[0])`,
+  },
+  {
+    id: 'list-processes',
+    label: 'Processes and the scheduler (shell)',
+    highlights: 'operating-system',
+    code: `# The operating system schedules every process
+$ ps -o pid,comm | head -3
+  PID COMM
+    1 init
+  482 chrome
+$ kill 482`,
+  },
 ];

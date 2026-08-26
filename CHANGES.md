@@ -49,3 +49,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-08-25 [code] ci: code-analogy-forge source changes now select its deployment target, same as shortcut-sprint.
 
 2026-08-25 [code] code-analogy-forge: corpus grown 14 -> 25 concepts (closures, pointers/references, exceptions, caching, threads/parallelism, Big-O, git, APIs, encryption, binary numbers, graphs): 132 new analogy texts, detector rules for each, examples menu now one per concept (25); 97 vitest tests, 99.9% stmt coverage.
+
+2026-08-26 [code] code-analogy-forge: corpus grown 25 -> 47 concepts (linked lists, sets, heaps, hashing, state machines, boolean logic, scope, abstraction, regex, floating point, compilers, databases, HTTP, DNS, packets, events, debugging, testing, refactoring, GC, randomness, operating systems): 264 new texts, detector rules and a pinned example per concept, menus grouped into ten optgroups; 125 vitest tests, 99.9% stmt coverage.
