@@ -1,13 +1,12 @@
 import { describe, expect, it } from 'vitest';
 import { EXAMPLES } from '../src/core/examples';
 import { detectConcepts } from '../src/core/detect';
-import { getConcept } from '../src/core/corpus/index';
+import { CONCEPTS, getConcept } from '../src/core/corpus/index';
 
 describe('bundled examples', () => {
-  it('ships exactly ten examples with unique ids and labels', () => {
-    expect(EXAMPLES).toHaveLength(10);
-    expect(new Set(EXAMPLES.map((e) => e.id)).size).toBe(10);
-    expect(new Set(EXAMPLES.map((e) => e.label)).size).toBe(10);
+  it('has unique ids and labels', () => {
+    expect(new Set(EXAMPLES.map((e) => e.id)).size).toBe(EXAMPLES.length);
+    expect(new Set(EXAMPLES.map((e) => e.label)).size).toBe(EXAMPLES.length);
   });
 
   it('references only concepts that exist in the corpus', () => {
@@ -25,7 +24,7 @@ describe('bundled examples', () => {
     },
   );
 
-  it('covers ten distinct concepts', () => {
-    expect(new Set(EXAMPLES.map((e) => e.highlights)).size).toBe(10);
+  it('covers every corpus concept exactly once, in corpus order', () => {
+    expect(EXAMPLES.map((e) => e.highlights)).toEqual(CONCEPTS.map((c) => c.id));
   });
 });

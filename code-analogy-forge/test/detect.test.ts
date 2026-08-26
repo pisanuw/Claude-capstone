@@ -131,6 +131,58 @@ describe('detectConcepts', () => {
     expect(ids).toContain('recursion');
   });
 
+  it('detects a closure from a returned inner function', () => {
+    const code = `function makeGreeter(name) {
+      return () => console.log('hi ' + name);
+    }`;
+    const ids = detectConcepts(code).map((d) => d.conceptId);
+    expect(ids).toContain('closure');
+  });
+
+  it('detects pointers from C-style declarations and dereferences', () => {
+    const results = detectConcepts('struct Node *head = NULL;\nhead->next = malloc(sizeof(struct Node));');
+    expect(results[0].conceptId).toBe('pointer-reference');
+  });
+
+  it('detects exception handling across languages', () => {
+    expect(detectConcepts('try:\n    risky()\nexcept ValueError:\n    pass')[0].conceptId).toBe('exception-handling');
+    expect(detectConcepts('try { risky(); } catch (e) { report(e); } finally { close(); }')[0].conceptId).toBe(
+      'exception-handling',
+    );
+  });
+
+  it('detects threads and locking', () => {
+    const results = detectConcepts('const m = new Mutex();\nawait m.lock();\n// threads must not race');
+    const ids = results.map((d) => d.conceptId);
+    expect(ids).toContain('threads-parallelism');
+  });
+
+  it('detects complexity talk', () => {
+    expect(detectConcepts('why is this O(n^2) and how do I make it O(n log n)?')[0].conceptId).toBe('big-o');
+  });
+
+  it('detects git workflows', () => {
+    expect(detectConcepts('git checkout -b fix; git commit -m "fix"; git rebase main')[0].conceptId).toBe(
+      'git-version-control',
+    );
+  });
+
+  it('detects graph traversal shapes', () => {
+    const code = `for (const neighbor of adjacencyList[node]) {
+      if (!visited.has(neighbor)) visited.add(neighbor);
+    }`;
+    const ids = detectConcepts(code).map((d) => d.conceptId);
+    expect(ids[0]).toBe('graph');
+  });
+
+  it('detects prose mentions of the newer concepts', () => {
+    expect(detectConcepts('what is a closure in javascript')[0].conceptId).toBe('closure');
+    expect(detectConcepts('explain public key encryption')[0].conceptId).toBe('encryption');
+    expect(detectConcepts('how do binary numbers work')[0].conceptId).toBe('binary');
+    expect(detectConcepts('what is an api endpoint')[0].conceptId).toBe('api');
+    expect(detectConcepts('explain caching to my manager')[0].conceptId).toBe('cache');
+  });
+
   it('scores every detection positively and sorts descending', () => {
     const results = detectConcepts(BINARY_SEARCH_JS);
     expect(results.length).toBeGreaterThan(0);

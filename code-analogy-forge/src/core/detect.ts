@@ -149,7 +149,7 @@ const RULES: ConceptRules[] = [
   },
   {
     conceptId: 'async',
-    keywords: ['async', 'asynchronous', 'await', 'promise', 'promises', 'callback', 'concurrency', 'non-blocking'],
+    keywords: ['async', 'asynchronous', 'await', 'promise', 'promises', 'callback', 'non-blocking'],
     patterns: [
       { re: /\basync\s+(?:function|def|\w+\s*\()|\basync\s*\(/, why: 'declares async work' },
       { re: /\bawait\b/, why: 'awaits a result' },
@@ -175,6 +175,113 @@ const RULES: ConceptRules[] = [
       { re: /\bextends\b|\bimplements\b|\bsuper\s*[(.]/, why: 'uses inheritance' },
       { re: /\bself\.\w+|\bthis\.\w+/, why: 'accesses instance state' },
       { re: /\bnew\s+[A-Z]\w*\s*\(|__init__/, why: 'constructs an object' },
+    ],
+  },
+  {
+    conceptId: 'closure',
+    keywords: ['closure', 'closures', 'captured variable', 'lexical scope'],
+    patterns: [
+      { re: /\breturn\s+function\b/, why: 'returns a function' },
+      { re: /\breturn\s+(?:\([^)\n]*\)|[\w$]+)\s*=>/, why: 'returns an arrow function' },
+      { re: /^([ \t]*)def\s+\w+[^\n]*:\n(?:\1[ \t]+[^\n]*\n)*?\1[ \t]+def\s+\w+/m, why: 'defines a nested function' },
+      { re: /\bnonlocal\b/, why: 'reaches into an enclosing scope' },
+    ],
+  },
+  {
+    conceptId: 'pointer-reference',
+    keywords: ['pointer', 'pointers', 'reference', 'references', 'dereference', 'alias', 'pass by reference'],
+    patterns: [
+      { re: /\b(?:int|char|float|double|void|struct\s+\w+|Node)\s*\*+\s*\w+/, why: 'declares a pointer' },
+      { re: /\w+\s*->\s*\w+/, why: 'dereferences with ->' },
+      { re: /=\s*&\w+/, why: 'takes an address with &' },
+      { re: /\bnullptr\b|\bNULL\b|\bmalloc\s*\(|\bfree\s*\(/, why: 'manages memory through pointers' },
+    ],
+  },
+  {
+    conceptId: 'exception-handling',
+    keywords: ['exception', 'exceptions', 'error handling', 'try catch', 'try/catch'],
+    patterns: [
+      { re: /\btry\s*[{:]/, why: 'has a try block' },
+      { re: /\bcatch\s*[({]|\bexcept\b/, why: 'catches a failure' },
+      { re: /\bfinally\b/, why: 'has cleanup that always runs' },
+      { re: /\bthrow\s+|\braise\s+/, why: 'throws or raises' },
+    ],
+  },
+  {
+    conceptId: 'cache',
+    keywords: ['cache', 'caching', 'cached', 'memoization', 'memoize', 'memoized'],
+    patterns: [
+      { re: /\b(?:memo|cache)\w*\s*[[.(=]/, why: 'keeps results in a cache structure' },
+      { re: /lru_cache|@cache\b/, why: 'uses a caching decorator' },
+      { re: /Cache-Control|max-age=/, why: 'sets HTTP cache headers' },
+    ],
+  },
+  {
+    conceptId: 'threads-parallelism',
+    keywords: [
+      'thread',
+      'threads',
+      'parallel',
+      'parallelism',
+      'concurrency',
+      'race condition',
+      'mutex',
+      'deadlock',
+      'thread-safe',
+    ],
+    patterns: [
+      { re: /\bThread\s*\(|threading\.|pthread_|\bgo\s+func\b/, why: 'starts a thread' },
+      { re: /\bsynchronized\b|\bmutex\w*\b|\.lock\s*\(\)|\bLock\s*\(\)/, why: 'locks shared state' },
+      { re: /multiprocessing\.|\bWorker\s*\(|new\s+Worker\b/, why: 'runs work on parallel workers' },
+      { re: /\.join\s*\(\s*\)/, why: 'waits for a thread to finish' },
+    ],
+  },
+  {
+    conceptId: 'big-o',
+    keywords: ['big o', 'big-o', 'time complexity', 'space complexity', 'quadratic time', 'linear time', 'asymptotic'],
+    patterns: [{ re: /\bO\s*\(\s*(?:1|n|log\s*n|n\s*(?:\^|\*\*)?\s*2|n\s*log\s*n|2\s*\^\s*n)\s*\)/i, why: 'names a complexity class' }],
+  },
+  {
+    conceptId: 'git-version-control',
+    keywords: ['git', 'version control', 'commit', 'commits', 'merge conflict', 'pull request', 'rebase'],
+    patterns: [
+      { re: /\bgit\s+(?:commit|merge|checkout|switch|branch|push|pull|rebase|log|diff|init|clone|status)\b/, why: 'runs git commands' },
+      { re: /^diff --git|^@@ .* @@|^[+-]{3}\s/m, why: 'looks like a diff' },
+    ],
+  },
+  {
+    conceptId: 'api',
+    keywords: ['api', 'apis', 'endpoint', 'endpoints', 'rest api', 'web service'],
+    patterns: [
+      { re: /fetch\s*\(\s*['"`][^'"`\n]*\/api\/|https?:\/\/[^\s'"`]*\/api\//, why: 'calls an /api/ URL' },
+      { re: /app\.(?:get|post|put|delete|patch)\s*\(|@app\.route|@(?:Get|Post|Put|Delete)Mapping/, why: 'defines a route handler' },
+      { re: /\bres\.(?:json|send|status)\s*\(|\breq\.(?:params|query|body)\b/, why: 'handles requests and responses' },
+    ],
+  },
+  {
+    conceptId: 'encryption',
+    keywords: ['encryption', 'encrypt', 'decrypt', 'cipher', 'public key', 'private key', 'cryptography'],
+    patterns: [
+      { re: /\bAES\b|\bRSA\b|\bSHA-?\d|\bHMAC\b/, why: 'names a crypto algorithm' },
+      { re: /crypto\.|Fernet\b|cipher\w*\s*[.([=]/i, why: 'uses a crypto library' },
+    ],
+  },
+  {
+    conceptId: 'binary',
+    keywords: ['binary number', 'binary numbers', 'binary representation', 'in binary', 'base 2', 'bitwise', 'bits'],
+    patterns: [
+      { re: /\b0b[01]+\b/, why: 'has a binary literal' },
+      { re: /(?:<<|>>>?)\s*\d|&\s*1\b|\^\s*\w|\|\s*\(?\s*1\s*<</, why: 'does bitwise arithmetic' },
+      { re: /\bbin\s*\(|toString\s*\(\s*2\s*\)/, why: 'converts to base 2' },
+    ],
+  },
+  {
+    conceptId: 'graph',
+    keywords: ['graph', 'graphs', 'vertex', 'vertices', 'adjacency', 'shortest path', 'bfs', 'dfs'],
+    patterns: [
+      { re: /adjacency[_ ]?(?:list|matrix)|\badj\b/i, why: 'keeps an adjacency structure' },
+      { re: /\bvisited\b/, why: 'tracks visited nodes' },
+      { re: /\bneighbors?\b/i, why: 'walks neighbors' },
     ],
   },
 ];

@@ -3,8 +3,8 @@ import { CONCEPTS, getAnalogy, getConcept } from '../src/core/corpus/index';
 import { AUDIENCES } from '../src/core/types';
 
 describe('corpus integrity', () => {
-  it('ships at least a dozen concepts', () => {
-    expect(CONCEPTS.length).toBeGreaterThanOrEqual(12);
+  it('ships at least two dozen concepts', () => {
+    expect(CONCEPTS.length).toBeGreaterThanOrEqual(24);
   });
 
   it('has globally unique concept and analogy ids', () => {

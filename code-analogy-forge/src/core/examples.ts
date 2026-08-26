@@ -1,7 +1,8 @@
 /**
- * Bundled example snippets for the "Try an example" menu. Each one is chosen
- * so the detector ranks its `highlights` concept first; a test enforces that,
- * so a detector change can never silently break the examples.
+ * Bundled example snippets for the "Try an example" menu, one per concept, in
+ * corpus order. Each one is chosen so the detector ranks its `highlights`
+ * concept first; a test enforces that, so a detector change can never
+ * silently break the examples.
  */
 export interface Example {
   id: string;
@@ -12,6 +13,37 @@ export interface Example {
 }
 
 export const EXAMPLES: Example[] = [
+  {
+    id: 'score-tracker',
+    label: 'Score tracker (JavaScript)',
+    highlights: 'variable',
+    code: `// Update the score variable as the game goes on
+let score = 0;
+score += 10;
+score += 25;
+let best = score;`,
+  },
+  {
+    id: 'tip-calculator',
+    label: 'Tip calculator (Python)',
+    highlights: 'function-return',
+    code: `# A function that returns the tip
+def tip(bill, percent=20):
+    return round(bill * percent / 100, 2)`,
+  },
+  {
+    id: 'shipping-rules',
+    label: 'Shipping rules (JavaScript)',
+    highlights: 'conditional',
+    code: `// if/else branching over the order total
+if (order.total >= 50) {
+  order.shipping = 0;
+} else if (order.isMember) {
+  order.shipping = 2;
+} else {
+  order.shipping = 5;
+}`,
+  },
   {
     id: 'grading-loop',
     label: 'Grading loop (JavaScript)',
@@ -26,6 +58,16 @@ for (let i = 0; i < grades.length; i++) {
     console.log(\`Student \${i} needs help\`);
   }
 }`,
+  },
+  {
+    id: 'temperature-readings',
+    label: 'Temperature readings (Python)',
+    highlights: 'array',
+    code: `# Array indexing: positions, not searching
+readings = [18.5, 19.2, 21.0, 22.4, 20.9]
+first = readings[0]
+latest = readings[len(readings) - 1]
+readings[2] = 21.5`,
   },
   {
     id: 'word-counter',
@@ -121,5 +163,131 @@ for i in range(len(nums)):
     public Dog(String name) { this.name = name; }
     public String speak() { return this.name + " says woof"; }
 }`,
+  },
+  {
+    id: 'counter-factory',
+    label: 'Counter factory (JavaScript)',
+    highlights: 'closure',
+    code: `// A closure keeps its captured variable alive
+function makeCounter() {
+  let count = 0;
+  return () => {
+    count += 1;
+    return count;
+  };
+}`,
+  },
+  {
+    id: 'linked-list-node',
+    label: 'Linked list node (C)',
+    highlights: 'pointer-reference',
+    code: `// Pointers: the node holds the address of the next node
+struct Node *head = malloc(sizeof(struct Node));
+head->value = 7;
+head->next = NULL;`,
+  },
+  {
+    id: 'safe-file-read',
+    label: 'Safe file read (Python)',
+    highlights: 'exception-handling',
+    code: `# Exception handling around a risky read
+try:
+    with open(path) as f:
+        data = f.read()
+except FileNotFoundError:
+    data = ""
+except PermissionError:
+    raise
+finally:
+    log("attempted read of " + path)`,
+  },
+  {
+    id: 'memoized-lookup',
+    label: 'Memoized lookup (Python)',
+    highlights: 'cache',
+    code: `# Cache results (memoization): compute once, reuse forever
+cache = {}
+def expensive(x):
+    if x not in cache:
+        cache[x] = slow_compute(x)
+    return cache[x]`,
+  },
+  {
+    id: 'worker-threads',
+    label: 'Worker threads (Python)',
+    highlights: 'threads-parallelism',
+    code: `# Threads run in parallel; a lock prevents a race condition
+workers = [threading.Thread(target=crunch, args=(chunk,)) for chunk in chunks]
+for w in workers:
+    w.start()
+for w in workers:
+    w.join()`,
+  },
+  {
+    id: 'counting-pairs',
+    label: 'Counting pairs (Python)',
+    highlights: 'big-o',
+    code: `# Big O: the nested scan makes this O(n^2) time complexity
+pairs = 0
+for i in range(len(items)):
+    for j in range(i + 1, len(items)):
+        if items[i] == items[j]:
+            pairs += 1`,
+  },
+  {
+    id: 'feature-branch',
+    label: 'Feature branch flow (shell)',
+    highlights: 'git-version-control',
+    code: `# Version control basics: branch, commit, merge
+git checkout -b add-login
+git commit -m "Add login form"
+git checkout main
+git merge add-login`,
+  },
+  {
+    id: 'orders-endpoint',
+    label: 'Orders endpoint (JavaScript)',
+    highlights: 'api',
+    code: `// A REST API endpoint
+app.get('/api/orders/:id', (req, res) => {
+  const order = orders[req.params.id];
+  res.json(order);
+});`,
+  },
+  {
+    id: 'lock-a-message',
+    label: 'Lock a message (Python)',
+    highlights: 'encryption',
+    code: `# Encrypt and decrypt with a cipher key
+cipher = Fernet(key)
+token = cipher.encrypt(b"meet at noon")
+plain = cipher.decrypt(token)`,
+  },
+  {
+    id: 'decimal-to-binary',
+    label: 'Decimal to binary (Python)',
+    highlights: 'binary',
+    code: `# Binary representation, one bit at a time
+n = 0b101101
+digits = []
+while n > 0:
+    digits.append(n & 1)
+    n = n >> 1
+assert digits[::-1] == [1, 0, 1, 1, 0, 1]`,
+  },
+  {
+    id: 'friend-network',
+    label: 'Friend network layers (Python)',
+    highlights: 'graph',
+    code: `# Graph traversal over an adjacency list
+friends = {"ana": ["ben", "col"], "ben": ["ana"], "col": ["ana", "dia"], "dia": ["col"]}
+visited = {"ana"}
+frontier = deque(["ana"])
+while frontier:
+    person = frontier.popleft()
+    for neighbor in friends[person]:
+        if neighbor not in visited:
+            visited.add(neighbor)
+            frontier.append(neighbor)`,
   },
 ];

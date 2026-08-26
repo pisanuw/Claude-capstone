@@ -3,9 +3,18 @@ import { basics } from './basics';
 import { dataStructures } from './dataStructures';
 import { algorithms } from './algorithms';
 import { paradigms } from './paradigms';
+import { systems } from './systems';
+import { practice } from './practice';
 
 /** Every concept in the forge, in browse order. */
-export const CONCEPTS: Concept[] = [...basics, ...dataStructures, ...algorithms, ...paradigms];
+export const CONCEPTS: Concept[] = [
+  ...basics,
+  ...dataStructures,
+  ...algorithms,
+  ...paradigms,
+  ...systems,
+  ...practice,
+];
 
 const conceptById = new Map(CONCEPTS.map((c) => [c.id, c]));
 
