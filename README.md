@@ -178,6 +178,25 @@ covers every concept, grouped into ten themed sections. Deployed on **Netlify**
 Live: [code-analogy-forge.netlify.app](https://code-analogy-forge.netlify.app).
 See its [README](./code-analogy-forge/README.md).
 
+### [`prompt-genome/`](./prompt-genome)
+
+**Prompt Genome** implements idea #1 ("Prompt Genome") from the ideas day of
+2026-08-23. Paste any AI prompt and see it as a DNA strand of typed,
+color-coded genes: role, persona, context, task, constraint, format, example.
+A rule-based classifier (explicit section labels plus sentence-level cue
+patterns, each gene showing why it got its label) replaces the idea's
+suggested Claude API parsing; three hand-written deterministic mutations per
+gene type replace "AI suggests three alternatives"; and a word-level LCS diff
+of the prompt itself replaces model-response diffing. A lint pass scores the
+genome 0-100 (missing task, vague wording, brevity-vs-depth conflicts,
+negative-only constraints, and more), genes can be edited, reclassified, and
+reordered, a localStorage library keeps reusable genes with tags and search,
+and share links carry the whole genome in the URL hash. Deployed on
+**Netlify** (static site, no backend).
+
+Live: [prompt-genome.netlify.app](https://prompt-genome.netlify.app).
+See its [README](./prompt-genome/README.md).
+
 ### [`game-palette-inspector/`](./game-palette-inspector)
 
 **Game Palette Inspector** implements idea #1 from the ideas day of 2026-06-19.
