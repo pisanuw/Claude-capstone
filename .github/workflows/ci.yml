@@ -428,3 +428,30 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Moved in from the standalone pisanuw/pathfinding-playground repo. Plain
+  # JavaScript with vitest but no lint/typecheck/coverage scripts, so this job
+  # runs everything the package actually supports.
+  pathfinding-playground:
+    name: pathfinding-playground
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pathfinding-playground
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: pathfinding-playground/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build

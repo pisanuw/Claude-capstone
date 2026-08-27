@@ -1,0 +1,30 @@
+# Deploy control file for Pathfinding Playground (Netlify, static site).
+#
+# Moved here from the standalone pisanuw/pathfinding-playground repo. The
+# Netlify site is the same one that repo published to, pinned by id below, so
+# the public URL https://pathfinding-playground-pisanuw.netlify.app is
+# unchanged. That site was already deployed by CLI (it had no git connection),
+# so nothing had to be disconnected.
+#
+# The deploy workflow auto-discovers this file via the `*/deploy/target.yml`
+# glob, so no workflow edit was needed to adopt this app.
+
+provider: netlify
+projectName: pathfinding-playground
+directory: pathfinding-playground
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed: the search algorithms, the
+# narrator, and share-link encoding are all deterministic client-side code.
+# (Touch this file to retrigger a deploy: the workflow deploys changed target.ymls.)
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  # The bare name pathfinding-playground was taken on Netlify, hence the suffix.
+  siteName: pathfinding-playground-pisanuw
+  # Pinned to the pre-existing site so the public URL survives the move.
+  siteId: '656c1f2c-1b56-4b0c-bd5d-b90344042d66'
+  accountSlug: yusuf-pisan

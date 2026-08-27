@@ -200,3 +200,28 @@ JavaScript with `node --test`, not TypeScript with vitest, so it has no `lint`,
 only. 11 tests, no backend, no runtime dependencies beyond React.
 Live: [game-palette-inspector.netlify.app](https://game-palette-inspector.netlify.app).
 See its [README](./game-palette-inspector/README.md).
+
+### [`pathfinding-playground/`](./pathfinding-playground)
+
+**Pathfinding Playground** implements idea #1 from the ideas day of 2026-07-26.
+Draw a grid map, drop in walls and mud (mud costs 5 to enter), then watch A*,
+Dijkstra, BFS, DFS, and greedy best-first think one expansion at a time, each
+step narrated from the live algorithm state: which cell got picked, why, and what
+its g, h, and f values were. The idea suggested Claude API calls for narration;
+every line is instead a template filled with the numbers the algorithm just
+computed, so it is free, offline, and cannot drift from what the search did. Each
+algorithm is a generator emitting one uniform event trace that the canvas
+renderer and the narrator both consume. Compare mode runs two algorithms side by
+side, and the whole puzzle (map, start, goal, picks) run-length encodes into the
+URL hash, so a class exercise is shareable as a plain link.
+
+Moved here on 2026-08-27 from the standalone `pisanuw/pathfinding-playground`
+repo, with its history. The Netlify site id is pinned in its `deploy/target.yml`,
+so the public URL did not change.
+
+Like `game-palette-inspector`, this app predates the TypeScript house style: it
+is plain JavaScript, and while it does use vitest it has no `lint`, `typecheck`,
+or `coverage` script, so its CI job runs install, test, and build only. 20 tests
+covering optimality, path validity, maze solvability, and trace determinism.
+Live: [pathfinding-playground-pisanuw.netlify.app](https://pathfinding-playground-pisanuw.netlify.app).
+See its [README](./pathfinding-playground/README.md).

@@ -38,6 +38,8 @@ React + Vite, no backend, no other runtime dependencies. Each algorithm is a gen
 
 Maze generation is recursive division with a guard so a new wall never seals the gap of an earlier one, plus a random chance to leave small chambers as open rooms. Twenty seeded mazes are tested for solvability.
 
+Run these from this directory (`pathfinding-playground/`), not the repo root.
+
 ```
 npm install
 npm run dev       # local dev server
@@ -45,6 +47,16 @@ npm test          # 20 vitest cases: optimality, path validity, share round trip
 npm run build     # static bundle in dist/
 ```
 
+## Deployment
+
+This app was moved into the `Claude-capstone` monorepo on 2026-08-27 from the
+standalone `pisanuw/pathfinding-playground` repo, and now deploys the same way
+as every other package here: the repo-level `Deploy` workflow discovers
+[`deploy/target.yml`](./deploy/target.yml) and pushes a build to Netlify with
+the CLI. The Netlify site id is pinned in that file and is the same site the old
+repo published to, so <https://pathfinding-playground-pisanuw.netlify.app> is
+unchanged.
+
 ## License
 
-MIT.
+MIT, via the [repo-root LICENSE](../LICENSE).

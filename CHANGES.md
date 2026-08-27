@@ -54,3 +54,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-08-27 [scope] game-palette-inspector: moved in from standalone pisanuw/c1 via git subtree (history preserved). Netlify siteId pinned to the existing site, so the public URL is unchanged.
 2026-08-27 [code] ci: added game-palette-inspector job (install/test/build only; app is plain JS with node --test, so no lint/typecheck/coverage scripts exist).
+2026-08-27 [scope] pathfinding-playground: moved in from standalone pisanuw/pathfinding-playground via git subtree (history preserved). Netlify siteId pinned to the existing site, so the public URL is unchanged.
+2026-08-27 [code] ci: added pathfinding-playground job (install/test/build only; plain JS with vitest, no lint/typecheck/coverage scripts).
