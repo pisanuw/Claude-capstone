@@ -1,0 +1,30 @@
+# Deploy control file for Game Palette Inspector (Netlify, static site).
+#
+# Moved here from the standalone pisanuw/c1 repo. The Netlify site is the same
+# one that repo published to, pinned by id below, so the public URL
+# https://game-palette-inspector.netlify.app is unchanged. The site's old
+# git-based build (Netlify building directly from pisanuw/c1) has been
+# disconnected; deploys now go through this repo's Deploy workflow like every
+# other package here.
+#
+# The deploy workflow auto-discovers this file via the `*/deploy/target.yml`
+# glob, so no workflow edit was needed to adopt this app.
+
+provider: netlify
+projectName: game-palette-inspector
+directory: game-palette-inspector
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed: all colour maths, the CVD
+# simulation, and the fix search run client-side with no backend.
+# (Touch this file to retrigger a deploy: the workflow deploys changed target.ymls.)
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: game-palette-inspector
+  # Pinned to the pre-existing site so the public URL survives the move.
+  siteId: 'd451799b-4c1c-48a0-b00b-ba3fe403487e'
+  accountSlug: yusuf-pisan

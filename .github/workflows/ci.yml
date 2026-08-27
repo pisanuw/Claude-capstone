@@ -400,3 +400,31 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  # Moved in from the standalone pisanuw/c1 repo. This app predates the
+  # TypeScript + vitest house style and is plain JavaScript with `node --test`,
+  # so it has no lint/typecheck/coverage scripts. Running install/test/build is
+  # everything the package actually supports; converting it is a separate job.
+  game-palette-inspector:
+    name: game-palette-inspector
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: game-palette-inspector
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: game-palette-inspector/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build

@@ -4,7 +4,7 @@ Check a game palette against WCAG contrast and 8 types of color vision deficienc
 
 Everything runs in the browser. No accounts, no uploads, no API keys, no tracking.
 
-**Live**: [game-palette-inspector.netlify.app](https://game-palette-inspector.netlify.app) · [pisanuw.github.io/c1](https://pisanuw.github.io/c1/)
+**Live**: [game-palette-inspector.netlify.app](https://game-palette-inspector.netlify.app)
 
 Idea source: [Daily Project Ideas](https://daily-project-ideas.netlify.app/), 2026-06-19, Weekend tier.
 
@@ -19,6 +19,8 @@ Idea source: [Daily Project Ideas](https://daily-project-ideas.netlify.app/), 20
 
 ## Quick start
 
+Run these from this directory (`game-palette-inspector/`), not the repo root.
+
 ```bash
 npm install
 npm run dev       # local dev server
@@ -28,8 +30,18 @@ npm run build     # production build in dist/
 
 ## Deployment
 
-- **Netlify**: repo includes `netlify.toml`; connect the repo and deploy.
-- **GitHub Pages**: repo includes `.github/workflows/deploy.yml`. Enable Pages with "GitHub Actions" as the source; every push to `main` tests, builds, and deploys. The Vite `base: './'` setting makes the build work at any subpath.
+This app was moved into the `Claude-capstone` monorepo on 2026-08-27 from the
+standalone `pisanuw/c1` repo, and now deploys the same way as every other package
+here: the repo-level `Deploy` workflow discovers [`deploy/target.yml`](./deploy/target.yml)
+and pushes a build to Netlify with the CLI. The Netlify site id is pinned in that
+file and is the same site the old repo published to, so
+<https://game-palette-inspector.netlify.app> is unchanged.
+
+The old repo's two deploy paths are gone: Netlify no longer builds from
+`pisanuw/c1` (that git connection was removed to stop it fighting with this
+workflow), and the GitHub Pages mirror at `pisanuw.github.io/c1` now redirects
+here rather than serving its own copy. Vite's `base: './'` is still set, so the
+build works at any subpath.
 
 ## Methodology
 

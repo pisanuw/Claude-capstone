@@ -177,3 +177,26 @@ covers every concept, grouped into ten themed sections. Deployed on **Netlify**
 
 Live: [code-analogy-forge.netlify.app](https://code-analogy-forge.netlify.app).
 See its [README](./code-analogy-forge/README.md).
+
+### [`game-palette-inspector/`](./game-palette-inspector)
+
+**Game Palette Inspector** implements idea #1 from the ideas day of 2026-06-19.
+Check a game palette against WCAG contrast and eight kinds of colour vision
+deficiency, then get replacement colours that keep the art style: build a palette
+by hand, load a preset, or drop a screenshot and have its eight dominant colours
+extracted. The confusion report measures pairs perceptually in OKLab and names the
+worst-case vision type; the fix studio repairs a failing colour by binary-searching
+OKLCH lightness with hue pinned, and says so honestly when a contrast target is
+unreachable. Simulation is Machado, Oliveira and Fernandes (2009) applied in linear
+sRGB, verified against the colour-science reference data.
+
+Moved here on 2026-08-27 from the standalone `pisanuw/c1` repo, with its history,
+so every capstone project now lives in one place. The Netlify site id is pinned in
+its `deploy/target.yml`, so the public URL did not change.
+
+The one deviation from the house layout: this app predates it and is plain
+JavaScript with `node --test`, not TypeScript with vitest, so it has no `lint`,
+`typecheck`, or `coverage` script and its CI job runs install, test, and build
+only. 11 tests, no backend, no runtime dependencies beyond React.
+Live: [game-palette-inspector.netlify.app](https://game-palette-inspector.netlify.app).
+See its [README](./game-palette-inspector/README.md).
