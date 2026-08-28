@@ -1,0 +1,22 @@
+# Deploy control file for Type Witness (Netlify, static site).
+#
+# No backend and no environment variables: the TypeScript compiler runs in a
+# Web Worker in the visitor's browser, so analysis, narration, share links,
+# and the last-session snippet (localStorage) are all client-side. The deploy
+# workflow auto-discovers this file via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: type-witness
+directory: type-witness
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+# (Touch this file to retrigger a deploy: the workflow deploys changed target.ymls.)
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: type-witness
+  accountSlug: yusuf-pisan

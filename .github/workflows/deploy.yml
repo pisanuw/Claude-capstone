@@ -70,6 +70,10 @@ jobs:
                 && ! printf '%s\n' "$changed" | grep -qx 'code-analogy-forge/deploy/target.yml'; then
                 selected="$selected"code-analogy-forge/deploy/target.yml$'\n'
               fi
+              if printf '%s\n' "$changed" | grep -q '^type-witness/' \
+                && ! printf '%s\n' "$changed" | grep -qx 'type-witness/deploy/target.yml'; then
+                selected="$selected"type-witness/deploy/target.yml$'\n'
+              fi
             fi
           fi
 

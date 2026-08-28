@@ -197,6 +197,25 @@ and share links carry the whole genome in the URL hash. Deployed on
 Live: [prompt-genome.netlify.app](https://prompt-genome.netlify.app).
 See its [README](./prompt-genome/README.md).
 
+### [`type-witness/`](./type-witness)
+
+**Type Witness** implements idea #1 ("Type Witness") from the ideas day of
+2026-08-02. Paste a TypeScript snippet and watch type inference unfold as an
+ordered, narrated story: literal types and let/const widening, generic calls
+showing the declared signature, the inferred binding (`T = string`), and the
+resolved signature, unannotated callback parameters typed from context,
+control-flow narrowing with declared-vs-here detail, inferred return types,
+and compiler errors threaded in right after the step where inference went
+astray. The real TypeScript compiler (pinned 5.6.3) runs in a Web Worker
+against an in-memory file system with the full ES2022 lib closure bundled as
+raw text, so analysis is exact, offline, and nothing leaves the browser. Hover
+any expression for its type, click to jump to its step, autoplay the story, or
+share a snippet via a URL-hash link. Deployed on **Netlify** (static site, no
+backend).
+
+Live: [type-witness.netlify.app](https://type-witness.netlify.app).
+See its [README](./type-witness/README.md).
+
 ### [`game-palette-inspector/`](./game-palette-inspector)
 
 **Game Palette Inspector** implements idea #1 from the ideas day of 2026-06-19.
