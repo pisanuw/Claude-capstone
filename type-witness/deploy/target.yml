@@ -19,4 +19,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: type-witness
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: 'f91ce98d-83b2-41d0-bcc6-4bfc0da42aa1'
   accountSlug: yusuf-pisan
