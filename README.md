@@ -216,6 +216,26 @@ backend).
 Live: [type-witness.netlify.app](https://type-witness.netlify.app).
 See its [README](./type-witness/README.md).
 
+### [`cron-cartographer/`](./cron-cartographer)
+
+**Cron Cartographer** implements idea #1 ("Cron Cartographer") from the ideas
+day of 2026-09-02. Paste a cron expression, an RRULE, a GitHub Actions
+`on.schedule` snippet, or plain English like "every weekday at 4:15am", and
+see every firing over the next 30, 90, or 365 days on a calendar heatmap,
+with exact fire times on hover, a plain-English description of the schedule,
+and a next-25-firings table. Separate "runs in" and "view in" time-zone
+pickers convert exactly: offset transitions are resolved to the minute from
+the browser's IANA database, spring-forward gaps are reported as skipped
+(like system cron), and ambiguous fall-back times fire once. A deterministic
+rule-based English parser replaces the idea's suggested Claude API call, and
+a hand-written cron/RRULE engine replaces the suggested npm packages, so the
+app has zero runtime dependencies and works offline. Share links carry the
+whole state in query params. Deployed on **Netlify** (static site, no
+backend).
+
+Live: [cron-cartographer.netlify.app](https://cron-cartographer.netlify.app).
+See its [README](./cron-cartographer/README.md).
+
 ### [`game-palette-inspector/`](./game-palette-inspector)
 
 **Game Palette Inspector** implements idea #1 from the ideas day of 2026-06-19.
