@@ -62,3 +62,8 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-09-02 [code] cron-cartographer: new package (idea 2026-09-02 n1). Cron/RRULE/GitHub-Actions/plain-English schedule visualizer: calendar heatmap of every firing over 30/90/365 days, dual time-zone pickers backed by exact Intl offset-transition tables (DST gaps reported as skipped, fall-back ambiguity fires once at the earlier instant), plain-English descriptions, next-25 table, query-param share links. 74 vitest tests, 92% stmt coverage.
 2026-09-02 [decision] cron-cartographer: replaced the idea's Claude API NL-to-cron with a deterministic rule set that annotates every assumption and returns null honestly, and replaced cronstrue/cron-parser with a hand-written engine; zero runtime dependencies.
+
+2026-09-03 [code] summit-navigator: new package (idea 2026-09-03 n1). Mobile-first conference schedule browser for the ACM AI Leadership Summit: sticky day tabs, track chips, full-text search, localStorage starred agenda, timezone-aware now/next banner, single validated schedule.json. 42 vitest tests, >=85% thresholds.
+2026-09-03 [code] ci: added emoji-lingua job (typecheck/coverage/build; package has no lint script).
+2026-09-03 [doc] CLAUDE.md: added summit-navigator to the commit scope list.
+2026-09-03 [scope] Removed DoProject.md (auto-pick-an-idea prompt); superseded by the weekly build routine, which receives the idea from Yusuf and records it in daily-project-ideas.
