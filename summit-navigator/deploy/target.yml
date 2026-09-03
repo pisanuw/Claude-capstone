@@ -1,0 +1,22 @@
+# Deploy control file for Summit Navigator (Netlify, static site).
+#
+# No backend and no environment variables: schedule validation, filtering,
+# time-zone math, and the starred agenda are all deterministic client-side
+# logic over a bundled schedule.json. The deploy workflow auto-discovers
+# this file via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: summit-navigator
+directory: summit-navigator
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+# (Touch this file to retrigger a deploy: the workflow deploys changed target.ymls.)
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: summit-navigator
+  accountSlug: yusuf-pisan

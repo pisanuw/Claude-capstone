@@ -1,0 +1,30 @@
+{
+  "name": "summit-navigator",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Mobile-first conference schedule browser for the inaugural ACM AI Leadership Summit (Atlanta, Aug 30 - Sep 2, 2026): sticky day tabs, track filters, full-text search, a starred personal agenda, and a timezone-aware now/next view. Fully client-side: the schedule lives in one documented JSON file, so any conference can be dropped in.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@vitest/coverage-v8": "^2.1.8",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.69.0",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
+  }
+}

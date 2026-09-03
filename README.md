@@ -236,6 +236,25 @@ backend).
 Live: [cron-cartographer.netlify.app](https://cron-cartographer.netlify.app).
 See its [README](./cron-cartographer/README.md).
 
+### [`summit-navigator/`](./summit-navigator)
+
+**Summit Navigator** implements idea #1 ("Summit Navigator") from the ideas day
+of 2026-09-03: a mobile-first schedule browser for the inaugural ACM AI
+Leadership Summit (Hyatt Regency Atlanta, Aug 30 – Sep 2, 2026). Sticky day
+tabs, sessions grouped by start time, eleven color-coded track chips,
+every-term full-text search across titles/speakers/rooms/descriptions, a
+starred "My agenda" persisted in localStorage, and a now/next banner plus a
+one-tap toggle between Atlanta wall time and the viewer's own time zone
+(exact IANA math, DST-safe). The entire conference lives in one validated
+`schedule.json`, so the app doubles as a drop-in template for any conference.
+The build environment could not reach the official program page, so the
+bundled data is an unofficial snapshot reconstructed from ACM's public
+announcements, and the app's footer says so. Deployed on **Netlify** (static
+site, no backend).
+
+Live: [summit-navigator.netlify.app](https://summit-navigator.netlify.app).
+See its [README](./summit-navigator/README.md).
+
 ### [`game-palette-inspector/`](./game-palette-inspector)
 
 **Game Palette Inspector** implements idea #1 from the ideas day of 2026-06-19.
