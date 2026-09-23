@@ -1,0 +1,20 @@
+# Deploy control file for Prompt Shrink Ray (Netlify, static site).
+#
+# No backend and no environment variables: decomposition, compression, token
+# estimation, and the retention check are all deterministic client-side
+# logic. The deploy workflow auto-discovers this file via the
+# `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: prompt-shrink-ray
+directory: prompt-shrink-ray
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: prompt-shrink-ray

@@ -67,3 +67,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-09-03 [code] ci: added emoji-lingua job (typecheck/coverage/build; package has no lint script).
 2026-09-03 [doc] CLAUDE.md: added summit-navigator to the commit scope list.
 2026-09-03 [scope] Removed DoProject.md (auto-pick-an-idea prompt); superseded by the weekly build routine, which receives the idea from Yusuf and records it in daily-project-ideas.
+
+2026-09-23 [code] prompt-shrink-ray: new package (idea 2026-09-15 n1). Client-side LLM-prompt compressor: label/heuristic section decomposition, three-level rewrite pipeline (whitespace/filler, verbose-phrase simplification + cross-section duplicate-sentence removal, hedge removal + few-shot trimming), token/cost estimate, word-level LCS diff, and a keyword-retention check (numbers, quotes, inline/fenced code, proper nouns) that names anything dropped. 76 vitest tests, 100% stmt coverage.
+2026-09-23 [decision] prompt-shrink-ray: replaced the idea's suggested Claude Haiku compression call and Claude Sonnet equivalence check with a deterministic rule set and a term-retention heuristic; fenced code is hidden behind a placeholder before any rule runs so it is never rewritten.
+2026-09-23 [doc] CLAUDE.md: added prompt-shrink-ray to the commit scope list.

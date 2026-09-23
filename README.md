@@ -302,3 +302,19 @@ or `coverage` script, so its CI job runs install, test, and build only. 20 tests
 covering optimality, path validity, maze solvability, and trace determinism.
 Live: [pathfinding-playground-pisanuw.netlify.app](https://pathfinding-playground-pisanuw.netlify.app).
 See its [README](./pathfinding-playground/README.md).
+
+### [`prompt-shrink-ray/`](./prompt-shrink-ray)
+
+Paste an LLM prompt and get it compressed with a live token/cost estimate: a
+word-level diff of exactly what changed, and a retention check flagging any
+number, quoted string, inline/fenced code, or probable proper noun the
+compression dropped. Three levels (light/medium/aggressive) run filler-word
+removal, verbose-phrase simplification, cross-section duplicate-instruction
+removal, and few-shot example trimming; fenced code blocks are never touched.
+A deterministic rule set replaces the idea's suggested Claude Haiku
+compression call and Claude Sonnet equivalence check, so results are instant,
+offline, and reproducible. Deployed on **Netlify** (static site, no backend).
+
+76 vitest tests, 100% statement coverage.
+Live: [prompt-shrink-ray.netlify.app](https://prompt-shrink-ray.netlify.app).
+See its [README](./prompt-shrink-ray/README.md).
