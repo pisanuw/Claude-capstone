@@ -19,4 +19,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: agent-blast-radius
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '4fc2b29f-9025-4b66-b937-e6a525aa0750'
   accountSlug: yusuf-pisan
