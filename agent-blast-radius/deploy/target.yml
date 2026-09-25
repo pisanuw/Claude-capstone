@@ -3,7 +3,8 @@
 # No backend and no environment variables: config parsing, capability
 # scoring, and report generation all run in the browser, and the files a user
 # drops in never leave the page. The deploy workflow auto-discovers this file
-# via the `*/deploy/target.yml` glob.
+# via the `*/deploy/target.yml` glob. package-lock.json is force-added (the
+# root .gitignore excludes lockfiles) because `npm ci` below needs it.
 
 provider: netlify
 projectName: agent-blast-radius
