@@ -318,3 +318,20 @@ offline, and reproducible. Deployed on **Netlify** (static site, no backend).
 76 vitest tests, 100% statement coverage.
 Live: [prompt-shrink-ray.netlify.app](https://prompt-shrink-ray.netlify.app).
 See its [README](./prompt-shrink-ray/README.md).
+
+### [`agent-blast-radius/`](./agent-blast-radius)
+
+Drop in MCP configs (Claude Desktop, Cursor, VS Code, Claude Code), Claude Code
+settings, and browser or VS Code extension manifests to see what each AI tool
+can reach: filesystem, shell/code execution, network egress, credentials, and
+browser data, scored 0-100 with a plain-English explanation and the exact
+config evidence per capability. It also flags plaintext secrets, unpinned
+`npx`/`uvx` packages, auto-approved tools, `bypassPermissions`, Docker socket
+mounts, and all-sites extension access. Files are parsed in the tab and never
+uploaded; a self-contained HTML report can be downloaded. The idea's suggested
+local CLI became a static web app (no install, but you pick the files).
+Deployed on **Netlify** (static site, no backend).
+
+95 vitest tests, >99% statement coverage.
+Live: [agent-blast-radius.netlify.app](https://agent-blast-radius.netlify.app).
+See its [README](./agent-blast-radius/README.md).

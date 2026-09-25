@@ -1,0 +1,21 @@
+# Deploy control file for Agent Blast Radius (Netlify, static site).
+#
+# No backend and no environment variables: config parsing, capability
+# scoring, and report generation all run in the browser, and the files a user
+# drops in never leave the page. The deploy workflow auto-discovers this file
+# via the `*/deploy/target.yml` glob.
+
+provider: netlify
+projectName: agent-blast-radius
+directory: agent-blast-radius
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: agent-blast-radius
+  accountSlug: yusuf-pisan
