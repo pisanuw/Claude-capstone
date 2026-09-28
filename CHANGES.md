@@ -75,3 +75,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-09-25 [code] agent-blast-radius: new package (idea 2026-09-23 n1). Client-side scanner for MCP configs (Claude Desktop/Cursor/VS Code/Claude Code), Claude Code permission settings, and browser/VS Code extension manifests; scores filesystem/shell/network/credentials/browser reach with evidence, flags plaintext secrets and risky config. 95 vitest tests, >99% stmt coverage.
 2026-09-25 [decision] agent-blast-radius: shipped as a static drop-in-files web app instead of the idea's local CLI, so it deploys to Netlify with zero install; unrecognized local MCP servers are scored as full-privilege code rather than as safe.
 2026-09-25 [doc] CLAUDE.md: added agent-blast-radius to the commit scope list; ci: added agent-blast-radius job.
+
+2026-09-28 [code] repo-weight-map: new package (idea 2026-09-28 n1). Browser-only folder walker (File System Access API, webkitdirectory, drag-and-drop), hand-written squarified treemap with zoom, 19 ecosystem-aware junk rules, .gitignore diff, HTML report. 40 vitest tests, 100% stmt coverage on core.
+2026-09-28 [decision] repo-weight-map: git history mode (large blobs only in history, filter-repo command) left out; needs a packfile/delta reader and did not fit Weekend size. .git is counted in the treemap but never opened.
+2026-09-28 [doc] CLAUDE.md: added repo-weight-map to the commit scope list; ci: added repo-weight-map job.

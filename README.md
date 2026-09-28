@@ -335,3 +335,20 @@ Deployed on **Netlify** (static site, no backend).
 95 vitest tests, >99% statement coverage.
 Live: [agent-blast-radius.netlify.app](https://agent-blast-radius.netlify.app).
 See its [README](./agent-blast-radius/README.md).
+
+### [`repo-weight-map/`](./repo-weight-map)
+
+Drop a project folder into the browser and see a zoomable squarified treemap
+of where the bytes are, colored by category (source, dependencies, generated
+output, data, media, `.git` internals), plus a nineteen-rule junk detector for
+committed virtualenvs, `node_modules`, build output, caches, secrets, and
+files over 10 MB, each with an explanation and the `.gitignore` lines to fix
+it. Untick findings to refine a before/after estimate, copy the lines or a
+unified diff against the existing `.gitignore`, or download a standalone HTML
+report. The folder is walked for names and sizes only and nothing is
+uploaded; the treemap layout is hand-written (no d3). The idea's git history
+mode was left out. Deployed on **Netlify** (static site, no backend).
+
+40 vitest tests, 100% statement coverage on the core.
+Live: [repo-weight-map.netlify.app](https://repo-weight-map.netlify.app).
+See its [README](./repo-weight-map/README.md).
