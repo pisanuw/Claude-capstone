@@ -1,0 +1,22 @@
+# Deploy control file for Cipher Ladder (Netlify, static site).
+#
+# No backend and no environment variables: the ciphers, the analysis tools,
+# the solvers and the progress records all run in the browser. The deploy
+# workflow auto-discovers this file via the `*/deploy/target.yml` glob.
+# package-lock.json is force-added (the root .gitignore excludes lockfiles)
+# because `npm ci` below needs it.
+
+provider: netlify
+projectName: cipher-ladder
+directory: cipher-ladder
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: cipher-ladder
+  accountSlug: yusuf-pisan
