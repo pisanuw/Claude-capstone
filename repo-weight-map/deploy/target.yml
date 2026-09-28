@@ -1,0 +1,23 @@
+# Deploy control file for Repo Weight Map (Netlify, static site).
+#
+# No backend and no environment variables: the folder walk, category
+# classification, treemap layout, and junk detection all run in the browser,
+# and nothing from the chosen folder ever leaves the page. The deploy workflow
+# auto-discovers this file via the `*/deploy/target.yml` glob. package-lock.json
+# is force-added (the root .gitignore excludes lockfiles) because `npm ci`
+# below needs it.
+
+provider: netlify
+projectName: repo-weight-map
+directory: repo-weight-map
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: repo-weight-map
+  accountSlug: yusuf-pisan
