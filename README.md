@@ -352,3 +352,21 @@ mode was left out. Deployed on **Netlify** (static site, no backend).
 40 vitest tests, 100% statement coverage on the core.
 Live: [repo-weight-map.netlify.app](https://repo-weight-map.netlify.app).
 See its [README](./repo-weight-map/README.md).
+
+### [`cipher-ladder/`](./cipher-ladder)
+
+A classical cryptanalysis ladder: Caesar, affine, Vigenere, columnar
+transposition, monoalphabetic substitution and homophonic substitution, each
+rung unlocking after a correct solve. The workbench has letter, bigram and
+trigram frequencies against English, index of coincidence per period with
+per-column charts, a Kasiski table, and keyboard-only substitution and symbol
+boards that decrypt live; hints come from an instructor-set budget. After a
+solve, a deterministic solver's step-by-step attack on the same ciphertext is
+shown beside the student's path, including where it went wrong, in place of
+the idea's LLM debrief. Instructors build a ladder into a share link and read
+exported progress files in a dashboard (no Supabase, no accounts). Deployed on
+**Netlify** (static site, no backend).
+
+65 vitest tests, 100% statement coverage on the core.
+Live: [cipher-ladder.netlify.app](https://cipher-ladder.netlify.app).
+See its [README](./cipher-ladder/README.md).

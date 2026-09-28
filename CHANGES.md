@@ -79,3 +79,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-09-28 [code] repo-weight-map: new package (idea 2026-09-28 n1). Browser-only folder walker (File System Access API, webkitdirectory, drag-and-drop), hand-written squarified treemap with zoom, 19 ecosystem-aware junk rules, .gitignore diff, HTML report. 40 vitest tests, 100% stmt coverage on core.
 2026-09-28 [decision] repo-weight-map: git history mode (large blobs only in history, filter-repo command) left out; needs a packfile/delta reader and did not fit Weekend size. .git is counted in the treemap but never opened.
 2026-09-28 [doc] CLAUDE.md: added repo-weight-map to the commit scope list; ci: added repo-weight-map job.
+
+2026-09-28 [code] cipher-ladder: new package (idea 2026-09-25 n2). Six-rung classical cryptanalysis ladder with frequency/IC/Kasiski workbench, hint budgets, ladder builder encoded in the URL, localStorage progress with JSON export and an instructor dashboard. 65 vitest tests, 100% stmt coverage on core.
+2026-09-28 [decision] cipher-ladder: the idea's LLM debrief is a deterministic solver per cipher (chi-squared, IC/Kasiski, permutation search, trigram hill-climb, annealing) with a written step log; Supabase auth/rosters replaced by localStorage plus exported JSON.
+2026-09-28 [doc] CLAUDE.md: added cipher-ladder to the commit scope list; ci: added cipher-ladder job.
