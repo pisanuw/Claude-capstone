@@ -83,3 +83,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-09-28 [code] cipher-ladder: new package (idea 2026-09-25 n2). Six-rung classical cryptanalysis ladder with frequency/IC/Kasiski workbench, hint budgets, ladder builder encoded in the URL, localStorage progress with JSON export and an instructor dashboard. 65 vitest tests, 100% stmt coverage on core.
 2026-09-28 [decision] cipher-ladder: the idea's LLM debrief is a deterministic solver per cipher (chi-squared, IC/Kasiski, permutation search, trigram hill-climb, annealing) with a written step log; Supabase auth/rosters replaced by localStorage plus exported JSON.
 2026-09-28 [doc] CLAUDE.md: added cipher-ladder to the commit scope list; ci: added cipher-ladder job.
+
+2026-09-30 [code] where-does-it-say: new package (idea 2026-09-30 n1). Quote-or-refuse course Q&A: verified verbatim spans highlighted in a side-by-side viewer, quote checker with word diff, gap log/report. 91 vitest tests, 99.7% stmt coverage.
+2026-09-30 [decision] where-does-it-say: the idea's Claude Haiku proposer is a deterministic BM25 sentence retriever (no API key or server); packs travel deflated in the URL fragment; logs are exported JSON, not a backend.
+2026-09-30 [doc] CLAUDE.md: added where-does-it-say to the commit scope list; ci: added where-does-it-say job (Node 22, pdfjs-dist 6 needs it).

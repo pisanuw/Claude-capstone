@@ -370,3 +370,21 @@ exported progress files in a dashboard (no Supabase, no accounts). Deployed on
 65 vitest tests, 100% statement coverage on the core.
 Live: [cipher-ladder.netlify.app](https://cipher-ladder.netlify.app).
 See its [README](./cipher-ladder/README.md).
+
+### [`where-does-it-say/`](./where-does-it-say)
+
+A course Q&A box that can only answer by pointing at the exact sentence: the
+instructor drops in the syllabus, specs and policies (PDF, Markdown or text),
+and every answer is a passage from them, verified word for word (after
+whitespace and typography folding) and highlighted in a side-by-side viewer.
+If no passage qualifies it says "Not stated in the course documents" and logs
+the question; exported logs become an instructor gap report grouped by week
+and wording. A "Check a quote" mode verifies quotes pasted from anywhere and
+diffs altered ones against the closest passage. A deterministic BM25 proposer
+with numbered-item matching ("lab 3" against "labs 1 to 4") replaces the
+idea's Claude Haiku function; course packs travel compressed in the share
+link. Deployed on **Netlify** (static site, no backend).
+
+91 vitest tests, 99.7% statement coverage on the core.
+Live: [where-does-it-say.netlify.app](https://where-does-it-say.netlify.app).
+See its [README](./where-does-it-say/README.md).

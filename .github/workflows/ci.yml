@@ -724,3 +724,34 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  where-does-it-say:
+    name: where-does-it-say
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: where-does-it-say
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # pdfjs-dist 6 declares node >= 22.13.
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: where-does-it-say/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test with coverage
+        run: npm run coverage
+
+      - name: Build
+        run: npm run build
