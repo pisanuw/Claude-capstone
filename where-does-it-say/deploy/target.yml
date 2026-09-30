@@ -1,0 +1,23 @@
+# Deploy control file for Where Does It Say (Netlify, static site).
+#
+# No backend and no environment variables: parsing, retrieval, quote
+# verification, PDF text extraction and the question log all run in the
+# browser. Course packs travel inside the share link. The deploy workflow
+# auto-discovers this file via the `*/deploy/target.yml` glob.
+# package-lock.json is force-added (the root .gitignore excludes lockfiles)
+# because `npm ci` below needs it.
+
+provider: netlify
+projectName: where-does-it-say
+directory: where-does-it-say
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: where-does-it-say
+  accountSlug: yusuf-pisan
