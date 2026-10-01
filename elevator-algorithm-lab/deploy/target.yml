@@ -19,4 +19,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: elevator-algorithm-lab
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '35c4fa92-23f9-4bb6-af5d-85ec44128f05'
   accountSlug: yusuf-pisan
