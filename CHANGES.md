@@ -87,3 +87,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-09-30 [code] where-does-it-say: new package (idea 2026-09-30 n1). Quote-or-refuse course Q&A: verified verbatim spans highlighted in a side-by-side viewer, quote checker with word diff, gap log/report. 91 vitest tests, 99.7% stmt coverage.
 2026-09-30 [decision] where-does-it-say: the idea's Claude Haiku proposer is a deterministic BM25 sentence retriever (no API key or server); packs travel deflated in the URL fragment; logs are exported JSON, not a backend.
 2026-09-30 [doc] CLAUDE.md: added where-does-it-say to the commit scope list; ci: added where-does-it-say job (Node 22, pdfjs-dist 6 needs it).
+
+2026-10-01 [code] elevator-algorithm-lab: new package (idea 2026-09-29 n2). Student dispatch policies in a Web Worker, seeded scenarios, animated building, side-by-side compare, disk view. 53 vitest tests, 100% stmt coverage.
+2026-10-01 [decision] elevator-algorithm-lab: cars stop only where the policy sends them (matches disk scheduling exactly); leaderboard is localStorage + CSV/JSON export, not Supabase; hidden scenarios travel in the share link.
+2026-10-01 [doc] CLAUDE.md: added elevator-algorithm-lab to the commit scope list; ci: added elevator-algorithm-lab job.

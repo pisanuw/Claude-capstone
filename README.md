@@ -388,3 +388,23 @@ link. Deployed on **Netlify** (static site, no backend).
 91 vitest tests, 99.7% statement coverage on the core.
 Live: [where-does-it-say.netlify.app](https://where-does-it-say.netlify.app).
 See its [README](./where-does-it-say/README.md).
+
+### [`elevator-algorithm-lab/`](./elevator-algorithm-lab)
+
+A browser sandbox where students write an elevator dispatch policy in
+JavaScript (`dispatch(car, state)` returns the next floor) and run it against
+seeded traffic scenarios in an animated building: morning rush, lunch spike,
+a starvation trap and the textbook disk trace. Each run reports mean, p95 and
+max wait (starvation), energy and more; two policies replay side by side on
+the same trace; and a disk view redraws the identical run as a head sweeping
+across cylinders with time flowing down, so FCFS, SSTF, SCAN and LOOK (all
+included as editable presets, with the textbook head-movement numbers pinned
+in tests) are visibly elevator algorithms. Instructors author scenarios as
+JSON with deterministic generators, mark them hidden for grading and share
+them by link; the class leaderboard stores only scores and policy hashes,
+locally, with CSV/JSON export and import in place of the idea's Supabase.
+Deployed on **Netlify** (static site, no backend).
+
+53 vitest tests, 100% statement coverage on the core.
+Live: [elevator-algorithm-lab.netlify.app](https://elevator-algorithm-lab.netlify.app).
+See its [README](./elevator-algorithm-lab/README.md).

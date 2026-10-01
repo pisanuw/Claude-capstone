@@ -1,0 +1,22 @@
+# Deploy control file for Elevator Algorithm Lab (Netlify, static site).
+#
+# No backend and no environment variables: the simulation, the student policy
+# sandbox (a Web Worker), the leaderboard and share links all run in the
+# browser. The deploy workflow auto-discovers this file via the
+# `*/deploy/target.yml` glob. package-lock.json is force-added (the root
+# .gitignore excludes lockfiles) because `npm ci` below needs it.
+
+provider: netlify
+projectName: elevator-algorithm-lab
+directory: elevator-algorithm-lab
+build: npm ci && npm run build
+publish: dist
+
+# No secrets or runtime configuration are needed.
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: elevator-algorithm-lab
+  accountSlug: yusuf-pisan
