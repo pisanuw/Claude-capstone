@@ -379,7 +379,7 @@ export class App {
       html:
         'Everything runs in your browser: enumeration in a Web Worker, true distances by BFS from the goals, no server and no AI calls. ' +
         'Goal tests happen at expansion time for every algorithm so the counts compare fairly. ' +
-        'Built from an idea in <a href="https://pisanuw.github.io/daily-project-ideas/" target="_blank" rel="noreferrer">daily-project-ideas</a>.',
+        'Built from an idea in <a href="https://daily-project-ideas.netlify.app/" target="_blank" rel="noreferrer">daily-project-ideas</a>.',
     });
 
     this.root.replaceChildren(header, el('main', { class: 'layout' }, left, center, right), footer, this.tooltip);
