@@ -91,3 +91,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-01 [code] elevator-algorithm-lab: new package (idea 2026-09-29 n2). Student dispatch policies in a Web Worker, seeded scenarios, animated building, side-by-side compare, disk view. 53 vitest tests, 100% stmt coverage.
 2026-10-01 [decision] elevator-algorithm-lab: cars stop only where the policy sends them (matches disk scheduling exactly); leaderboard is localStorage + CSV/JSON export, not Supabase; hidden scenarios travel in the share link.
 2026-10-01 [doc] CLAUDE.md: added elevator-algorithm-lab to the commit scope list; ci: added elevator-algorithm-lab job.
+
+2026-10-02 [code] reverse-minesweeper-studio: new package (idea 2026-09-29 n1). Mine painter, four-tier no-guess solver, amber stuck/sealed regions, A/B ambiguity layouts, single-edit fix search in a Web Worker, solver replay, URL-fragment play links. 40 vitest tests, 99.9% stmt coverage.
+2026-10-02 [decision] reverse-minesweeper-studio: vanilla TS + canvas instead of React/Tailwind; "solved" means every safe cell opened (untouched interior mines need not be identified); frontier search capped at 250k nodes per pass.
+2026-10-02 [doc] CLAUDE.md: added reverse-minesweeper-studio to the commit scope list; ci: added reverse-minesweeper-studio job.

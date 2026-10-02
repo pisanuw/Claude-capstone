@@ -408,3 +408,19 @@ Deployed on **Netlify** (static site, no backend).
 53 vitest tests, 100% statement coverage on the core.
 Live: [elevator-algorithm-lab.netlify.app](https://elevator-algorithm-lab.netlify.app).
 See its [README](./elevator-algorithm-lab/README.md).
+
+### [`reverse-minesweeper-studio/`](./reverse-minesweeper-studio)
+
+Paint a picture with mines, pick a safe opening, and a tiered client-side
+solver (single-cell rules, pairwise overlap, exhaustive frontier search, then
+the global mine count) plays the board without ever guessing. Stuck regions
+turn amber, two mine layouts that both fit the visible numbers can be toggled
+side by side, and a Web Worker searches single-cell edits for the smallest fix
+that makes the board guess-free. A slider replays the deduction step by step,
+a difficulty meter reports the hardest tier needed, and finished boards travel
+as playable URL-fragment links that reveal the drawing on a win. Deployed on
+**Netlify** (static site, no backend).
+
+40 vitest tests, 99.9% statement coverage on the core.
+Live: [reverse-minesweeper-studio.netlify.app](https://reverse-minesweeper-studio.netlify.app).
+See its [README](./reverse-minesweeper-studio/README.md).
