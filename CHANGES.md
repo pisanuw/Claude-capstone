@@ -95,3 +95,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-02 [code] reverse-minesweeper-studio: new package (idea 2026-09-29 n1). Mine painter, four-tier no-guess solver, amber stuck/sealed regions, A/B ambiguity layouts, single-edit fix search in a Web Worker, solver replay, URL-fragment play links. 40 vitest tests, 99.9% stmt coverage.
 2026-10-02 [decision] reverse-minesweeper-studio: vanilla TS + canvas instead of React/Tailwind; "solved" means every safe cell opened (untouched interior mines need not be identified); frontier search capped at 250k nodes per pass.
 2026-10-02 [doc] CLAUDE.md: added reverse-minesweeper-studio to the commit scope list; ci: added reverse-minesweeper-studio job.
+
+2026-10-02 [code] state-space-atlas: new package (idea 2026-10-01 n2). Exhaustive state graphs (Hanoi, tiles, Klotski, Rush Hour) in a Web Worker, layered/radial canvas atlas, steppable BFS/DFS/IDDFS/greedy/A*, heuristic admissibility and consistency checker, challenge links. 65 vitest tests, 99.6% stmt coverage.
+2026-10-02 [decision] state-space-atlas: canvas 2D instead of Sigma.js/regl; same-size block pieces and mirror images share one node; IDDFS is the graph variant (skip states reached at the same or smaller depth); all searches test the goal at expansion; state cap 400k.
+2026-10-02 [doc] CLAUDE.md: added state-space-atlas to the commit scope list; ci: added state-space-atlas job.

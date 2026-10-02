@@ -424,3 +424,21 @@ as playable URL-fragment links that reveal the drawing on a win. Deployed on
 40 vitest tests, 99.9% statement coverage on the core.
 Live: [reverse-minesweeper-studio.netlify.app](https://reverse-minesweeper-studio.netlify.app).
 See its [README](./reverse-minesweeper-studio/README.md).
+
+### [`state-space-atlas/`](./state-space-atlas)
+
+Enumerates every reachable state of a small puzzle (Towers of Hanoi, sliding
+tiles up to the 8-puzzle, the classic Klotski, Rush Hour) in a Web Worker,
+draws the whole state graph on a canvas with every state in the column of
+its distance from the start, and animates BFS, DFS, IDDFS, greedy and A*
+across it with live expansion, frontier and peak-memory counters. Students
+type a heuristic in JavaScript and, because the atlas knows the true distance
+of every state, it is checked for admissibility and consistency on all of
+them, with overestimating states painted red. Same-size pieces and mirror
+images collapse into one node, hover shows a picture of any state, and
+instructors export "expand fewer than N nodes" challenges as links. Deployed
+on **Netlify** (static site, no backend).
+
+65 vitest tests, 99.6% statement coverage on the core.
+Live: [state-space-atlas.netlify.app](https://state-space-atlas.netlify.app).
+See its [README](./state-space-atlas/README.md).
