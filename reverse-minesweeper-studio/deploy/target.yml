@@ -19,4 +19,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: reverse-minesweeper-studio
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '1400712b-3786-4a7f-b2f8-3a0f41d3ecc6'
   accountSlug: yusuf-pisan
