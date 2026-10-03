@@ -21,4 +21,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: bombe-bench
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: 'bbcedb00-47cf-4d4f-bca9-06240995467f'
   accountSlug: yusuf-pisan
