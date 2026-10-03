@@ -425,6 +425,24 @@ as playable URL-fragment links that reveal the drawing on a win. Deployed on
 Live: [reverse-minesweeper-studio.netlify.app](https://reverse-minesweeper-studio.netlify.app).
 See its [README](./reverse-minesweeper-studio/README.md).
 
+### [`bombe-bench/`](./bombe-bench)
+
+An Enigma I you can open up (rotors I-V, reflectors A/B/C, ring settings,
+plugboard, double stepping) with every keypress drawn as a path through
+plugboard, rotors and reflector, paired with a working Turing-Welchman
+Bombe. Slide a crib along the ciphertext to discard positions where a letter
+would encipher to itself, build the menu graph and see its loops, then run
+the Bombe over all 60 rotor orders and 17,576 positions in a Web Worker with
+a live count of rejected positions and stops; a checking-machine pass thins
+the stops, and a tracer follows one hypothesis implication by implication
+until the test register is lit twice. Instructors generate challenge
+messages with hidden settings as links; answers are graded in the page.
+Deployed on **Netlify** (static site, no backend).
+
+55 vitest tests, 98.8% statement coverage on the core.
+Live: [bombe-bench.netlify.app](https://bombe-bench.netlify.app).
+See its [README](./bombe-bench/README.md).
+
 ### [`state-space-atlas/`](./state-space-atlas)
 
 Enumerates every reachable state of a small puzzle (Towers of Hanoi, sliding

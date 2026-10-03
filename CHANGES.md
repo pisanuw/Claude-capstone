@@ -99,3 +99,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-02 [code] state-space-atlas: new package (idea 2026-10-01 n2). Exhaustive state graphs (Hanoi, tiles, Klotski, Rush Hour) in a Web Worker, layered/radial canvas atlas, steppable BFS/DFS/IDDFS/greedy/A*, heuristic admissibility and consistency checker, challenge links. 65 vitest tests, 99.6% stmt coverage.
 2026-10-02 [decision] state-space-atlas: canvas 2D instead of Sigma.js/regl; same-size block pieces and mirror images share one node; IDDFS is the graph variant (skip states reached at the same or smaller depth); all searches test the goal at expansion; state cap 400k.
 2026-10-02 [doc] CLAUDE.md: added state-space-atlas to the commit scope list; ci: added state-space-atlas job.
+
+2026-10-03 [code] bombe-bench: new package (idea 2026-10-03 n2). Enigma I with signal-path SVG, crib sliding, menu graph with cycle basis, Bombe search with loop prefilter and diagonal board in a Web Worker, checking machine, hypothesis tracer, challenge links. 55 vitest tests, 98.8% stmt coverage.
+2026-10-03 [decision] bombe-bench: vanilla TS + SVG instead of React/Tailwind; loops through the test letter are checked as a fixed-point test before propagation (1M positions in about 1 s); stops report core positions at ring A; single-survivor menu components merge their plugs into the stop.
+2026-10-03 [doc] CLAUDE.md: added bombe-bench to the commit scope list; ci: added bombe-bench job.
