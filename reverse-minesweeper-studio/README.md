@@ -84,7 +84,7 @@ of `pisanuw/daily-project-ideas`.
 ```bash
 npm install
 npm run dev        # local dev server
-npm run coverage   # 40 vitest cases, ≥85% thresholds enforced
+npm run coverage   # 41 vitest cases, ≥85% thresholds enforced
 npm run lint && npm run typecheck && npm run build
 ```
 

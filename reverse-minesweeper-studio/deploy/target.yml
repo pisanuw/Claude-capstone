@@ -12,7 +12,9 @@ directory: reverse-minesweeper-studio
 build: npm ci && npm run build
 publish: dist
 
-# No secrets or runtime configuration are needed.
+# No secrets or runtime configuration are needed. (Touching this file is how a
+# source-only change gets redeployed: the workflow deploys targets whose
+# target.yml changed in the push.)
 envPassthrough: []
 
 netlify:

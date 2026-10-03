@@ -37,6 +37,12 @@ describe('solve', () => {
     expect(difficulty(r).label).toBe('Beginner logic');
   });
 
+  it('spells İdil with a guess-free board', () => {
+    const r = solve(preset('idil'));
+    expect(r.solved).toBe(true);
+    expect(r.maxTier).toBeLessThanOrEqual(2);
+  });
+
   it('needs pairwise reasoning for the heart', () => {
     const r = solve(preset('heart'));
     expect(r.solved).toBe(true);

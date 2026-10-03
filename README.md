@@ -421,7 +421,7 @@ a difficulty meter reports the hardest tier needed, and finished boards travel
 as playable URL-fragment links that reveal the drawing on a win. Deployed on
 **Netlify** (static site, no backend).
 
-40 vitest tests, 99.9% statement coverage on the core.
+41 vitest tests, 99.9% statement coverage on the core.
 Live: [reverse-minesweeper-studio.netlify.app](https://reverse-minesweeper-studio.netlify.app).
 See its [README](./reverse-minesweeper-studio/README.md).
 
