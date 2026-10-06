@@ -103,3 +103,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-03 [code] bombe-bench: new package (idea 2026-10-03 n2). Enigma I with signal-path SVG, crib sliding, menu graph with cycle basis, Bombe search with loop prefilter and diagonal board in a Web Worker, checking machine, hypothesis tracer, challenge links. 55 vitest tests, 98.8% stmt coverage.
 2026-10-03 [decision] bombe-bench: vanilla TS + SVG instead of React/Tailwind; loops through the test letter are checked as a fixed-point test before propagation (1M positions in about 1 s); stops report core positions at ring A; single-survivor menu components merge their plugs into the stop.
 2026-10-03 [doc] CLAUDE.md: added bombe-bench to the commit scope list; ci: added bombe-bench job.
+
+2026-10-06 [code] heap-arena-replay: new package (idea 2026-10-06 n2). Word-accurate CS:APP-style heap with implicit/explicit/segregated lists, first/next/best/worst fit, immediate/deferred/no coalescing, realloc, mid-replay policy switch, compare tab, simulator-verified quiz with QTI export, student trace diff, share links. 57 vitest tests, 99.1% stmt coverage.
+2026-10-06 [decision] heap-arena-replay: vanilla TS + SVG instead of React/Tailwind/Recharts; fixed arena with no sbrk so a failed malloc returns NULL; next-fit only on the implicit list; free lists rebuilt in address order after a policy switch; QTI zip written by a dependency-free stored-zip writer.
+2026-10-06 [doc] CLAUDE.md: added heap-arena-replay to the commit scope list; ci: added heap-arena-replay job.

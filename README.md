@@ -425,6 +425,27 @@ as playable URL-fragment links that reveal the drawing on a win. Deployed on
 Live: [reverse-minesweeper-studio.netlify.app](https://reverse-minesweeper-studio.netlify.app).
 See its [README](./reverse-minesweeper-studio/README.md).
 
+### [`heap-arena-replay/`](./heap-arena-replay)
+
+A malloc you can watch. Paste or generate a malloc/free/realloc trace and
+replay it on a word-accurate CS:APP-style heap (header and footer boundary
+tags, prologue and epilogue, alignment padding, pred/succ pointers stored in
+free payloads) under first-fit, next-fit, best-fit or worst-fit on an
+implicit list, an explicit list or segregated size classes, with immediate,
+deferred or no coalescing. Each step draws the strip, highlights what the
+search examined and returned, and explains the adjusted size, the split and
+the coalescing case in a sentence; the policy can be switched mid-replay with
+the blocks left in place. A compare tab replays the same trace under eight
+policies with fragmentation and search-cost charts, a quiz generator reads
+verified answers off the simulator and exports Markdown or a Canvas QTI zip,
+and a diff mode finds the first op where a student allocator's addresses
+diverge and flags misalignment, overlap and bounds bugs. Deployed on
+**Netlify** (static site, no backend).
+
+57 vitest tests, 99.1% statement coverage on the core.
+Live: [heap-arena-replay.netlify.app](https://heap-arena-replay.netlify.app).
+See its [README](./heap-arena-replay/README.md).
+
 ### [`bombe-bench/`](./bombe-bench)
 
 An Enigma I you can open up (rotors I-V, reflectors A/B/C, ring settings,
