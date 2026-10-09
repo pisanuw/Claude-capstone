@@ -481,3 +481,20 @@ on **Netlify** (static site, no backend).
 65 vitest tests, 99.6% statement coverage on the core.
 Live: [state-space-atlas.netlify.app](https://state-space-atlas.netlify.app).
 See its [README](./state-space-atlas/README.md).
+
+### [`program-alarm-1202/`](./program-alarm-1202)
+
+A playable model of the Apollo Guidance Computer's priority Executive during
+the lunar descent, built as a tribute to Margaret Hamilton. A cycle-stealing
+radar fault makes low-priority jobs pile up in the real pools of 7 core sets
+and 5 VAC areas until a request finds nothing free and 1202 (or 1201) fires;
+the restart then flushes everything, re-establishes only the restart-protected
+jobs at their last phase, and guidance keeps flying a 1D descent to touchdown.
+The same load replays on a halt-on-overflow Executive and a naive round-robin
+scheduler, with a DSKY panel, live slot gauges, a guidance timeline, a steal
+sweep and the real Apollo 11 alarm timeline. Deployed on **Netlify** (static
+site, no backend).
+
+36 vitest tests, 100% statement coverage on the core.
+Live: [program-alarm-1202.netlify.app](https://program-alarm-1202.netlify.app).
+See its [README](./program-alarm-1202/README.md).
