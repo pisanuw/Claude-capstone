@@ -18,4 +18,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: program-alarm-1202
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '4f7d0c9f-66e6-426e-bf2c-5752433b0a4f'
   accountSlug: yusuf-pisan
