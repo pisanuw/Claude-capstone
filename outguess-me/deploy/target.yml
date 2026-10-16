@@ -1,0 +1,21 @@
+# Deploy control file for Outguess Me (Netlify, static site).
+#
+# No backend and no environment variables: the oracle, the SHA-256
+# commitments, the statistics and share links all run in the browser. The
+# deploy workflow auto-discovers this file via the `*/deploy/target.yml` glob.
+# package-lock.json is force-added (the root .gitignore excludes lockfiles)
+# because `npm ci` below needs it.
+
+provider: netlify
+projectName: outguess-me
+directory: outguess-me
+build: npm ci && npm run build
+publish: dist
+
+envPassthrough: []
+
+netlify:
+  # No serverless functions; the whole app is static.
+  functionsDir: ''
+  siteName: outguess-me
+  accountSlug: yusuf-pisan

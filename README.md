@@ -498,3 +498,20 @@ site, no backend).
 36 vitest tests, 100% statement coverage on the core.
 Live: [program-alarm-1202.netlify.app](https://program-alarm-1202.netlify.app).
 See its [README](./program-alarm-1202/README.md).
+
+### [`outguess-me/`](./outguess-me)
+
+A take on Scott Aaronson's oracle demo: press F or J as unpredictably as you
+can while an n-gram oracle predicts each key and seals its guess with a
+SHA-256 commitment before you press, then reveals it with the nonce so the
+page can verify it. Easy mode is the classic 6-gram table with back-off; hard
+mode is a weighted-majority mixture of 1- to 6-gram experts. Live hit rate
+against a coin-flip band, then a breakdown with a Wilson interval and
+binomial p-value, the 6-gram table that read you, run lengths, alternation
+rate and Krichevsky-Trofimov bits per press. Paste any two-symbol sequence or
+run 200 real coin flips as a control; share links replay the oracle on open.
+Deployed on **Netlify** (static site, no backend).
+
+43 vitest tests, 100% statement coverage on the core.
+Live: [outguess-me.netlify.app](https://outguess-me.netlify.app).
+See its [README](./outguess-me/README.md).
