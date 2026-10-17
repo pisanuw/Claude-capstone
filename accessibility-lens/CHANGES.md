@@ -12,3 +12,4 @@ Types: decision, plan, doc, scope, code, note.
 2026-05-21 code React UI with four disability-profile simulations and per-issue fix cards; UI itself built to WCAG (focus rings, ARIA tabs, non-color cues).
 2026-05-21 code 102 tests passing (server 88 at ~96% coverage, client 14 at ~96%); thresholds enforced in CI.
 2026-05-21 doc Wrote README, ASSUMPTIONS, .env.example; added Dockerfile, render.yaml, and GitHub Actions CI.
+2026-10-17 code Default model claude-sonnet-4-20250514 (retired 2026-06-15) replaced by claude-sonnet-5-5 at low effort, max_tokens 1024; refusals and truncated replies fall back to the rule-based fix. SDK 0.32 to 0.135.

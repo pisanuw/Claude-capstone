@@ -65,7 +65,7 @@ easy to tune in `engine/analyze.ts`. They are not a recognized WCAG metric.
   and a `HeuristicProvider` fallback. With no `ANTHROPIC_API_KEY` the app works
   fully and just uses the deterministic rule-based fixes. `enrichFix` never throws;
   a model failure degrades silently to the rule-based fix.
-- **Model choice.** Defaults to `claude-sonnet-4-20250514`, overridable via
+- **Model choice.** Defaults to `claude-sonnet-5-5`, overridable via
   `ANTHROPIC_MODEL`. Only the most severe N issues (default 5, `AI_ENRICH_LIMIT`)
   are sent to the model per scan to bound latency and cost.
 

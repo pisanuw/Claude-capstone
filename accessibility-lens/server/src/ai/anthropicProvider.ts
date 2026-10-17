@@ -14,7 +14,7 @@ export class AnthropicProvider implements AiProvider {
   private readonly client: Anthropic;
   private readonly model: string;
 
-  constructor(apiKey: string, model = 'claude-sonnet-4-20250514') {
+  constructor(apiKey: string, model = 'claude-sonnet-5-5') {
     this.client = new Anthropic({ apiKey });
     this.model = model;
   }
@@ -23,7 +23,10 @@ export class AnthropicProvider implements AiProvider {
     try {
       const response = await this.client.messages.create({
         model: this.model,
-        max_tokens: 400,
+        // Thinking counts toward max_tokens, so leave room beyond the reply.
+        max_tokens: 1024,
+        // A short rewrite: at low effort the model skips thinking on most requests.
+        output_config: { effort: 'low' },
         system:
           'You are an accessibility expert helping a student fix one issue on their web page. ' +
           'Given the failing HTML snippet and the WCAG rule it breaks, return a short, concrete fix: ' +
@@ -42,6 +45,9 @@ export class AnthropicProvider implements AiProvider {
           },
         ],
       });
+
+      // A refusal, or a reply cut off at max_tokens, is not a usable fix.
+      if (response.stop_reason !== 'end_turn') return issue.suggestedFix;
 
       const text = response.content
         .filter((block): block is Anthropic.TextBlock => block.type === 'text')
