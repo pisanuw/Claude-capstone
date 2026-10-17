@@ -5,6 +5,9 @@
 # deploy workflow auto-discovers this file via the `*/deploy/target.yml` glob.
 # package-lock.json is force-added (the root .gitignore excludes lockfiles)
 # because `npm ci` below needs it.
+#
+# Code-only pushes do not trigger a deploy: the workflow watches this file, so
+# touch it (or run the workflow manually) to ship UI changes.
 
 provider: netlify
 projectName: outguess-me
