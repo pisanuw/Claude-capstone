@@ -6,6 +6,9 @@
 # injected into the workflow at run time.
 #
 # Switch `provider` between "render" and "netlify" to retarget.
+#
+# Code-only pushes do not trigger a deploy: the workflow watches this file, so
+# touch it (or run the workflow manually) to ship code changes.
 
 # Which host to deploy to. One of: render | netlify
 provider: netlify

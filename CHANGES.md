@@ -109,3 +109,4 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-06 [doc] CLAUDE.md: added heap-arena-replay to the commit scope list; ci: added heap-arena-replay job.
 
 2026-10-17 [code] shortcut-sprint: bundled Excel, Visio, Word, and Acrobat Reader sets (86 shortcuts, Mac bindings from Microsoft/Adobe docs); custom sets reusing a bundled id are hidden. 85 tests.
+2026-10-17 [code] accessibility-lens, emoji-lingua: retired claude-sonnet-4-20250514 replaced by claude-sonnet-5-5 (low effort, max_tokens 1024); refusals fall back to the non-AI output.

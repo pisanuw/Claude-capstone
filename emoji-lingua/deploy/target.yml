@@ -1,4 +1,7 @@
 # Deploy control file for emoji-lingua (Netlify).
+#
+# Code-only pushes do not trigger a deploy: the workflow watches this file, so
+# touch it (or run the workflow manually) to ship code changes.
 provider: netlify
 projectName: emoji-lingua
 directory: emoji-lingua
