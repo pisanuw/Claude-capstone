@@ -437,3 +437,56 @@ footer a {
 .sw.misssw {
   background: var(--miss);
 }
+
+.modes {
+  flex-basis: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 0;
+  font-size: 0.88rem;
+}
+@media (max-width: 720px) {
+  .modes {
+    grid-template-columns: 1fr;
+  }
+  .modes > div:not(.active) {
+    display: none;
+  }
+}
+.modes > div {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: var(--muted);
+}
+.modes > div.active {
+  border-color: var(--accent);
+  color: var(--fg);
+}
+.modes dt {
+  font-weight: 700;
+}
+.modes dd {
+  margin: 2px 0 0;
+}
+.key.idle {
+  opacity: 0.45;
+}
+#start.nudge {
+  animation: nudge 0.6s;
+}
+@keyframes nudge {
+  0%,
+  100% {
+    transform: none;
+  }
+  20%,
+  60% {
+    transform: translateX(-4px);
+  }
+  40%,
+  80% {
+    transform: translateX(4px);
+  }
+}

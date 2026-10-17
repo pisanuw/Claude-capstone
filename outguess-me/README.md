@@ -15,11 +15,16 @@ A take on Scott Aaronson's classic "oracle" demo, prompted by the
 
 ## What you can do
 
-- **Play** 50, 100 or 200 presses with the keyboard or the on-screen keys.
+- **Play** 50 (default), 100 or 200 presses with the keyboard or the on-screen
+  keys. A game only begins when you press Start, and keys pressed before Start
+  or after the last press are ignored, so the breakdown is never wiped by an
+  accidental extra press. There is no clock: speed does not count.
   The live view shows the score, the sealed hash for the next press, the last
   reveal with a "check it yourself" recipe, a strip of recent presses coloured
   by who won, and a chart of the oracle's hit rate (overall and last 20)
   against the band a coin-flipping oracle stays inside 95% of the time.
+- The settings card explains the two oracles in plain words, next to the
+  mode switch.
 - **Easy mode** is Aaronson's oracle: a 6-gram table (the five previous presses
   predict the sixth), backing off to shorter contexts while a context is unseen
   or tied, and betting on a switch when it has nothing to go on.

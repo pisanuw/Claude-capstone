@@ -33,13 +33,14 @@ function verdict(s: Summary): string {
 }
 
 export function mountApp(root: HTMLElement): void {
-  const state: State = { mode: 'easy', length: 100, session: null, lastRound: null, lastVerified: null, analysed: null };
+  const state: State = { mode: 'easy', length: 50, session: null, lastRound: null, lastVerified: null, analysed: null };
 
   root.innerHTML = `
     <header class="top">
       <h1>Outguess Me</h1>
       <p class="lede">Press <kbd>F</kbd> or <kbd>J</kbd> as unpredictably as you can. Before every press the oracle
       seals its guess with a SHA-256 hash, then reveals it. A coin would be right half the time. It will do better.</p>
+      <p class="lede muted">There is no clock: take as long as you like over each press. Speed does not count, only your choices do.</p>
     </header>
     <section class="card controls" aria-label="Game settings">
       <div class="seg" role="radiogroup" aria-label="Oracle">
@@ -52,6 +53,10 @@ export function mountApp(root: HTMLElement): void {
         <button data-len="200" role="radio">200</button>
       </div>
       <button id="start" class="primary">Start</button>
+      <dl class="modes">
+        <div data-mode-help="easy"><dt>Easy: 6-gram</dt><dd>One fixed memory. The oracle looks at your last five presses, finds every earlier time you made that same run of five, and guesses whatever you pressed next most often (falling back to the last four, three, ... presses when that run is new).</dd></div>
+        <div data-mode-help="hard"><dt>Hard: mixture</dt><dd>Six of those tables at once, remembering your last 0 to 5 presses. Each gets a vote, and a table loses weight every time it guesses wrong, so the oracle shifts to whichever memory length is reading you best right now. Switching strategy mid-game buys you a few presses, not the game.</dd></div>
+      </dl>
     </section>
     <section class="card play" aria-label="Play">
       <div class="score" id="score" aria-live="polite"></div>
@@ -92,10 +97,12 @@ export function mountApp(root: HTMLElement): void {
   const chart = $('#chart');
   const results = $('#results');
   const pasteError = $('#paste-error');
+  const startButton = $<HTMLButtonElement>('#start');
 
   function syncControls(): void {
     root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((b) => b.setAttribute('aria-checked', String(b.dataset.mode === state.mode)));
     root.querySelectorAll<HTMLButtonElement>('[data-len]').forEach((b) => b.setAttribute('aria-checked', String(Number(b.dataset.len) === state.length)));
+    root.querySelectorAll<HTMLElement>('[data-mode-help]').forEach((d) => d.classList.toggle('active', d.dataset.modeHelp === state.mode));
   }
 
   function renderPlay(): void {
@@ -105,7 +112,11 @@ export function mountApp(root: HTMLElement): void {
     const target = s?.target ?? state.length;
     score.innerHTML = s
       ? `<strong>Oracle ${hits}</strong> / ${rounds.length} <span class="muted">(${rounds.length ? pct(hits / rounds.length) : '-'})</span> · You ${rounds.length - hits} · ${target - rounds.length} presses left`
-      : `<span class="muted">${modeLabel(state.mode)}, ${state.length} presses. Press Start, then use the F and J keys (or tap).</span>`;
+      : `<span class="muted">${modeLabel(state.mode)}, ${state.length} presses. Press Start, then use the F and J keys (or tap). No time limit.</span>`;
+    if (s?.done) score.innerHTML += ` <span class="muted">Game over: the breakdown is below. Press Start for a new game.</span>`;
+    const playing = !!s && !s.done;
+    root.querySelectorAll<HTMLButtonElement>('.key').forEach((k) => k.classList.toggle('idle', !playing));
+    startButton.textContent = s ? 'New game' : 'Start';
     bar.style.width = pct(rounds.length / target, 1);
     const pending = s?.pendingCommitment;
     hash.textContent = s ? (s.done ? 'game over' : (pending?.hash ?? 'sealing...')) : 'press Start';
@@ -265,6 +276,13 @@ export function mountApp(root: HTMLElement): void {
     void seal();
   }
 
+  /** A key press with no game running: point at Start instead of starting one. */
+  function nudge(): void {
+    startButton.classList.remove('nudge');
+    void startButton.offsetWidth;
+    startButton.classList.add('nudge');
+  }
+
   function flash(bit: Bit, caught: boolean): void {
     const key = root.querySelector<HTMLElement>(`.key[data-bit="${bit}"]`);
     if (!key) return;
@@ -296,7 +314,7 @@ export function mountApp(root: HTMLElement): void {
   $('#start').addEventListener('click', start);
   root.querySelectorAll<HTMLButtonElement>('.key').forEach((b) =>
     b.addEventListener('click', () => {
-      if (!state.session || state.session.done) start();
+      if (!state.session || state.session.done) nudge();
       else press(Number(b.dataset.bit) as Bit);
     }),
   );
@@ -306,7 +324,7 @@ export function mountApp(root: HTMLElement): void {
     const k = e.key.toLowerCase();
     if (k === 'f' || k === 'j') {
       e.preventDefault();
-      if (!state.session || state.session.done) start();
+      if (!state.session || state.session.done) nudge();
       else press(k === 'f' ? 0 : 1);
     }
   });
