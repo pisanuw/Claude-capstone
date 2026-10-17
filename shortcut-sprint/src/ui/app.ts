@@ -434,7 +434,7 @@ export class App {
       const name = el('span', 'name');
       name.textContent = set.name;
       const meta = el('span', 'meta');
-      const custom = this.progress.customSets.some((c) => c.id === set.id);
+      const custom = !bundledSets.some((b) => b.id === set.id);
       meta.textContent = `${set.tool} · ${set.shortcuts.length} shortcuts${custom ? ' · custom' : ''}`;
       row.append(name, meta);
       const spacer = el('span', 'spacer');
@@ -644,8 +644,10 @@ function radarSvg(stats: SetStats[]): string {
     cy,
     r,
   );
+  // Side margins so labels anchored left or right of an axis are not clipped.
+  const pad = 60;
   return (
-    `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" role="img" aria-label="Mastery per tool">` +
+    `<svg viewBox="${-pad} 0 ${size + 2 * pad} ${size}" width="${size + 2 * pad}" height="${size}" role="img" aria-label="Mastery per tool">` +
     `${rings}${axes}` +
     `<polygon points="${shape}" fill="rgba(79,140,255,0.25)" stroke="#4f8cff" stroke-width="2"/>` +
     `${labels}</svg>`

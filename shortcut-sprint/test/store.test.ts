@@ -77,6 +77,14 @@ describe('allSets', () => {
   it('lists bundled then custom', () => {
     const p = sample();
     const sets = allSets(bundledSets, p);
-    expect(sets.map((s) => s.id)).toEqual(['vscode', 'devtools', 'figma', 'vim', 'emacs', 'custom']);
+    expect(sets.map((s) => s.id)).toEqual([...bundledSets.map((s) => s.id), 'custom']);
+  });
+
+  it('hides a custom set whose id is now taken by a bundled set', () => {
+    const p = sample();
+    p.customSets.push({ ...p.customSets[0], id: 'excel', name: 'My Excel' });
+    const sets = allSets(bundledSets, p);
+    expect(sets.filter((s) => s.id === 'excel').map((s) => s.name)).toEqual(['Excel essentials']);
+    expect(sets.at(-1)?.id).toBe('custom');
   });
 });

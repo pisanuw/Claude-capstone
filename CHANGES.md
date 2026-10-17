@@ -107,3 +107,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-06 [code] heap-arena-replay: new package (idea 2026-10-06 n2). Word-accurate CS:APP-style heap with implicit/explicit/segregated lists, first/next/best/worst fit, immediate/deferred/no coalescing, realloc, mid-replay policy switch, compare tab, simulator-verified quiz with QTI export, student trace diff, share links. 57 vitest tests, 99.1% stmt coverage.
 2026-10-06 [decision] heap-arena-replay: vanilla TS + SVG instead of React/Tailwind/Recharts; fixed arena with no sbrk so a failed malloc returns NULL; next-fit only on the implicit list; free lists rebuilt in address order after a policy switch; QTI zip written by a dependency-free stored-zip writer.
 2026-10-06 [doc] CLAUDE.md: added heap-arena-replay to the commit scope list; ci: added heap-arena-replay job.
+
+2026-10-17 [code] shortcut-sprint: bundled Excel, Visio, Word, and Acrobat Reader sets (86 shortcuts, Mac bindings from Microsoft/Adobe docs); custom sets reusing a bundled id are hidden. 85 tests.

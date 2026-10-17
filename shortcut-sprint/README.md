@@ -17,10 +17,20 @@ lives in `localStorage`.
 | Figma basics | 18 |
 | Vim survival kit | 21 |
 | Emacs essentials | 20 |
+| Excel essentials | 22 |
+| Visio essentials | 22 |
+| Word essentials | 22 |
+| Acrobat Reader essentials | 20 |
 
 Combos are the Windows/Linux defaults. macOS mode (auto-detected, toggleable
 in **Sets**) translates Ctrl→⌘ and uses explicit per-shortcut overrides where
 the real macOS binding differs (e.g. clear console is `⌘K`, not `⌃L`).
+Excel and Word follow Microsoft's Mac tables, which use Control in several
+places (Currency format is `⌃⇧4`; `⌘⇧4` would take a screenshot). Visio has
+no macOS app, so its set keeps the Windows `Ctrl` bindings, as Emacs does.
+Acrobat's single-letter tool keys (H, V, Z, S, U) only work in Acrobat once
+*Preferences > General > Use single-key accelerators to access tools* is on;
+those cards say so in their hint.
 
 ## Custom sets
 
@@ -44,6 +54,8 @@ Chords are space-separated, keys joined with `+`; sequences up to 4 chords
 (`"C I W"` for Vim's `ciw`). `notation: "vim"` displays bare letters
 lowercase. Validation is strict about structure and drops browser-reserved
 combos (see limitations) with a warning instead of rejecting the set.
+Bundled set ids are reserved: an upload that uses one is rejected, and a
+saved custom set whose id a later release bundles is hidden.
 
 ## How it works
 
@@ -64,6 +76,15 @@ combos (see limitations) with a warning instead of rejecting the set.
 - Browser-reserved combos (`Ctrl+W`, `Ctrl+T`, `Ctrl+N`, bare `⌘M`/`⌘H`, and
   their tab-level equivalents) cannot be captured by a web page. Bundled sets
   avoid them; custom uploads drop them with a warning.
+- Some well-known shortcuts are left out because no capturable binding
+  exists: switching sheets or pages with `Ctrl+Page Down` (Excel, Visio),
+  Excel's AutoSum on macOS (`⌘⇧T`), Word's Normal style (`Ctrl+Shift+N`),
+  Visio's fit to window (`Ctrl+Shift+W`), and Acrobat's Go to Page
+  (`Ctrl+Shift+N`).
+- macOS assigns `⌃Space` to input-source switching by default. To practice
+  Excel's select-column or Emacs's set-mark, free it in System Settings >
+  Keyboard > Keyboard Shortcuts > Input Sources (Excel itself needs the
+  same change).
 - Punctuation matching uses the produced character, so exotic layouts may
   need the character-style combo (`"$"`) rather than the physical one.
 - Progress is per-browser (localStorage): no sync between machines.
@@ -75,7 +96,7 @@ npm install
 npm run dev        # local dev server
 npm run lint       # eslint
 npm run typecheck  # tsc --noEmit
-npm run coverage   # vitest, 79 tests, thresholds 85% (currently ~98% stmts)
+npm run coverage   # vitest, 85 tests, thresholds 85% (currently ~98% stmts)
 npm run build      # typecheck + vite build → dist/
 ```
 

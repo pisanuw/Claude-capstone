@@ -121,8 +121,74 @@ describe('bundled sets', () => {
     }
   });
 
+  it('avoids combos the OS or tab strip consumes before the page sees them', () => {
+    // Beyond isBrowserReserved: macOS screenshots, Spotlight, app and window
+    // switching, and Spaces; Chrome tab switching and closing elsewhere.
+    const swallowed = (combo: string, mac: boolean) =>
+      parseCombo(combo).some(({ mods, key }) => {
+        if (mac) {
+          if (mods.includes('Meta') && mods.includes('Shift') && ['3', '4', '5'].includes(key)) return true;
+          if (mods.includes('Meta') && ['Space', 'Tab', '`'].includes(key)) return true;
+          return mods.length === 1 && mods[0] === 'Ctrl' && key.startsWith('Arrow');
+        }
+        if (mods.includes('Ctrl') && ['Tab', 'PageUp', 'PageDown', 'F4'].includes(key)) return true;
+        return mods.includes('Alt') && key === 'F4';
+      });
+    for (const set of bundledSets) {
+      for (const s of set.shortcuts) {
+        expect(swallowed(s.combo, false), `${set.id}/${s.id}`).toBe(false);
+        expect(swallowed(comboForPlatform(s, true), true), `${set.id}/${s.id} mac`).toBe(false);
+      }
+    }
+  });
+
   it('has the advertised tools', () => {
-    expect(bundledSets.map((s) => s.id)).toEqual(['vscode', 'devtools', 'figma', 'vim', 'emacs']);
+    expect(bundledSets.map((s) => s.id)).toEqual([
+      'vscode',
+      'devtools',
+      'figma',
+      'vim',
+      'emacs',
+      'excel',
+      'visio',
+      'word',
+      'acrobat',
+    ]);
+  });
+
+  it("uses Excel for Mac's Control bindings where Cmd would hit macOS", () => {
+    const excel = bundledSets.find((set) => set.id === 'excel');
+    const mac = (id: string) => comboForPlatform(excel!.shortcuts.find((s) => s.id === id)!, true);
+    expect(excel?.shortcuts).toHaveLength(22);
+    expect(mac('currency-format')).toBe('Ctrl+Shift+4');
+    expect(mac('show-formulas')).toBe('Ctrl+`');
+    expect(mac('find-replace')).toBe('Ctrl+H');
+    expect(mac('insert-time')).toBe('Meta+;');
+    expect(mac('fill-down')).toBe('Meta+D');
+  });
+
+  it('keeps Visio on its Windows bindings in macOS mode (there is no Mac Visio)', () => {
+    const visio = bundledSets.find((set) => set.id === 'visio');
+    expect(visio?.shortcuts).toHaveLength(22);
+    for (const s of visio?.shortcuts ?? []) expect(comboForPlatform(s, true), s.id).toBe(s.combo);
+  });
+
+  it("follows Word for Mac's own bindings where they are not Ctrl→Cmd", () => {
+    const word = bundledSets.find((set) => set.id === 'word');
+    const mac = (id: string) => comboForPlatform(word!.shortcuts.find((s) => s.id === id)!, true);
+    expect(word?.shortcuts).toHaveLength(22);
+    expect(mac('indent')).toBe('Ctrl+Shift+M');
+    expect(mac('remove-indent')).toBe('Shift+Meta+M');
+    expect(mac('insert-comment')).toBe('Alt+Meta+A');
+    expect(mac('heading-1')).toBe('Alt+Meta+1');
+  });
+
+  it('hints that Acrobat single-letter tools need single-key accelerators', () => {
+    const acrobat = bundledSets.find((set) => set.id === 'acrobat');
+    expect(acrobat?.shortcuts).toHaveLength(20);
+    const letters = acrobat?.shortcuts.filter((s) => /^[A-Z]$/.test(s.combo)) ?? [];
+    expect(letters.map((s) => s.combo)).toEqual(['H', 'V', 'Z', 'S', 'U']);
+    for (const s of letters) expect(s.hint, s.id).toMatch(/single-key accelerators/);
   });
 
   it('keeps Emacs control bindings on macOS', () => {

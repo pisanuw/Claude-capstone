@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Spaced-repetition trainer for keyboard shortcuts: VS Code, Chrome DevTools, Figma, and Vim bundled, custom JSON sets supported. Entirely client-side; SM-2 scheduling and progress in localStorage, no accounts, no API keys.",
+  "description": "Spaced-repetition trainer for keyboard shortcuts: VS Code, Chrome DevTools, Figma, Vim, Emacs, Excel, Visio, Word, and Acrobat Reader bundled, custom JSON sets supported. Entirely client-side; SM-2 scheduling and progress in localStorage, no accounts, no API keys.",
   "license": "MIT",
   "engines": {
     "node": ">=20"

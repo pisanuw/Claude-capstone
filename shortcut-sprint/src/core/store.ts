@@ -78,7 +78,12 @@ export function deserialize(text: string | null): Progress {
   return out;
 }
 
-/** All sets visible to the player: bundled first, then custom. */
+/**
+ * All sets visible to the player: bundled first, then custom. A custom set
+ * whose id a later release gave to a bundled set is hidden: ids key both
+ * progress and selection, so the two cannot coexist.
+ */
 export function allSets(bundled: ShortcutSet[], p: Progress): ShortcutSet[] {
-  return [...bundled, ...p.customSets];
+  const taken = new Set(bundled.map((s) => s.id));
+  return [...bundled, ...p.customSets.filter((s) => !taken.has(s.id))];
 }
