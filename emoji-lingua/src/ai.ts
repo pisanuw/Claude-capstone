@@ -64,7 +64,7 @@ export class AnthropicTranslator implements Translator {
 
   constructor(private readonly opts: AnthropicTranslatorOptions) {
     this.fetchImpl = opts.fetchImpl ?? fetch;
-    this.model = opts.model ?? 'claude-sonnet-4-20250514';
+    this.model = opts.model ?? 'claude-sonnet-5-5';
   }
 
   async translate(text: string, direction: Direction, mode: Mode): Promise<TranslationResult> {
@@ -78,13 +78,21 @@ export class AnthropicTranslator implements Translator {
         },
         body: JSON.stringify({
           model: this.model,
-          max_tokens: 400,
+          // Thinking counts toward max_tokens, so leave room beyond the reply.
+          max_tokens: 1024,
+          // A short translation: at low effort the model skips thinking on most requests.
+          output_config: { effort: 'low' },
           system: systemPrompt(direction, mode),
           messages: [{ role: 'user', content: text }],
         }),
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const data = (await res.json()) as { content?: Array<{ type: string; text?: string }> };
+      const data = (await res.json()) as {
+        stop_reason?: string;
+        content?: Array<{ type: string; text?: string }>;
+      };
+      // A refusal, or a reply cut off at max_tokens, is not a usable translation.
+      if (data.stop_reason !== 'end_turn') throw new Error(`stop_reason ${data.stop_reason}`);
       const output = (data.content ?? [])
         .filter((b) => b.type === 'text')
         .map((b) => b.text ?? '')

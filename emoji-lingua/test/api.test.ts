@@ -40,7 +40,7 @@ describe('DictionaryTranslator', () => {
 describe('AnthropicTranslator', () => {
   it('returns the model output on success', async () => {
     const fetchImpl = vi.fn(async () =>
-      jsonRes({ content: [{ type: 'text', text: '🐱🍕' }] }),
+      jsonRes({ stop_reason: 'end_turn', content: [{ type: 'text', text: '🐱🍕' }] }),
     ) as unknown as typeof fetch;
     const t = new AnthropicTranslator({ apiKey: 'k', fetchImpl });
     const r = await t.translate('cat pizza', 'to-emoji', 'interpretive');
@@ -57,16 +57,42 @@ describe('AnthropicTranslator', () => {
   });
 
   it('falls back when the response has no text', async () => {
-    const fetchImpl = vi.fn(async () => jsonRes({ content: [] })) as unknown as typeof fetch;
+    const fetchImpl = vi.fn(async () =>
+      jsonRes({ stop_reason: 'end_turn', content: [] }),
+    ) as unknown as typeof fetch;
     const t = new AnthropicTranslator({ apiKey: 'k', fetchImpl });
     expect((await t.translate('cat', 'to-emoji', 'literal')).engine).toBe('dictionary');
+  });
+
+  it('falls back on a refusal or a reply cut off at max_tokens', async () => {
+    for (const stop_reason of ['refusal', 'max_tokens']) {
+      const fetchImpl = vi.fn(async () =>
+        jsonRes({ stop_reason, content: [{ type: 'text', text: '🐱🍕🍕' }] }),
+      ) as unknown as typeof fetch;
+      const t = new AnthropicTranslator({ apiKey: 'k', fetchImpl });
+      const r = await t.translate('cat', 'to-emoji', 'literal');
+      expect(r.engine, stop_reason).toBe('dictionary');
+      expect(r.output).toBe('🐱');
+    }
+  });
+
+  it('asks Claude Sonnet 5.5 at low effort with room for thinking', async () => {
+    let captured: any = null;
+    const fetchImpl = vi.fn(async (_u: string, init: any) => {
+      captured = JSON.parse(init.body);
+      return jsonRes({ stop_reason: 'end_turn', content: [{ type: 'text', text: '🐱' }] });
+    }) as unknown as typeof fetch;
+    await new AnthropicTranslator({ apiKey: 'k', fetchImpl }).translate('cat', 'to-emoji', 'literal');
+    expect(captured.model).toBe('claude-sonnet-5-5');
+    expect(captured.output_config).toEqual({ effort: 'low' });
+    expect(captured.max_tokens).toBe(1024);
   });
 
   it('sends the right direction-specific system prompt', async () => {
     let captured: any = null;
     const fetchImpl = vi.fn(async (_u: string, init: any) => {
       captured = JSON.parse(init.body);
-      return jsonRes({ content: [{ type: 'text', text: 'ok' }] });
+      return jsonRes({ stop_reason: 'end_turn', content: [{ type: 'text', text: 'ok' }] });
     }) as unknown as typeof fetch;
     const t = new AnthropicTranslator({ apiKey: 'k', fetchImpl });
     await t.translate('🐱', 'to-english', 'literal');
