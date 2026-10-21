@@ -114,3 +114,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-21 [code] code-viva: new package (idea 2026-10-21 n1). Zip/Classroom import, questions from student code and commits, timed link session, scored evidence, flag queue. 79 tests, 99.6% stmt.
 2026-10-21 [decision] code-viva: templates and a keyword rubric replace Claude API; no Supabase/Flask (vivas in URL fragment, answers as response codes); mostly pasted replies earn no credit.
 2026-10-21 [doc] CLAUDE.md: added code-viva to the commit scope list; ci: added code-viva job.
+
+2026-10-21 [decision] deploy: only main deploys; a missing base diffs the tip commit, not deploy-all; editing deploy.yml alone deploys nothing. New daily workflow deletes merged claude/* branches.
