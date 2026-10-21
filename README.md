@@ -516,3 +516,23 @@ Deployed on **Netlify** (static site, no backend).
 43 vitest tests, 100% statement coverage on the core.
 Live: [outguess-me.netlify.app](https://outguess-me.netlify.app).
 See its [README](./outguess-me/README.md).
+
+### [`code-viva/`](./code-viva)
+
+Short written orals about each student's own code. Import a Gradescope or
+Canvas zip or a GitHub Classroom assignment (browser straight to the GitHub
+API), and a source analyser plus commit statistics write 4 to 6 questions per
+student anchored to their own functions, guards, data structures, vague names
+and unusual commits (one-commit submissions, late-night bulk adds, deadline
+rushes). Students answer in a timed text session from a personal link (the
+questions travel in the URL fragment), with up to two follow-ups aimed at what
+a vague answer is missing, and send back a response code. The review tab shows
+transcripts with proposed 0-3 rubric scores quoting their evidence, a flag
+queue (low scores, pasting, an unexplained commit, focus loss, restarts),
+instructor overrides and approval, and CSV exports. Deterministic templates and
+a keyword rubric replace the idea's Claude API calls. Deployed on **Netlify**
+(static site, no backend).
+
+79 vitest tests, 99.6% statement coverage on the core.
+Live: [code-viva.netlify.app](https://code-viva.netlify.app).
+See its [README](./code-viva/README.md).

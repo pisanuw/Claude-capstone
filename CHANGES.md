@@ -110,3 +110,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-10-17 [code] shortcut-sprint: bundled Excel, Visio, Word, and Acrobat Reader sets (86 shortcuts, Mac bindings from Microsoft/Adobe docs); custom sets reusing a bundled id are hidden. 85 tests.
 2026-10-17 [code] accessibility-lens, emoji-lingua: retired claude-sonnet-4-20250514 replaced by claude-sonnet-5-5 (low effort, max_tokens 1024); refusals fall back to the non-AI output.
+
+2026-10-21 [code] code-viva: new package (idea 2026-10-21 n1). Zip/Classroom import, questions from student code and commits, timed link session, scored evidence, flag queue. 79 tests, 99.6% stmt.
+2026-10-21 [decision] code-viva: templates and a keyword rubric replace Claude API; no Supabase/Flask (vivas in URL fragment, answers as response codes); mostly pasted replies earn no credit.
+2026-10-21 [doc] CLAUDE.md: added code-viva to the commit scope list; ci: added code-viva job.
