@@ -8,8 +8,9 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text'],
       include: ['src/**/*.ts'],
-      // The DOM layer is exercised by hand in the browser, not by unit tests.
-      exclude: ['src/main.ts', 'src/ui/**'],
+      // The DOM layer is exercised by hand in the browser, not by unit tests;
+      // src/demos holds invented student code that the demo courses bundle as text.
+      exclude: ['src/main.ts', 'src/ui/**', 'src/demos/**'],
       thresholds: { statements: 85, branches: 85, functions: 85, lines: 85 },
     },
   },

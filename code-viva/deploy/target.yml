@@ -22,4 +22,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: code-viva
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: 'dfd9d1b8-2296-4070-b15e-adffc0525b01'
   accountSlug: yusuf-pisan

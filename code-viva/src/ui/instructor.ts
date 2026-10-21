@@ -18,13 +18,14 @@ import {
 import { importClassroom } from '../core/github';
 import { decodeResponses, vivaId, vivaLink } from '../core/pack';
 import { nextCandidate } from '../core/questions';
-import { sampleCourse } from '../core/sample';
+import { DEMOS, loadDemo } from '../core/demos';
 import { RUBRIC, scoreViva } from '../core/scoring';
 import type { Submission } from '../core/types';
 import { readSubmissionsZip } from '../core/zip';
 import { codeBlock, copy, download, esc, prose, store } from './dom';
+import { GUIDE_HTML, STEP_HELP } from './guide';
 
-type Tab = 'import' | 'questions' | 'review';
+type Tab = 'guide' | 'import' | 'questions' | 'review';
 
 const KEY = 'code-viva-course';
 
@@ -54,7 +55,7 @@ function isoWithLocalOffset(local: string): string {
 
 export function mountInstructor(root: HTMLElement): void {
   let course: Course = parseCourse(JSON.stringify(store<Course>(KEY) ?? '')) ?? emptyCourse();
-  let tab: Tab = course.submissions.length ? (Object.keys(course.transcripts).length ? 'review' : 'questions') : 'import';
+  let tab: Tab = course.submissions.length ? (Object.keys(course.transcripts).length ? 'review' : 'questions') : 'guide';
   let selected: string | null = null;
   let message = '';
   let error = '';
@@ -73,7 +74,19 @@ export function mountInstructor(root: HTMLElement): void {
       <h1>Code Viva</h1>
       <p class="lede">Short written orals about each student's own submission: questions anchored to their functions, names and commits, a timed session from a personal link, and proposed scores with quoted evidence for you to approve. Everything runs in this browser; no code or answers leave it unless you send them.</p>
     </header>
+    <section class="card demo-bar" aria-labelledby="demo-h">
+      <div>
+        <h2 id="demo-h">New here? Start with a demo course</h2>
+        <p class="small muted">Each demo is a made-up class with real-looking code and commit history. Most students have already "taken" their viva, so you land on the Review tab with transcripts, proposed scores and a flag queue to explore. Nothing is sent anywhere.</p>
+      </div>
+      <div class="demo-pick">
+        <label for="demo-select">Demo course</label>
+        <select id="demo-select">${DEMOS.map((d) => `<option value="${esc(d.id)}">${esc(d.topic)} (${esc(d.languages)}, ${d.students.length} students)</option>`).join('')}</select>
+        <button class="primary" id="demo">Load demo</button>
+      </div>
+    </section>
     <nav class="tabs" role="tablist" aria-label="Steps">
+      <button role="tab" data-tab="guide">How it works</button>
       <button role="tab" data-tab="import">1. Import</button>
       <button role="tab" data-tab="questions">2. Questions and links</button>
       <button role="tab" data-tab="review">3. Review</button>
@@ -93,9 +106,50 @@ export function mountInstructor(root: HTMLElement): void {
   function render() {
     for (const b of root.querySelectorAll<HTMLButtonElement>('[data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === tab));
     root.querySelector('#msg')!.innerHTML = error ? `<p class="notice bad">${esc(error)}</p>` : message ? `<p class="notice">${prose(message)}</p>` : '';
-    if (tab === 'import') renderImport();
+    if (tab === 'guide') renderGuide();
+    else if (tab === 'import') renderImport();
     else if (tab === 'questions') renderQuestions();
     else renderReview();
+    addStepHelp();
+  }
+
+  root.querySelector('#demo')!.addEventListener('click', () => {
+    const id = root.querySelector<HTMLSelectElement>('#demo-select')!.value;
+    if (course.submissions.length && !confirm('Replace the current course with this demo course? Export it first if you want to keep it.')) return;
+    save(loadDemo(id));
+    selected = null;
+    tab = 'review';
+    const all = rows(course);
+    const answered = all.filter((r) => r.score).length;
+    const first = flagQueue(course)[0];
+    say(`Demo loaded: ${course.settings.course}, ${course.settings.assignment}. ${answered} of ${all.length} students have answered${first ? `; ${first.student} is at the top of the flag queue` : ''}. Open "How it works" for a guided tour.`);
+    render();
+  });
+
+  /** A collapsible "how to use this step" box at the top of each step tab; its open/closed state is remembered. */
+  function addStepHelp() {
+    const help = STEP_HELP[tab];
+    if (!help) return;
+    const key = `code-viva-help-${tab}`;
+    const open = store<boolean>(key) ?? true;
+    panel.insertAdjacentHTML('afterbegin', `<details class="card help" ${open ? 'open' : ''}><summary>How to use this step</summary>${help}</details>`);
+    const d = panel.querySelector<HTMLDetailsElement>('details.help')!;
+    d.addEventListener('toggle', () => store(key, d.open));
+  }
+
+  function renderGuide() {
+    panel.innerHTML = GUIDE_HTML;
+    for (const b of panel.querySelectorAll<HTMLButtonElement>('[data-goto]')) {
+      b.addEventListener('click', () => {
+        tab = b.dataset.goto as Tab;
+        say('');
+        render();
+      });
+    }
+    panel.querySelector('#guide-demo')?.addEventListener('click', () => {
+      root.querySelector<HTMLSelectElement>('#demo-select')!.focus();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 
   // ---------- Import ----------
@@ -125,8 +179,7 @@ export function mountInstructor(root: HTMLElement): void {
             <p class="small muted">A Gradescope export (with <code>submission_metadata.yml</code>), a Canvas "Download submissions" zip, or one folder per student. Add a <code>git-log.txt</code> (output of <code>git log --numstat</code>) to a folder to include its commits.</p>
             <label for="zip" class="sr-only">Submissions zip</label>
             <input id="zip" type="file" accept=".zip,application/zip">
-            <p class="small muted" style="margin-top:14px">Or try it with invented data:</p>
-            <button id="demo">Load the demo course (4 students, 3 already answered)</button>
+            <p class="small muted" style="margin-top:14px">Just exploring? Use <b>Load demo</b> at the top of the page instead.</p>
           </div>
           <form id="gh">
             <h3>GitHub Classroom</h3>
@@ -181,13 +234,6 @@ export function mountInstructor(root: HTMLElement): void {
       } catch (err) {
         say(`Could not read that zip: ${(err as Error).message}`, true);
       }
-      render();
-    });
-    panel.querySelector('#demo')!.addEventListener('click', () => {
-      if (course.submissions.length && !confirm('Replace the current course with the demo course?')) return;
-      save(sampleCourse());
-      tab = 'review';
-      say('Demo course loaded: Ana, Ben and Chen have answered; Dana has not. Ben is at the top of the flag queue.');
       render();
     });
     panel.querySelector<HTMLFormElement>('#gh')!.addEventListener('submit', async (e) => {
@@ -457,7 +503,7 @@ export function mountInstructor(root: HTMLElement): void {
   }
 
   function detailHtml(): string {
-    if (!selected) return '<section class="card"><p class="muted">No answers yet. Paste response codes above, or load the demo course on the Import tab.</p></section>';
+    if (!selected) return '<section class="card"><p class="muted">No answers yet. Paste response codes above, or load a demo course from the top of the page to see what a finished review looks like.</p></section>';
     const sub = course.submissions.find((s) => s.id === selected)!;
     const v = course.vivas[sub.id]!;
     const t = course.transcripts[sub.id]!;

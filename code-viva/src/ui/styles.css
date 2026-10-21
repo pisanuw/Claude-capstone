@@ -112,6 +112,7 @@ a {
 }
 
 .tabs button {
+  white-space: nowrap;
   border: 0;
   border-bottom: 3px solid transparent;
   border-radius: 0;
@@ -454,4 +455,66 @@ button.linkish {
 button.small {
   font-size: 0.82rem;
   padding: 2px 8px;
+}
+
+.demo-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 12px 20px;
+  align-items: end;
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.demo-bar h2 {
+  margin-bottom: 4px;
+}
+
+.demo-bar p {
+  margin: 0;
+}
+
+.demo-pick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.demo-pick label {
+  flex-basis: 100%;
+  margin: 0;
+}
+
+.demo-pick select {
+  flex: 1 1 220px;
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .demo-bar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+details.help summary {
+  font-size: 0.95rem;
+}
+
+details.help[open] summary {
+  margin-bottom: 6px;
+}
+
+ol.steps {
+  margin: 6px 0;
+  padding-left: 22px;
+}
+
+ol.steps li {
+  margin: 6px 0;
+}
+
+.guide p,
+.guide li {
+  max-width: 78ch;
 }

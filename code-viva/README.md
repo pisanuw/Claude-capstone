@@ -38,9 +38,42 @@ for code.
    sentences they rest on. Override any score, add a note, approve, and export
    a results CSV.
 
-Try **Load the demo course** on the Import tab: four invented submissions to a
-linked-list assignment (Python, Java, JavaScript), three already answered by
-scripted sessions played through the real session engine.
+## Demo courses
+
+The **New here? Start with a demo course** box at the top of every tab loads one
+of eleven invented courses. In each, most students have already answered
+through scripted sessions played by the real session engine, so you land on a
+finished review: one strong student, one who committed everything in a single
+late-night commit and answers vaguely or by pasting a textbook paragraph (top
+of the flag queue), and sometimes a student who recovers after follow-ups or
+has not answered yet.
+
+| Demo | Topic | Languages |
+|---|---|---|
+| CS 143 A4 | Linked lists and merge sort | Python, Java, JavaScript |
+| CS 142 A6 | Recursion and backtracking (N-Queens, subsets) | Python |
+| CS 143 A7 | Binary search trees | Java, Python |
+| CSS 342 P3 | Graphs: breadth-first search on a grid | Python, JavaScript |
+| CSE 333 HW2 | Hash table with separate chaining | C |
+| CS 161 A5 | Dynamic programming (edit distance, LCS) | TypeScript, Python |
+| CS 2 A3 | Stacks: bracket matching and postfix evaluation | Java |
+| INFO 340 Lab 6 | A REST API | JavaScript (Express) |
+| CSE 160 HW4 | Grade statistics from a CSV | Python |
+| CS 162 Lab 2 | Quicksort and insertion sort | C++ |
+| CSS 360 A2 | Bank accounts and exceptions | C# |
+| CS 1 Project 2 | Word frequencies | Python |
+
+The student code lives as ordinary source files under `src/demos/`, bundled as
+text; `src/core/demos.ts` describes each course and generates its commit
+history.
+
+## Built-in help
+
+The **How it works** tab (the start page for a new browser) has a five-minute
+tour with a demo course, a step-by-step guide for a real assignment, what
+students see, how questions are chosen, how to read scores and flags,
+privacy, and tips. Each step tab also opens with a collapsible **How to use
+this step** box; the page remembers whether you closed it.
 
 ![Student session on a phone: an edge-case question about line 75 of merge, a follow-up, and the highlighted code](mobile.png)
 
@@ -71,8 +104,8 @@ copies of the same starter code still get different questions.
 
 **Commit statistics** (the MVP's "simple stats", not anomaly detection): a
 commit that adds 120+ code lines and 40%+ of all code; a commit between 00:00
-and 04:59 in the committer's own timezone with 40+ lines; one commit carrying
-80%+ of the code; 50%+ of the code in the hour before the deadline. Commits by
+and 04:59 in the committer's own timezone with 20+ lines; one commit carrying
+80%+ of the code (20+ lines); 50%+ of the code in the hour before the deadline. Commits by
 `github-classroom[bot]` and other bots are ignored. A flagged commit is a
 question for the student, never a verdict.
 

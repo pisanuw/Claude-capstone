@@ -529,10 +529,12 @@ questions travel in the URL fragment), with up to two follow-ups aimed at what
 a vague answer is missing, and send back a response code. The review tab shows
 transcripts with proposed 0-3 rubric scores quoting their evidence, a flag
 queue (low scores, pasting, an unexplained commit, focus loss, restarts),
-instructor overrides and approval, and CSV exports. Deterministic templates and
+instructor overrides and approval, and CSV exports. Eleven demo courses (C, C++,
+C#, Java, Python, JavaScript, TypeScript) load from the top of the page, and a
+"How it works" tab walks through the whole workflow. Deterministic templates and
 a keyword rubric replace the idea's Claude API calls. Deployed on **Netlify**
 (static site, no backend).
 
-79 vitest tests, 99.6% statement coverage on the core.
+117 vitest tests, 99.7% statement coverage on the core.
 Live: [code-viva.netlify.app](https://code-viva.netlify.app).
 See its [README](./code-viva/README.md).

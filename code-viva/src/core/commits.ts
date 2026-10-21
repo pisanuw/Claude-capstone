@@ -125,8 +125,8 @@ function clock(iso: string): string {
 /**
  * Statistics plus "worth asking about" events. Thresholds: a bulk commit adds
  * at least 120 code lines and 40% of everything added; a late commit is
- * between 00:00 and 04:59 in the committer's timezone with 40+ lines; a
- * single-commit history has one commit carrying 80%+ of the code; a deadline
+ * between 00:00 and 04:59 in the committer's timezone with 20+ lines; a
+ * single-commit history has one commit carrying 80%+ of 20 or more code lines; a deadline
  * rush lands 50%+ of the code in the hour before the given deadline.
  */
 export function commitStats(all: Commit[], deadline?: string): CommitStats {
@@ -145,13 +145,13 @@ export function commitStats(all: Commit[], deadline?: string): CommitStats {
       events.push({ kind: 'bulk', sha: c.sha, date: c.date, added, file, severity: 2, reason: `Commit ${short} added ${added} lines${where} in one step (${Math.round((100 * added) / totalAdded)}% of all code).` });
     }
     const hour = localHour(c.date);
-    if (hour < 5 && added >= 40) {
+    if (hour < 5 && added >= 20) {
       events.push({ kind: 'late', sha: c.sha, date: c.date, added, file, severity: 1, reason: `Commit ${short} at ${clock(c.date)} local time added ${added} lines${where}.` });
     }
   }
   const big = commits.length ? commits.reduce((a, b) => (codeAdded(b) > codeAdded(a) ? b : a)) : null;
   const bulk = events.find((e) => e.kind === 'bulk' && e.sha === big?.sha);
-  if (big && totalAdded >= 40 && largest / totalAdded >= 0.8) {
+  if (big && totalAdded >= 20 && largest / totalAdded >= 0.8) {
     // One commit with most of the code is the strongest signal; it replaces its own bulk event.
     if (bulk) events.splice(events.indexOf(bulk), 1);
     events.push({
