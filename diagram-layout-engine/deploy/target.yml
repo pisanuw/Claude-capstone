@@ -21,4 +21,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: diagram-layout-engine
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '5d3a5d80-823a-4b26-a55c-c44ac60d40e2'
   accountSlug: yusuf-pisan

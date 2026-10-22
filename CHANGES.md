@@ -122,3 +122,4 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-22 [code] diagram-layout-engine: new package (idea 2026-10-18 n3). Mermaid-subset parser, Sugiyama pipeline, routing, subgraphs, themes, diff, inspector, benchmark. 88 tests, 98.9% stmt.
 2026-10-22 [decision] diagram-layout-engine: subgraphs laid out bottom-up as fixed boxes with obstacle-aware legs; barycenter default after the 50-graph benchmark; no dagre/ELK comparison.
 2026-10-22 [doc] CLAUDE.md: added diagram-layout-engine to the commit scope list; ci: added diagram-layout-engine job.
+2026-10-22 [code] diagram-layout-engine: deployed to diagram-layout-engine.netlify.app; siteId pinned.
