@@ -118,3 +118,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-21 [decision] deploy: only main deploys; a missing base diffs the tip commit, not deploy-all; editing deploy.yml alone deploys nothing. New daily workflow deletes merged claude/* branches.
 
 2026-10-21 [code] code-viva: 10 more demo courses (C, C++, C#, Java, Python, JS, TS) in a picker at the top; How it works tab and per-step help; late/single-commit checks from 20 lines; siteId pinned.
+
+2026-10-22 [code] diagram-layout-engine: new package (idea 2026-10-18 n3). Mermaid-subset parser, Sugiyama pipeline, routing, subgraphs, themes, diff, inspector, benchmark. 88 tests, 98.9% stmt.
+2026-10-22 [decision] diagram-layout-engine: subgraphs laid out bottom-up as fixed boxes with obstacle-aware legs; barycenter default after the 50-graph benchmark; no dagre/ELK comparison.
+2026-10-22 [doc] CLAUDE.md: added diagram-layout-engine to the commit scope list; ci: added diagram-layout-engine job.

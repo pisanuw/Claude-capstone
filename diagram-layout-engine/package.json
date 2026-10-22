@@ -1,0 +1,30 @@
+{
+  "name": "diagram-layout-engine",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "A from-scratch layout engine for a Mermaid flowchart subset: recursive-descent parser with line/column errors, the full Sugiyama pipeline (greedy feedback arcs, longest-path or network-simplex layering, barycenter/median sweeps with transposition, Brandes-Kopf coordinates, spline/orthogonal routing), subgraphs with their own direction, themeable SVG, stable-layout visual diff, a stage-by-stage pipeline inspector and a 50-graph benchmark. Entirely client-side.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -p tsconfig.json --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "coverage": "vitest run --coverage",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src test"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@vitest/coverage-v8": "^2.1.8",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "typescript": "^5.6.3",
+    "typescript-eslint": "^8.19.0",
+    "vite": "^6.0.7",
+    "vitest": "^2.1.8"
+  }
+}

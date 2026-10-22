@@ -538,3 +538,25 @@ a keyword rubric replace the idea's Claude API calls. Deployed on **Netlify**
 117 vitest tests, 99.7% statement coverage on the core.
 Live: [code-viva.netlify.app](https://code-viva.netlify.app).
 See its [README](./code-viva/README.md).
+
+### [`diagram-layout-engine/`](./diagram-layout-engine)
+
+A from-scratch layout engine for a Mermaid flowchart subset, built as the
+reference solution for the "Build Your Own Diagram Layout Engine" assignment. A
+hand-written recursive-descent parser (14 shapes, labelled links in both forms,
+chains, `&` groups, nested subgraphs with their own `direction`, `classDef`,
+`style`, `linkStyle`) reports the first error with line, column and a caret.
+Layout is the full Sugiyama pipeline: greedy feedback arcs, longest-path or
+network-simplex layering, dummy nodes, barycenter/median sweeps with
+transposition scored by an accumulator-tree crossing count, Brandes-Koepf or
+priority coordinates, then spline, polyline or orthogonal routing. Subgraphs
+are laid out bottom-up in their own direction; edges into them get legs that
+bend around sibling nodes. Six CSS-variable themes, SVG/PNG export, share
+links, a stable-layout visual diff (one union layout, added/removed/changed
+colouring), a stage-by-stage pipeline inspector and a 50-graph benchmark that
+ranks five configurations. Ten bundled examples. Deployed on **Netlify**
+(static site, no backend).
+
+88 vitest tests, 98.9% statement coverage on the core.
+Live: [diagram-layout-engine.netlify.app](https://diagram-layout-engine.netlify.app).
+See its [README](./diagram-layout-engine/README.md).
