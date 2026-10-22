@@ -560,3 +560,20 @@ ranks five configurations. Ten bundled examples. Deployed on **Netlify**
 88 vitest tests, 98.9% statement coverage on the core.
 Live: [diagram-layout-engine.netlify.app](https://diagram-layout-engine.netlify.app).
 See its [README](./diagram-layout-engine/README.md).
+
+### [`letter-ledger/`](./letter-ledger)
+
+Recommendation-letter requests for professors. A personal request link carries
+the professor's policy (notice period, grade rule, required documents,
+questions) and public key; the student form collects programs and letter
+deadlines, courses, documents and a signed FERPA release, and seals it all into
+one `.ledger` file (ECDH P-256, AES-256-GCM) the student emails. The professor's
+dashboard files requests by student, checks them against the policy and the
+release, sorts every letter by deadline, exports calendar reminders (.ics) and
+writes status emails for the mail app. A notes timeline (with quick capture
+during the term) feeds a Markdown fact outline per program that leaves grades
+out unless the release covers them. Encrypted backups, deletion on request, a
+demo ledger. Deployed on **Netlify** (static site, no backend).
+
+Live: [letter-ledger.netlify.app](https://letter-ledger.netlify.app).
+See its [README](./letter-ledger/README.md).
