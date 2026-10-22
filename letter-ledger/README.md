@@ -9,8 +9,7 @@ program, sends status updates from their own mail app, keeps a notes timeline
 on students during the term, and exports a fact outline when it is time to
 write.
 
-Live: [letter-ledger.netlify.app](https://letter-ledger.netlify.app) (once the
-deploy workflow has run on `main`)
+Live: [letter-ledger.netlify.app](https://letter-ledger.netlify.app)
 
 Built from idea 2026-10-22 n3 in
 [`pisanuw/daily-project-ideas`](https://github.com/pisanuw/daily-project-ideas).

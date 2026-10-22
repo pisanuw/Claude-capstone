@@ -127,3 +127,4 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-22 [code] letter-ledger: new package (idea 2026-10-22 n3). Request link with policy, sealed .ledger packets, FERPA release check, deadline dashboard, .ics, status emails, notes, fact outline. 58 tests.
 2026-10-22 [decision] letter-ledger: no Supabase/Resend/Stripe/Claude API; packets emailed as files sealed to the professor's ECDH key; reminders as .ics, status as mailto drafts; outline only, no AI drafting.
 2026-10-22 [doc] CLAUDE.md: added letter-ledger to the commit scope list; ci: added letter-ledger job.
+2026-10-22 [code] letter-ledger: deployed to letter-ledger.netlify.app; siteId pinned.
