@@ -137,3 +137,4 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-23 [code] fork-count: new package (idea 2026-10-09 n2). C-subset interpreter, process tree, exhaustive schedule search, possibility checker with happens-before reasons, quiz generator. 94 tests.
 2026-10-23 [decision] fork-count: processes run by re-executing main() along fork decisions; canonical-state symmetry reduction plus a 50k-state budget; no D3, no LLM.
 2026-10-23 [doc] CLAUDE.md: added fork-count to the commit scope list; ci: added fork-count job.
+2026-10-23 [code] fork-count: deployed to fork-count.netlify.app; siteId pinned.
