@@ -627,4 +627,5 @@ Ships with a real recorded demo on two sample assignments. Deployed on
 **Netlify** (static site, no backend).
 
 53 vitest tests (the pytest harness runs for real under CPython), 99.8% statement coverage on the core.
+Live: [assignment-stress-test.netlify.app](https://assignment-stress-test.netlify.app).
 See its [README](./assignment-stress-test/README.md).

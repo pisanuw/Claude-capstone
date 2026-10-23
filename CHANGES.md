@@ -143,3 +143,4 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-23 [decision] assignment-stress-test: no backend; BYOK Claude API from the browser, paste mode instead of a Gemini client, Pyodide worker as sandbox; refusals score zero, no fallback model.
 2026-10-23 [note] assignment-stress-test: demo recorded with the claude CLI in a whitelisted env; Sonnet 5.5 rejected effort high via the CLI, so attempts retry once at default effort.
 2026-10-23 [doc] CLAUDE.md: added assignment-stress-test to the commit scope list; ci: added assignment-stress-test job (installs pytest).
+2026-10-23 [code] assignment-stress-test: deployed to assignment-stress-test.netlify.app; siteId pinned.
