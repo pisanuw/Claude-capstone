@@ -609,3 +609,22 @@ exports Markdown or QTI 1.2. Deployed on **Netlify** (static site, no backend).
 94 vitest tests (including a brute-force soundness check), 99% statement coverage on the core.
 Live: [fork-count.netlify.app](https://fork-count.netlify.app).
 See its [README](./fork-count/README.md).
+
+### [`assignment-stress-test/`](./assignment-stress-test)
+
+See how AI scores on your assignment before students find out. Paste the
+prompt and rubric (one row per line or a Markdown table, rows tagged `{tests}`
+go to the autograder), and each Claude model makes three student-style
+attempts: a lazy paste, a rubric-aware request and a careful plan/write/revise
+conversation. Your pytest suite runs in the browser in Pyodide with a time
+limit; the other rows are scored by a judge model against your rubric. The
+report shows a model by style matrix, which rows AI meets, gets partway or
+cannot meet, editable scores and full transcripts, and exports as a one-page
+HTML report. History keeps runs term over term with re-test diffs and flags
+assignments that aged badly. Instructors bring their own API key (calls go
+straight from the browser to Anthropic) or paste replies from any chat tool.
+Ships with a real recorded demo on two sample assignments. Deployed on
+**Netlify** (static site, no backend).
+
+53 vitest tests (the pytest harness runs for real under CPython), 99.8% statement coverage on the core.
+See its [README](./assignment-stress-test/README.md).

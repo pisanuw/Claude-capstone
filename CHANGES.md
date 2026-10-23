@@ -138,3 +138,8 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-23 [decision] fork-count: processes run by re-executing main() along fork decisions; canonical-state symmetry reduction plus a 50k-state budget; no D3, no LLM.
 2026-10-23 [doc] CLAUDE.md: added fork-count to the commit scope list; ci: added fork-count job.
 2026-10-23 [code] fork-count: deployed to fork-count.netlify.app; siteId pinned.
+
+2026-10-23 [code] assignment-stress-test: new package (idea 2026-10-23 n1). Rubric parser, 3 student-style prompts, judge + pytest in Pyodide, report, diff, term history, paste mode. 53 tests.
+2026-10-23 [decision] assignment-stress-test: no backend; BYOK Claude API from the browser, paste mode instead of a Gemini client, Pyodide worker as sandbox; refusals score zero, no fallback model.
+2026-10-23 [note] assignment-stress-test: demo recorded with the claude CLI in a whitelisted env; Sonnet 5.5 rejected effort high via the CLI, so attempts retry once at default effort.
+2026-10-23 [doc] CLAUDE.md: added assignment-stress-test to the commit scope list; ci: added assignment-stress-test job (installs pytest).
