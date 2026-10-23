@@ -21,4 +21,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: brocot-gear-finder
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '81923a45-d24d-4aa7-8dc5-fd75a37e18f8'
   accountSlug: yusuf-pisan
