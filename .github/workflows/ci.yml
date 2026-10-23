@@ -1055,3 +1055,33 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  brocot-gear-finder:
+    name: brocot-gear-finder
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: brocot-gear-finder
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: brocot-gear-finder/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test with coverage
+        run: npm run coverage
+
+      - name: Build
+        run: npm run build

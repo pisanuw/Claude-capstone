@@ -128,3 +128,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-22 [decision] letter-ledger: no Supabase/Resend/Stripe/Claude API; packets emailed as files sealed to the professor's ECDH key; reminders as .ics, status as mailto drafts; outline only, no AI drafting.
 2026-10-22 [doc] CLAUDE.md: added letter-ledger to the commit scope list; ci: added letter-ledger job.
 2026-10-22 [code] letter-ledger: deployed to letter-ledger.netlify.app; siteId pinned.
+
+2026-10-23 [code] brocot-gear-finder: new package (idea 2026-10-05 n1). Product-table train search, continued fraction and Stern-Brocot panel, meshing SVG animation, drift dial, laser-cut SVG. 44 tests.
+2026-10-23 [decision] brocot-gear-finder: trains come from an exhaustive smooth-product search (tree shown for teaching); max 3 stages and 200 teeth; plain TypeScript, no React/Tailwind.
+2026-10-23 [doc] CLAUDE.md: added brocot-gear-finder to the commit scope list; ci: added brocot-gear-finder job.

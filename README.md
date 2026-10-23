@@ -577,3 +577,19 @@ demo ledger. Deployed on **Netlify** (static site, no backend).
 
 Live: [letter-ledger.netlify.app](https://letter-ledger.netlify.app).
 See its [README](./letter-ledger/README.md).
+
+### [`brocot-gear-finder/`](./brocot-gear-finder)
+
+Gear trains for any ratio with whole-number teeth. Type a target reduction
+(an expression or a:b) and an exhaustive search over a product table lists the
+most accurate 1 to 3 stage compound trains in your tooth range, with error in
+ppm/ppb and as clock drift in s/day. A continued-fraction panel shows the
+Stern-Brocot path and which convergents are buildable (Brocot's point: the
+best fraction often has a prime factor no gear can carry). The chosen train is
+animated in SVG with involute teeth phased to mesh, a dial shows drift against
+an ideal hand, and an SVG cut sheet exports for laser cutting. Share links in
+the URL fragment. Deployed on **Netlify** (static site, no backend).
+
+44 vitest tests, 100% statement coverage on the core.
+Live: [brocot-gear-finder.netlify.app](https://brocot-gear-finder.netlify.app).
+See its [README](./brocot-gear-finder/README.md).
