@@ -629,3 +629,20 @@ Ships with a real recorded demo on two sample assignments. Deployed on
 53 vitest tests (the pytest harness runs for real under CPython), 99.8% statement coverage on the core.
 Live: [assignment-stress-test.netlify.app](https://assignment-stress-test.netlify.app).
 See its [README](./assignment-stress-test/README.md).
+
+### [`cache-miss-theater/`](./cache-miss-theater)
+
+Watch a loop nest miss. Write a small C kernel (arrays, #define constants,
+for/while/if, min/max bounds) and a hand-written interpreter produces its
+exact address trace, which runs through a configurable cache (size, line
+size, associativity, LRU/FIFO/random, write-allocate, write-back). Every miss
+is classified as compulsory, capacity or conflict by running an infinite and
+a fully associative cache alongside. Step or play through the trace with an
+animated sets × ways grid and a memory map of each array, compare two kernels
+side by side, sweep a block size or cache parameter, and generate exam
+questions answered by the simulator (Markdown or QTI 1.2). Deployed on
+**Netlify** (static site, no backend).
+
+62 vitest tests (the cache is cross-checked against a naive reference), 99.7% statement coverage on the core.
+Live: [cache-miss-theater.netlify.app](https://cache-miss-theater.netlify.app).
+See its [README](./cache-miss-theater/README.md).

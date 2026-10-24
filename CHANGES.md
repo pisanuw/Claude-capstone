@@ -144,3 +144,9 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-23 [note] assignment-stress-test: demo recorded with the claude CLI in a whitelisted env; Sonnet 5.5 rejected effort high via the CLI, so attempts retry once at default effort.
 2026-10-23 [doc] CLAUDE.md: added assignment-stress-test to the commit scope list; ci: added assignment-stress-test job (installs pytest).
 2026-10-23 [code] assignment-stress-test: deployed to assignment-stress-test.netlify.app; siteId pinned.
+
+2026-10-24 [code] cache-miss-theater: new package (idea 2026-10-10 n2). C loop-nest parser, exact address trace, set-assoc cache sim, 3C classification, theater, compare, sweep, quiz; 62 tests.
+
+2026-10-24 [decision] cache-miss-theater: interpreter instead of affine-only analysis (supports min() bounds, branches); array contents not modelled; plain DOM + canvas, no React/D3.
+
+2026-10-24 [doc] CLAUDE.md: added cache-miss-theater to the commit scope list; ci: added cache-miss-theater job.
