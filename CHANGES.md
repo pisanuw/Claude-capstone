@@ -150,3 +150,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-24 [decision] cache-miss-theater: interpreter instead of affine-only analysis (supports min() bounds, branches); array contents not modelled; plain DOM + canvas, no React/D3.
 
 2026-10-24 [doc] CLAUDE.md: added cache-miss-theater to the commit scope list; ci: added cache-miss-theater job.
+
+2026-10-24 [code] cache-miss-theater: deployed to cache-miss-theater.netlify.app; siteId pinned.
