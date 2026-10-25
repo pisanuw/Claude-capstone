@@ -1183,3 +1183,33 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  edit-graph-lab:
+    name: edit-graph-lab
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: edit-graph-lab
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: edit-graph-lab/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Test with coverage
+        run: npm run coverage
+
+      - name: Build
+        run: npm run build

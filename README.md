@@ -646,3 +646,19 @@ questions answered by the simulator (Markdown or QTI 1.2). Deployed on
 62 vitest tests (the cache is cross-checked against a naive reference), 99.7% statement coverage on the core.
 Live: [cache-miss-theater.netlify.app](https://cache-miss-theater.netlify.app).
 See its [README](./cache-miss-theater/README.md).
+
+### [`edit-graph-lab/`](./edit-graph-lab)
+
+Diff as a shortest-path search. Type two texts (lines or characters) and see
+their edit graph, with Myers' O(ND) algorithm animated step by step: the
+furthest-reaching d-paths spread across the grid while the V array fills in,
+and the final path becomes a unified diff whose hunks light up their stretch
+of the path. A comparison view runs LCS dynamic programming, Myers, patience
+and histogram diff on the same input and outlines the hunks where they
+disagree, with seven curated "readability trap" examples. A seeded exercise
+generator (predict D, fill in V[k], spot the patience diff, count the hunks)
+exports Markdown or QTI 1.2. Deployed on **Netlify** (static site, no backend).
+
+36 vitest tests (cross-checked against the `diff` npm package), 99.4% statement coverage on the core.
+Live: [edit-graph-lab.netlify.app](https://edit-graph-lab.netlify.app).
+See its [README](./edit-graph-lab/README.md).
