@@ -156,3 +156,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-25 [decision] edit-graph-lab: quadratic-space forward Myers so every step and the V array can be replayed; histogram uses a simplified rarest-then-longest rule; no git indent heuristic.
 
 2026-10-25 [doc] CLAUDE.md: added edit-graph-lab to the commit scope list; ci: added edit-graph-lab job.
+
+2026-10-25 [code] edit-graph-lab: deployed to edit-graph-lab.netlify.app; siteId pinned.

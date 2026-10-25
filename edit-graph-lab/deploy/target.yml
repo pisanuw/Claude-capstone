@@ -21,4 +21,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: edit-graph-lab
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: '763456eb-389e-4eb9-8c88-ca1333d66458'
   accountSlug: yusuf-pisan
