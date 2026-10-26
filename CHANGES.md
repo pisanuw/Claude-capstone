@@ -162,3 +162,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-26 [decision] lockstep-lab: one main-thread sim in 1 ms steps (reproducible from seed) instead of a worker per client; float platforms simulated; grader in a Web Worker.
 
 2026-10-26 [doc] CLAUDE.md: added lockstep-lab to the commit scope list; ci: added lockstep-lab job.
+
+2026-10-26 [code] lockstep-lab: deployed to lockstep-lab.netlify.app; siteId pinned.
