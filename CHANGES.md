@@ -158,3 +158,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-25 [doc] CLAUDE.md: added edit-graph-lab to the commit scope list; ci: added edit-graph-lab job.
 
 2026-10-25 [code] edit-graph-lab: deployed to edit-graph-lab.netlify.app; siteId pinned.
+
+2026-10-26 [decision] lockstep-lab: one main-thread sim in 1 ms steps (reproducible from seed) instead of a worker per client; float platforms simulated; grader in a Web Worker.
+
+2026-10-26 [doc] CLAUDE.md: added lockstep-lab to the commit scope list; ci: added lockstep-lab job.

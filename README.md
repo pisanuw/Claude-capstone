@@ -662,3 +662,19 @@ exports Markdown or QTI 1.2. Deployed on **Netlify** (static site, no backend).
 36 vitest tests (cross-checked against the `diff` npm package), 99.4% statement coverage on the core.
 Live: [edit-graph-lab.netlify.app](https://edit-graph-lab.netlify.app).
 See its [README](./edit-graph-lab/README.md).
+
+### [`lockstep-lab/`](./lockstep-lab)
+
+Deterministic lockstep and rollback netcode, made visible. Two to four
+simulated RTS clients run side by side over a seeded fake network (latency,
+jitter, loss, reordering). Toggle a source of nondeterminism (float32 across
+two platforms, an unseeded RNG, Map iteration order, frame-rate timestep) and
+watch the per-tick state hashes split, with a diff naming the first unit and
+field that differ. A sweep compares input-delay lockstep with GGPO-style
+rollback (input lag, stalls, re-simulation cost), and five autograded
+exercises ask students to make a step function survive 10,000 ticks on two
+simulated machines. Deployed on **Netlify** (static site, no backend).
+
+46 vitest tests (rollback's confirmed states are checked against lockstep's), 100% statement coverage on the core.
+Live: [lockstep-lab.netlify.app](https://lockstep-lab.netlify.app).
+See its [README](./lockstep-lab/README.md).
