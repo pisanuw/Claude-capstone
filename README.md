@@ -678,3 +678,16 @@ simulated machines. Deployed on **Netlify** (static site, no backend).
 46 vitest tests (rollback's confirmed states are checked against lockstep's), 100% statement coverage on the core.
 Live: [lockstep-lab.netlify.app](https://lockstep-lab.netlify.app).
 See its [README](./lockstep-lab/README.md).
+
+### [`tetromino-arcade/`](./tetromino-arcade)
+
+A feature-rich, Tetris-style falling-block game, built on request rather than
+from the ideas list. Guideline rules (SRS kicks, 7-bag, hold, ghost, lock
+delay with move reset, T-spins, back-to-back, combos, perfect clears) in a
+deterministic 60 fps core; Marathon, Sprint 40L, Ultra, Dig, Master 20G, Zen,
+a Daily Sprint and Versus against a Dellacherie/El-Tetris CPU with garbage
+exchange. Rebindable keys with DAS/ARR, gamepad and touch controls, themes,
+synthesised sound, records, and exact replays from seed plus key log.
+58 vitest tests, 99% statement coverage on the core.
+Live: [tetromino-arcade.netlify.app](https://tetromino-arcade.netlify.app).
+See its [README](./tetromino-arcade/README.md).
