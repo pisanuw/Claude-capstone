@@ -6,11 +6,14 @@ import {
   allChunks,
   check,
   enumerate,
+  findHang,
+  HANG,
   initialState,
   normaliseAnswer,
   show,
   simulate,
   statuses,
+  stuckReasons,
   type Enumeration,
   type Frame,
   type Policy,
@@ -30,13 +33,17 @@ const MODE_LABELS: Record<BufMode, string> = {
 const STATUS_LABELS: Record<ProcStatus, string> = {
   unborn: 'not yet forked',
   ready: 'runnable',
-  blocked: 'blocked in wait',
+  blocked: 'blocked in wait or read',
   zombie: 'zombie (exited, not reaped)',
   reaped: 'exited and reaped',
   orphan: 'orphan (parent exited)',
 };
 
-const visible = (s: string) => s.replace(/\n/g, '↵\n').replace(/\t/g, '⇥');
+const visible = (s: string) =>
+  s
+    .replace(/\n/g, '↵\n')
+    .replace(/\t/g, '⇥')
+    .replace(HANG, '[deadlock: no process can run]');
 
 function download(name: string, text: string, type: string): void {
   const url = URL.createObjectURL(new Blob([text], { type }));
@@ -96,7 +103,7 @@ export function mountApp(root: HTMLElement): void {
       el(
         'p',
         {},
-        'One main() with int / pid_t variables, if/else, for, while, do-while, break, continue, return, and the operators of C except pointers and arrays. Calls: fork, wait(NULL or &status), waitpid(pid, …, 0), exit, _exit, printf, fprintf(stdout|stderr), puts, putchar, write(1|2, "…", n), fflush, setbuf/setvbuf, getpid, getppid, sleep (ignored), WEXITSTATUS, and execlp/execl/execvp stubs (echo prints its arguments, other programs print a <placeholder> line). #include lines are skipped.',
+        'One main() with int / pid_t / char variables, one-dimensional int and char arrays, char * strings, if/else, for, while, do-while, break, continue, return, and the operators of C except pointer arithmetic. Calls: fork, wait(NULL or &status), waitpid(pid, …, 0), exit, _exit, printf, fprintf(stdout|stderr), sprintf, puts, putchar, fflush, setbuf/setvbuf, getpid, getppid, sleep (ignored), WEXITSTATUS, strlen, strcpy, strcat, strcmp, atoi; pipe, read, write, close, dup, dup2; and execlp/execl/execvp stubs: echo, cat, wc, sort, uniq, grep, head, tr, rev, true and false behave like the real filters on their stdin, other programs print a <placeholder> line. Each pipe needs one writing and one reading process, and each write() reaches the reader as one unit. #include lines are skipped.',
       ),
     ),
   );
@@ -207,7 +214,7 @@ export function mountApp(root: HTMLElement): void {
       el(
         'p',
         { class: 'lede' },
-        'Paste a fork/wait/exit/printf snippet. Fork Count runs every process, builds the process tree, and enumerates every order the scheduler could print in, including stdio buffers copied at fork. Then ask whether an output is possible, and if not, which happens-before edge rules it out.',
+        'Paste a fork/wait/exit/printf/pipe snippet. Fork Count runs every process, builds the process tree, and enumerates every order the scheduler could print in, including stdio buffers copied at fork, data passed through pipes, and deadlocks. Then ask whether an output is possible, and if not, which happens-before edge rules it out.',
       ),
     ),
     el('div', { class: 'grid' }, programCard, summary),
@@ -263,17 +270,44 @@ export function mountApp(root: HTMLElement): void {
       );
     }
     if (run.mode === 'full') notes.push(el('li', {}, 'Fully buffered: printf writes nothing until fflush, a full 4096-byte buffer, or exit.'));
+    const hangs = en.outputs.filter((o) => o.endsWith(HANG)).length;
+    if (hangs) {
+      const h = findHang(run);
+      notes.push(
+        el(
+          'li',
+          { class: 'warn' },
+          hangs === en.outputs.length
+            ? 'Every schedule deadlocks:'
+            : `${hangs} of the ${en.outputs.length} possible outputs end in a deadlock, for example:`,
+          h ? el('ul', {}, ...stuckReasons(run, h.state).map((r) => el('li', {}, r))) : '',
+        ),
+      );
+    }
+    for (const p of run.pipes) {
+      const who = (i: number | null) => (i === null ? 'nobody' : `pid ${run?.procs[i]?.pid}`);
+      notes.push(
+        el(
+          'li',
+          {},
+          `Pipe from line ${p.line}: ` +
+            (p.writer === null ? 'nothing is ever written into it' : `${who(p.writer)} writes ${p.writes.length} time${p.writes.length === 1 ? '' : 's'}`) +
+            (p.reader === null ? ', and nobody reads it.' : `, ${who(p.reader)} reads.`),
+        ),
+      );
+    }
     summary.replaceChildren(
       el('h2', {}, 'Summary'),
       el(
         'div',
         { class: 'stats' },
         stat('processes', String(run.procs.length)),
+        ...(run.pipes.length ? [stat('pipes', String(run.pipes.length))] : []),
         stat('writes', String(chunks.length)),
         stat('possible outputs', (en.truncated ? '≥ ' : '') + en.outputs.length.toLocaleString()),
         stat('write orders', en.schedules.toLocaleString()),
       ),
-      notes.length ? el('ul', { class: 'notes' }, ...notes) : el('p', { class: 'muted' }, 'No buffering surprises in this program.'),
+      notes.length ? el('ul', { class: 'notes' }, ...notes) : el('p', { class: 'muted' }, 'No buffering or pipe surprises in this program.'),
       el(
         'p',
         { class: 'muted small' },
@@ -310,7 +344,7 @@ export function mountApp(root: HTMLElement): void {
     const colW = 96;
     const rowH = 84;
     const W = Math.max(lay.width * colW, 200);
-    const H = lay.depth * rowH + 10;
+    const H = lay.depth * rowH + 10 + (run.pipes.length ? 56 : 0);
     const px = (i: number) => (lay.nodes[i]?.x ?? 0) * colW + colW / 2;
     const py = (i: number) => (lay.nodes[i]?.depth ?? 0) * rowH + 30;
     const parts: SVGElement[] = [];
@@ -321,6 +355,26 @@ export function mountApp(root: HTMLElement): void {
         svg('text', { x: String((px(p.parent) + px(i)) / 2 + 4), y: String((py(p.parent) + py(i)) / 2), class: 'edge-label' }, `L${p.forkLine}`),
       );
     });
+    // Pipes: a dashed arrow from the writing process to the reading one.
+    const defs = svg(
+      'defs',
+      {},
+      svg(
+        'marker',
+        { id: 'arrow', viewBox: '0 0 10 10', refX: '9', refY: '5', markerWidth: '7', markerHeight: '7', orient: 'auto-start-reverse' },
+        svg('path', { d: 'M 0 0 L 10 5 L 0 10 z', class: 'pipe-head' }),
+      ),
+    );
+    parts.unshift(defs);
+    for (const pipe of run.pipes) {
+      if (pipe.writer === null || pipe.reader === null || pipe.writer === pipe.reader) continue;
+      const [x1, y1, x2, y2] = [px(pipe.writer), py(pipe.writer) + 36, px(pipe.reader), py(pipe.reader) + 36];
+      const bend = Math.max(24, Math.abs(x2 - x1) / 4);
+      const mx = (x1 + x2) / 2;
+      const my = Math.max(y1, y2) + bend;
+      parts.push(svg('path', { d: `M ${x1} ${y1} Q ${mx} ${my} ${x2} ${y2}`, class: 'pipe-edge', 'marker-end': 'url(#arrow)' }));
+      parts.push(svg('text', { x: String(mx), y: String((Math.max(y1, y2) + my) / 2 + 12), class: 'pipe-label' }, `pipe L${pipe.line}`));
+    }
     procs.forEach((p: Proc, i) => {
       const outs = p.events.filter((e) => e.kind === 'out').map((e) => (e.kind === 'out' ? e.text : ''));
       const said = outs.join('').replace(/\n/g, '↵');
@@ -342,7 +396,8 @@ export function mountApp(root: HTMLElement): void {
       outSoFar.textContent = '';
     } else {
       const f = frames[frameIndex - 1] as Frame;
-      eventLine.textContent = describe(run, f);
+      const stuck = frameIndex === frames.length && f.status.some((x) => x === 'blocked' || x === 'ready');
+      eventLine.textContent = describe(run, f) + (stuck ? ' Then no process can run: deadlock.' : '');
       outSoFar.textContent = visible(f.output);
     }
     stepLabel.textContent = `step ${frameIndex} of ${frames.length}`;
@@ -360,6 +415,14 @@ export function mountApp(root: HTMLElement): void {
         return `pid ${pid} returns from wait at line ${e.line}.`;
       case 'exit':
         return `pid ${pid} exits with status ${e.code}${e.discarded ? `, discarding ${show(e.discarded)}` : ''}.`;
+      case 'pwrite':
+        return `pid ${pid} writes ${show(e.text)} into the pipe from line ${r.pipes[e.pipe]?.line} (line ${e.line}, ${causeText(e.cause)}).`;
+      case 'read':
+        return e.eof
+          ? `pid ${pid}'s read() at line ${e.line} returns 0: end of file.`
+          : `pid ${pid} reads ${show(e.text)} from the pipe at line ${e.line}.`;
+      case 'close':
+        return `pid ${pid} closes its last write end of the pipe from line ${r.pipes[e.pipe]?.line} (line ${e.line}).`;
     }
   }
 
@@ -426,7 +489,8 @@ export function mountApp(root: HTMLElement): void {
     }
     if (v.possible) {
       verdict.replaceChildren(
-        el('p', { class: 'yes' }, '✓ Possible.'),
+        el('p', { class: 'yes' }, v.hang.length ? '✓ Possible, and then the program hangs.' : '✓ Possible.'),
+        ...(v.hang.length ? [el('ul', {}, ...v.hang.map((h) => el('li', {}, h)))] : []),
         el('p', {}, 'One schedule that prints it, write by write:'),
         el(
           'ol',

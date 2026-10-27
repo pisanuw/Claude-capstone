@@ -597,16 +597,19 @@ See its [README](./brocot-gear-finder/README.md).
 ### [`fork-count/`](./fork-count)
 
 Fork-output questions for OS courses, answered exhaustively. Paste a short
-fork/wait/exit/printf C snippet: a hand-written interpreter runs every process
-(by re-executing main() along each process's fork decisions, so stdio buffers
-copied at fork come out right), draws the process tree, and enumerates every
-output any schedule can print, with symmetry reduction so 16 identical
-processes need a few hundred states. Type an output to learn whether it is
-possible and, if not, which fork or wait edge rules it out. A seeded generator
-writes exam questions whose answers are verified against every schedule and
-exports Markdown or QTI 1.2. Deployed on **Netlify** (static site, no backend).
+fork/wait/exit/printf/pipe C snippet: a hand-written interpreter runs every
+process (by re-executing main() along each process's fork decisions, so stdio
+buffers copied at fork come out right), draws the process tree with an arrow
+for each pipe, and enumerates every output any schedule can print, with
+symmetry reduction so 16 identical processes need a few hundred states. Pipes,
+`dup2`, `exec` of small filters (`wc`, `sort`, `grep`, `tr`, ...) and the
+deadlocks a missing `close` causes are modelled. Type an output to learn
+whether it is possible and, if not, which fork, wait or pipe edge rules it
+out. 37 examples (24 on pipes). A seeded generator writes exam questions whose
+answers are verified against every schedule and exports Markdown or QTI 1.2.
+Deployed on **Netlify** (static site, no backend).
 
-94 vitest tests (including a brute-force soundness check), 99% statement coverage on the core.
+165 vitest tests (including a brute-force soundness check), 99% statement coverage on the core.
 Live: [fork-count.netlify.app](https://fork-count.netlify.app).
 See its [README](./fork-count/README.md).
 

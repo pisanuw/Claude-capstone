@@ -184,8 +184,7 @@ describe('language', () => {
     expect(err('printf(1);')).toThrow(/format string/);
     expect(err('fprintf(stdout, 1);')).toThrow(/format string/);
     expect(err('puts(1);')).toThrow(/puts needs a string/);
-    expect(err('write(1, 2, 3);')).toThrow(/write\(fd/);
-    expect(err('write(3, "x", 1);')).toThrow(/fd 1 and 2/);
+    expect(err('write(1, 2, 3);')).toThrow(/write\(\) needs a string/);
     expect(err('break;')).toThrow(/outside a loop/);
     expect(err('while (1) {}')).toThrow(/infinite loop/);
     expect(err('while (1) fork();')).toThrow(/fork bomb/);

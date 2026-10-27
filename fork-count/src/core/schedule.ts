@@ -8,8 +8,18 @@
 // are enabled: they are invisible and only ever enable more steps, so doing
 // them early loses no output (a simple partial-order reduction). States are
 // memoised on (event counters, reaped children).
+//
+// Pipes add two edges: a read comes after the write whose bytes it returns,
+// and a read that returns end of file comes after every process holding the
+// write end has closed it or exited. Pipe writes, reads and closes are
+// invisible too and only ever enable more steps (each pipe has one reader),
+// so they run eagerly as well. A state where nothing can run but some process
+// has not finished is a deadlock: its output ends in HANG.
 
-import type { Ev, OutEvent, Proc, RunResult } from './interp';
+import type { Ev, OutEvent, Proc, ReadEvent, RunResult } from './interp';
+
+/** Marks the end of an output after which the program hangs (a deadlock). */
+export const HANG = '\u{E000}';
 
 export interface State {
   pc: number[];
@@ -62,7 +72,8 @@ function sig(run: RunResult, i: number, pc: number): number {
     if (e.kind === 'out') parts.push('o' + JSON.stringify(e.text));
     else if (e.kind === 'fork') parts.push('f' + sig(run, e.child, 0));
     else if (e.kind === 'wait') parts.push(e.target === null ? 'w' : 'w' + p.children.indexOf(e.target));
-    else parts.push('e');
+    else if (e.kind === 'exit') parts.push('e');
+    /* c8 ignore next */ else parts.push(e.kind); // pipe events: stateKey does not use sig() for those programs
   }
   const str = parts.join(' ');
   let id = c.ids.get(str);
@@ -92,6 +103,8 @@ function waitsFrom(run: RunResult, i: number, pc: number): boolean {
  * body collapse into a handful of states.
  */
 function stateKey(run: RunResult, s: State): string {
+  // Pipes tie particular processes together, so there is no symmetry to exploit.
+  if (run.pipes.length) return s.pc.join(',') + '|' + s.reaped.map((r) => (r ? 1 : 0)).join('');
   const top: string[] = [];
   const visit = (i: number): string | null => {
     const p = run.procs[i] as Proc;
@@ -165,10 +178,28 @@ export function waitTarget(run: RunResult, s: State, i: number): number {
   return -1;
 }
 
+/** Processes still holding the write end of a pipe in state s. */
+export function writeHolders(run: RunResult, s: State, pipe: number): number[] {
+  return run.procs.flatMap((p, i) => {
+    const at = p.writeEnds.get(pipe);
+    if (at === undefined) return [];
+    return exists(run, s, i) && (s.pc[i] as number) > at ? [] : [i];
+  });
+}
+
+/** Can this read return now? */
+export function readReady(run: RunResult, s: State, e: ReadEvent): boolean {
+  if (e.forever) return false;
+  if (e.eof) return writeHolders(run, s, e.pipe).length === 0;
+  const w = run.pipes[e.pipe]?.writes[e.seq];
+  return w !== undefined && (s.pc[w.proc] as number) > w.idx;
+}
+
 /** Is process i's next event runnable in state s? */
 export function enabled(run: RunResult, s: State, i: number): boolean {
   if (!exists(run, s, i) || finished(run, s, i)) return false;
   const e = nextEvent(run, s, i) as Ev;
+  if (e.kind === 'read') return readReady(run, s, e);
   return e.kind !== 'wait' || waitTarget(run, s, i) >= 0;
 }
 
@@ -205,6 +236,7 @@ function writers(run: RunResult, s: State): number[] {
 const allDone = (run: RunResult, s: State) => run.procs.every((_, i) => finished(run, s, i));
 
 export interface Enumeration {
+  /** Distinct outputs; one that ends in HANG is followed by a deadlock. */
   outputs: string[];
   /** True when the cap was hit and `outputs` is only a sample. */
   truncated: boolean;
@@ -224,9 +256,7 @@ export function enumerate(run: RunResult, cap = 2000, maxStates = MAX_STATES): E
     const ws = writers(run, s);
     let res: { set: Set<string>; truncated: boolean; count: bigint };
     if (ws.length === 0) {
-      /* c8 ignore next 3 */
-      if (!allDone(run, s)) throw new Error('deadlock: no process can run');
-      res = { set: new Set(['']), truncated: false, count: 1n };
+      res = { set: new Set([allDone(run, s) ? '' : HANG]), truncated: false, count: 1n };
     } else {
       const set = new Set<string>();
       let truncated = false;
@@ -279,14 +309,14 @@ export interface Witness {
 
 /** Longest prefix of `target` that some schedule prints, with a witness. Exact (not capped). */
 export function bestPrefix(run: RunResult, target: string, maxStates = MAX_STATES): Witness {
-  // Score = 2 * characters matched, plus 1 when that leaves every process finished.
+  // Score = 2 * characters matched, plus 1 when that leaves nothing able to run (finished or deadlocked).
   const memo = new Map<string, number>();
   const best = (s: State, pos: number): number => {
     closeInternal(run, s);
     const k = stateKey(run, s) + '@' + pos;
     const hit = memo.get(k);
     if (hit !== undefined) return hit;
-    let m = 2 * pos + (pos === target.length && allDone(run, s) ? 1 : 0);
+    let m = 2 * pos + (pos === target.length && writers(run, s).length === 0 ? 1 : 0);
     for (const i of writers(run, s)) {
       const e = nextEvent(run, s, i) as OutEvent;
       if (!target.startsWith(e.text, pos)) continue;
@@ -327,9 +357,46 @@ export function bestPrefix(run: RunResult, target: string, maxStates = MAX_STATE
   return { matched: pos, chunks, state: s };
 }
 
+/** Can some schedule print exactly `target` (and then finish, or hang)? */
 export function isPossible(run: RunResult, target: string): boolean {
   const w = bestPrefix(run, target);
-  return w.matched === target.length && allDone(run, w.state);
+  return w.matched === target.length && writers(run, w.state).length === 0;
+}
+
+/** Some schedule that deadlocks: the state it gets stuck in and what it printed. Null if every schedule finishes. */
+export function findHang(run: RunResult, maxStates = MAX_STATES): { state: State; output: string } | null {
+  if (!run.pipes.length && !run.procs.some((p) => p.blocked)) return null;
+  const seen = new Set<string>();
+  const go = (s: State, output: string): { state: State; output: string } | null => {
+    closeInternal(run, s);
+    const k = stateKey(run, s);
+    if (seen.has(k)) return null;
+    if (seen.size >= maxStates) throw new TooManyStates(maxStates);
+    seen.add(k);
+    const ws = writers(run, s);
+    if (!ws.length) return allDone(run, s) ? null : { state: s, output };
+    for (const i of ws) {
+      const n = clone(s);
+      const e = step(run, n, i) as OutEvent;
+      const found = go(n, output + e.text);
+      if (found) return found;
+    }
+    return null;
+  };
+  return go(initialState(run), '');
+}
+
+/** One sentence per process that is stuck in a deadlocked state. */
+export function stuckReasons(run: RunResult, s: State): string[] {
+  const stuck = run.procs.flatMap((_, i) => (exists(run, s, i) && !finished(run, s, i) ? [i] : []));
+  return stuck.map((i) => {
+    const head = nextEvent(run, s, i) as Ev;
+    if (head.kind === 'wait') {
+      // Its children are stuck too and get their own sentence.
+      return `pid ${pidOf(run, i)} is blocked in wait() at line ${head.line} for a child that never exits.`;
+    }
+    return blocker(run, s, i, s.pc[i] as number);
+  });
 }
 
 // ---- explanations ----
@@ -337,7 +404,16 @@ export function isPossible(run: RunResult, target: string): boolean {
 export const pidOf = (run: RunResult, i: number) => (run.procs[i] as Proc).pid;
 
 export function show(text: string): string {
-  return '"' + text.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/\t/g, '\\t') + '"';
+  return (
+    '"' +
+    text
+      .replace(/\\/g, '\\\\')
+      .replace(/\n/g, '\\n')
+      .replace(/\t/g, '\\t')
+      // eslint-disable-next-line no-control-regex
+      .replace(/[\x00-\x08\x0b-\x1f\x7f-\xff]/g, (c) => '\\x' + c.charCodeAt(0).toString(16).padStart(2, '0')) +
+    '"'
+  );
 }
 
 /**
@@ -380,11 +456,51 @@ export function blocker(run: RunResult, s: State, i: number, idx: number, depth 
       '.',
     );
   }
+  if (head.kind === 'read') return readBlocker(run, s, i, head, depth);
   /* c8 ignore next */
   return `pid ${pid} cannot run yet.`;
 }
 
 const lower = (s: string) => s.charAt(0).toLowerCase() + s.slice(1);
+
+/** Why a read at the head of process i cannot return yet. */
+function readBlocker(run: RunResult, s: State, i: number, head: ReadEvent, depth: number): string {
+  const pid = pidOf(run, i);
+  const pipe = run.pipes[head.pipe] as RunResult['pipes'][number];
+  const where = `pid ${pid} is blocked in read() at line ${head.line}`;
+  const w = pipe.writes[head.seq];
+  if (!head.eof && w) {
+    const data = ((run.procs[w.proc] as Proc).events[w.idx] as Extract<Ev, { kind: 'pwrite' }>).text;
+    const until = `${where} until pid ${pidOf(run, w.proc)} writes ${show(data)} into the pipe (line ${(run.procs[w.proc] as Proc).events[w.idx]?.line})`;
+    const pending = firstPendingOut(run, s, w.proc, w.idx);
+    if (pending) return `${until}, and pid ${pidOf(run, w.proc)} first prints ${show(pending.text)} (line ${pending.line}).`;
+    if (!exists(run, s, w.proc) || !enabled(run, s, w.proc)) {
+      return `${until}; ${lower(blocker(run, s, w.proc, w.idx, depth + 1))}`;
+    }
+    /* c8 ignore next */
+    return `${until}.`;
+  }
+  // Waiting for end of file (or for data that never comes): every write end must be closed first.
+  const holders = writeHolders(run, s, pipe.id);
+  const parts = holders.map((h) => {
+    const at = (run.procs[h] as Proc).writeEnds.get(pipe.id) as number;
+    const who = h === i ? `pid ${pid} itself` : `pid ${pidOf(run, h)}`;
+    let tail: string;
+    if (at === Infinity) tail = 'never closes it';
+    else {
+      const ev = (run.procs[h] as Proc).events[at] as Ev;
+      tail = ev.kind === 'exit' ? 'keeps it until it exits' : `closes it at line ${ev.line}`;
+    }
+    const stuck = h !== i && exists(run, s, h) && !finished(run, s, h) && !enabled(run, s, h);
+    const head2 = stuck ? nextEvent(run, s, h) : undefined;
+    const also = head2 && (head2.kind === 'read' || head2.kind === 'wait') ? `, and is itself blocked in ${head2.kind}() at line ${head2.line}` : '';
+    return `${who} still holds a write end (and ${tail}${also})`;
+  });
+  const lead = head.forever
+    ? `${where}: no more data will arrive, and read() only returns 0 (end of file) once every write end of the pipe from line ${pipe.line} is closed`
+    : `${where} until every write end of the pipe from line ${pipe.line} is closed`;
+  return `${lead}, but ${parts.join('; ')}.`;
+}
 
 /** First write of process i that has not happened yet and comes before event `before`. */
 function firstPendingOut(run: RunResult, s: State, i: number, before: number): OutEvent | null {
@@ -398,6 +514,8 @@ function firstPendingOut(run: RunResult, s: State, i: number, before: number): O
 
 export interface Verdict {
   possible: boolean;
+  /** Possible, but the program then deadlocks: these say who is stuck where. */
+  hang: string[];
   reasons: string[];
   witness: Witness;
 }
@@ -415,12 +533,15 @@ export function normaliseAnswer(s: string): string {
 
 export function check(run: RunResult, target: string): Verdict {
   const witness = bestPrefix(run, target);
-  if (witness.matched === target.length && allDone(run, witness.state)) {
-    return { possible: true, reasons: [], witness };
+  if (witness.matched === target.length && writers(run, witness.state).length === 0) {
+    const hang = allDone(run, witness.state) ? [] : stuckReasons(run, witness.state);
+    return { possible: true, hang, reasons: [], witness };
   }
   const reasons: string[] = [];
   const chunks = allChunks(run);
   const total = chunks.map((c) => c.ev.text).join('');
+  // With pipes a run can deadlock part way, so not every run prints every chunk.
+  const fixedChars = !run.pipes.length && !run.procs.some((p) => p.blocked);
   // Every run prints every chunk exactly once, so the characters are fixed.
   const want = charCounts(total);
   const got = charCounts(target);
@@ -430,11 +551,11 @@ export function check(run: RunResult, target: string): Verdict {
     const g = got.get(c) ?? 0;
     if (w !== g) diffs.push(`${show(c)} appears ${w} time${w === 1 ? '' : 's'} in every run but ${g} in yours`);
   }
-  if (diffs.length) {
+  if (fixedChars && diffs.length) {
     reasons.push(
       `Every run prints the same ${chunks.length} chunk${chunks.length === 1 ? '' : 's'} (${total.length} characters), only in different orders: ${diffs.slice(0, 4).join('; ')}.`,
     );
-    return { possible: false, reasons, witness };
+    return { possible: false, hang: [], reasons, witness };
   }
   const s = witness.state;
   const rest = target.slice(witness.matched);
@@ -461,16 +582,26 @@ export function check(run: RunResult, target: string): Verdict {
     seen.add(r);
     if (seen.size >= 3) break;
   }
-  if (!fits.length && partial.length) {
+  if (!fits.length && partial.length && !rest) {
+    const e = partial[0] as OutEvent;
+    reasons.push(`Every schedule that prints this much goes on to print ${show(e.text)} (line ${e.line}).`);
+  } else if (!fits.length && partial.length) {
     const e = partial[0] as OutEvent;
     reasons.push(
       `The next pending write is ${show(e.text)} (line ${e.line}), and each write lands in one piece: output from another process cannot appear in the middle of it.`,
     );
   }
   if (!fits.length && !partial.length) {
-    reasons.push(`No pending write starts with ${show(rest.slice(0, 1))} at this point.`);
+    reasons.push(
+      rest
+        ? `No pending write starts with ${show(rest.slice(0, 1))} at this point.`
+        : 'Every schedule that prints this much goes on to print more.',
+    );
   }
-  return { possible: false, reasons, witness };
+  if (!writers(run, s).length && !allDone(run, s)) {
+    reasons.push(`At that point the program is deadlocked: ${stuckReasons(run, s).map(lower).join(' ')}`);
+  }
+  return { possible: false, hang: [], reasons, witness };
 }
 
 // ---- one concrete schedule, for the animation ----

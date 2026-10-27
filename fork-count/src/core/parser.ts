@@ -1,6 +1,8 @@
 // Lexer and recursive-descent parser for the small C subset Fork Count runs:
-// int/pid_t variables, if/else, for, while, do-while, break/continue/return,
-// blocks, and expressions with calls (fork, wait, printf, ...). Everything
+// int/pid_t variables, one-dimensional int and char arrays (for pipe fds and
+// read buffers), char * strings, if/else, for, while, do-while,
+// break/continue/return, blocks, and expressions with calls (fork, wait,
+// printf, pipe, read, ...). Everything
 // else (#include lines, `int main(void)`) is accepted and ignored so that
 // textbook snippets paste in unchanged.
 
@@ -123,17 +125,33 @@ export type Expr =
   | { k: 'var'; name: string; line: number }
   | { k: 'addr'; name: string; line: number }
   | { k: 'null'; line: number }
+  | { k: 'index'; name: string; i: Expr; line: number }
+  | { k: 'sizeof'; e: Expr; line: number }
+  | { k: 'list'; items: Expr[]; line: number }
   | { k: 'unary'; op: string; e: Expr; line: number }
   | { k: 'binary'; op: string; a: Expr; b: Expr; line: number }
   | { k: 'logic'; op: '&&' | '||'; a: Expr; b: Expr; line: number }
   | { k: 'cond'; c: Expr; a: Expr; b: Expr; line: number }
-  | { k: 'assign'; op: string; name: string; e: Expr; line: number }
-  | { k: 'incdec'; op: '++' | '--'; prefix: boolean; name: string; line: number }
+  | { k: 'assign'; op: string; name: string; index: Expr | null; e: Expr; line: number }
+  | { k: 'incdec'; op: '++' | '--'; prefix: boolean; name: string; index: Expr | null; line: number }
   | { k: 'call'; name: string; args: Expr[]; line: number };
+
+export interface VarDecl {
+  name: string;
+  init: Expr | null;
+  /** Declared as an array: `int fd[2]`, `char buf[64]`, `char msg[] = "hi"`. */
+  array: boolean;
+  /** Array length, or null when it comes from the initialiser. */
+  size: Expr | null;
+  /** A char array (a byte buffer), as opposed to `char *` or int. */
+  char: boolean;
+  /** `char *`: holds a string (or NULL). */
+  ptr: boolean;
+}
 
 export type Stmt =
   | { k: 'expr'; e: Expr; line: number }
-  | { k: 'decl'; vars: { name: string; init: Expr | null }[]; line: number }
+  | { k: 'decl'; vars: VarDecl[]; line: number }
   | { k: 'if'; c: Expr; then: Stmt; else: Stmt | null; line: number }
   | { k: 'while'; c: Expr; body: Stmt; line: number }
   | { k: 'do'; c: Expr; body: Stmt; line: number }
@@ -149,7 +167,18 @@ export interface Program {
 
 const TYPE_WORDS = new Set([
   'int', 'pid_t', 'long', 'short', 'unsigned', 'signed', 'char', 'const', 'static', 'volatile', 'register', 'size_t',
+  'ssize_t',
 ]);
+
+const ASSIGN_OPS = ['=', '+=', '-=', '*=', '/=', '%='];
+
+/** sizeof for a type name: pointers are 8 bytes, char 1, long and size_t 8, the rest 4. */
+function sizeOfType(words: string[], pointer: boolean): number {
+  if (pointer) return 8;
+  if (words.includes('char')) return 1;
+  if (words.includes('long') || words.includes('size_t') || words.includes('ssize_t')) return 8;
+  return 4;
+}
 
 class Parser {
   private p = 0;
@@ -236,21 +265,48 @@ class Parser {
 
   private declaration(): Stmt {
     const line = this.peek().line;
-    while (this.atType()) this.next();
-    const vars: { name: string; init: Expr | null }[] = [];
+    let isChar = false;
+    while (this.atType()) if (this.next().value === 'char') isChar = true;
+    const vars: VarDecl[] = [];
     do {
-      if (this.isOp('*')) throw new ParseError('pointers are not supported', this.peek().line);
+      let pointer = false;
+      while (this.isOp('*')) {
+        this.next();
+        pointer = true;
+      }
+      if (pointer && !isChar) throw new ParseError('only char * pointers (strings) are supported', this.peek().line);
       const name = this.ident().value;
-      if (this.isOp('[')) throw new ParseError('arrays are not supported', this.peek().line);
+      let array = false;
+      let size: Expr | null = null;
+      if (this.isOp('[')) {
+        this.next();
+        array = true;
+        if (!this.isOp(']')) size = this.expression();
+        this.expectOp(']');
+        if (this.isOp('[')) throw new ParseError('multi-dimensional arrays are not supported', this.peek().line);
+      }
       let init: Expr | null = null;
       if (this.isOp('=')) {
         this.next();
-        init = this.assignment();
+        init = this.isOp('{') ? this.initList() : this.assignment();
       }
-      vars.push({ name, init });
+      if (array && size === null && init === null) throw new ParseError(`array '${name}' needs a size`, line);
+      vars.push({ name, init, array, size, char: isChar && !pointer, ptr: pointer });
     } while (this.isOp(',') && this.next());
     this.expectOp(';');
     return { k: 'decl', vars, line };
+  }
+
+  private initList(): Expr {
+    const line = this.expectOp('{').line;
+    const items: Expr[] = [];
+    while (!this.isOp('}')) {
+      items.push(this.assignment());
+      if (!this.isOp(',')) break;
+      this.next();
+    }
+    this.expectOp('}');
+    return { k: 'list', items, line };
   }
 
   statement(): Stmt {
@@ -355,14 +411,15 @@ class Parser {
   }
 
   private assignment(): Expr {
+    const lhs = this.conditional();
     const t = this.peek();
-    const n = this.peek(1);
-    if (t.kind === 'id' && n.kind === 'op' && ['=', '+=', '-=', '*=', '/=', '%='].includes(n.value)) {
+    if (t.kind === 'op' && ASSIGN_OPS.includes(t.value)) {
+      if (lhs.k !== 'var' && lhs.k !== 'index') throw new ParseError('can only assign to a variable or an array element', t.line);
       this.next();
-      this.next();
-      return { k: 'assign', op: n.value, name: t.value, e: this.assignment(), line: t.line };
+      const index = lhs.k === 'index' ? lhs.i : null;
+      return { k: 'assign', op: t.value, name: lhs.name, index, e: this.assignment(), line: lhs.line };
     }
-    return this.conditional();
+    return lhs;
   }
 
   private conditional(): Expr {
@@ -417,7 +474,8 @@ class Parser {
       }
       if (t.value === '++' || t.value === '--') {
         this.next();
-        return { k: 'incdec', op: t.value, prefix: true, name: this.ident().value, line: t.line };
+        const name = this.ident().value;
+        return { k: 'incdec', op: t.value, prefix: true, name, index: this.subscript(), line: t.line };
       }
       if (t.value === '&') {
         this.next();
@@ -427,7 +485,15 @@ class Parser {
         // A cast such as (void) or (int): skip the type.
         this.next();
         while (this.atType() || this.isId('void')) this.next();
-        if (this.isOp('*')) throw new ParseError('pointer casts are not supported', t.line);
+        // (char *) NULL, the usual execlp terminator: the cast changes nothing here.
+        while (this.isOp('*')) this.next();
+        this.expectOp(')');
+        return this.unary();
+      }
+      if (t.value === '(' && this.isId('void', 1) && this.isOp('*', 2)) {
+        this.next();
+        this.next();
+        while (this.isOp('*')) this.next();
         this.expectOp(')');
         return this.unary();
       }
@@ -438,14 +504,44 @@ class Parser {
         return this.unary();
       }
     }
+    if (this.isId('sizeof')) {
+      this.next();
+      if (this.isOp('(') && this.peek(1).kind === 'id' && (TYPE_WORDS.has(this.peek(1).value) || this.isId('void', 1))) {
+        this.next();
+        const words: string[] = [];
+        while (this.atType() || this.isId('void')) words.push(this.next().value);
+        let pointer = false;
+        while (this.isOp('*')) {
+          this.next();
+          pointer = true;
+        }
+        this.expectOp(')');
+        return { k: 'num', v: sizeOfType(words, pointer), line: t.line };
+      }
+      return { k: 'sizeof', e: this.unary(), line: t.line };
+    }
     return this.postfix();
   }
 
+  /** An optional `[expr]` after a name. */
+  private subscript(): Expr | null {
+    if (!this.isOp('[')) return null;
+    this.next();
+    const i = this.expression();
+    this.expectOp(']');
+    if (this.isOp('[')) throw new ParseError('multi-dimensional arrays are not supported', this.peek().line);
+    return i;
+  }
+
   private postfix(): Expr {
-    const e = this.primary();
-    if (e.k === 'var' && (this.isOp('++') || this.isOp('--'))) {
+    let e = this.primary();
+    if (e.k === 'var') {
+      const i = this.subscript();
+      if (i) e = { k: 'index', name: e.name, i, line: e.line };
+    }
+    if ((e.k === 'var' || e.k === 'index') && (this.isOp('++') || this.isOp('--'))) {
       const op = this.next().value as '++' | '--';
-      return { k: 'incdec', op, prefix: false, name: e.name, line: e.line };
+      return { k: 'incdec', op, prefix: false, name: e.name, index: e.k === 'index' ? e.i : null, line: e.line };
     }
     return e;
   }

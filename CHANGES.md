@@ -178,3 +178,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-27 [doc] CLAUDE.md: added net-units to the commit scope list; ci: added net-units job.
 
 2026-10-27 [code] net-units: deployed to net-units.netlify.app; siteId pinned.
+
+2026-10-27 [decision] fork-count: pipes modelled with one writer and one reader per pipe and each write() delivered whole, so reads are schedule-independent; runner suspends and re-runs readers.
+
+2026-10-27 [code] fork-count: added pipe/read/close/dup/dup2, int and char arrays, char * strings, exec filters (wc, sort, grep, tr, ...), deadlock detection, 24 pipe examples, a pipe quiz template.
