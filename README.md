@@ -691,3 +691,16 @@ synthesised sound, records, and exact replays from seed plus key log.
 58 vitest tests, 99% statement coverage on the core.
 Live: [tetromino-arcade.netlify.app](https://tetromino-arcade.netlify.app).
 See its [README](./tetromino-arcade/README.md).
+
+### [`net-units/`](./net-units)
+
+Measures how much code each solution adds in coding units (names, keywords,
+literals and operators on added lines minus deleted lines) rather than lines,
+so cramming does not help. Size vs tests-passed scatter with complexity and
+duplication overlays, side-by-side diffs with every counted unit highlighted,
+a per-function breakdown, and a guess-the-author round with an anonymized
+annotation export. Hand-written lexer for Python, JavaScript/TypeScript, Java
+and C/C++; no backend or LLM. 39 vitest tests, 99% statement coverage on the
+core.
+Live: [net-units.netlify.app](https://net-units.netlify.app).
+See its [README](./net-units/README.md).

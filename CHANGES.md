@@ -172,3 +172,7 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-27 [doc] CLAUDE.md: added tetromino-arcade to the commit scope list; ci: added tetromino-arcade job.
 
 2026-10-27 [code] tetromino-arcade: deployed to tetromino-arcade.netlify.app; siteId pinned.
+
+2026-10-27 [decision] net-units: hand-written lexer instead of tree-sitter, no backend or LLM; AI baselines are bundled hand-written examples (labelled so) or instructor uploads; tests passed entered by hand.
+
+2026-10-27 [doc] CLAUDE.md: added net-units to the commit scope list; ci: added net-units job.
