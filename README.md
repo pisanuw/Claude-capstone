@@ -704,3 +704,18 @@ and C/C++; no backend or LLM. 39 vitest tests, 99% statement coverage on the
 core.
 Live: [net-units.netlify.app](https://net-units.netlify.app).
 See its [README](./net-units/README.md).
+
+### [`study-buddy-matchmaker/`](./study-buddy-matchmaker)
+
+Complementary study pairs from a gradebook. Upload a CSV (topics and maxima
+read from headers like `Q3 [recursion] /5`, every guess editable), see each
+student's mastery per topic in a colour-coded class table, and get pairs where
+each student is strong in what the other is still learning: maximum-weight
+matching, exact by subset DP up to 20 students and greedy plus pair swaps
+above, with one trio for odd classes and keep-apart constraints. Each group
+gets an agenda (who leads which topic, with links) and each student a private
+printable card that never shows a groupmate's scores. No backend or LLM;
+nothing leaves the browser. 29 vitest tests, 100% statement coverage on the
+core.
+Live: [study-buddy-matchmaker.netlify.app](https://study-buddy-matchmaker.netlify.app).
+See its [README](./study-buddy-matchmaker/README.md).
