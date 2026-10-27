@@ -182,3 +182,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-27 [decision] study-buddy-matchmaker: deterministic mastery profiles and max-weight matching (exact DP up to 20 students) instead of Claude clustering; no backend, data stays in the browser.
 
 2026-10-27 [doc] CLAUDE.md: added study-buddy-matchmaker to the commit scope list; ci: added study-buddy-matchmaker job.
+
+2026-10-27 [code] study-buddy-matchmaker: deployed to study-buddy-matchmaker.netlify.app; siteId pinned.
