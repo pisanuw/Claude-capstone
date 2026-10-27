@@ -170,3 +170,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-27 [decision] tetromino-arcade: deterministic 60 fps core with seeded bag so replays are seed + key log; CPU uses El-Tetris weights over hard-drop placements, no LLM.
 
 2026-10-27 [doc] CLAUDE.md: added tetromino-arcade to the commit scope list; ci: added tetromino-arcade job.
+
+2026-10-27 [code] tetromino-arcade: deployed to tetromino-arcade.netlify.app; siteId pinned.
