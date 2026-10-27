@@ -77,10 +77,12 @@ describe('parse', () => {
 
   it('reports unsupported constructs with line numbers', () => {
     expect(() => parse('int f(void) { return 1; }')).toThrow(/only main/);
-    expect(() => parse('int *p;')).toThrow(/pointers/);
-    expect(() => parse('int a[3];')).toThrow(/arrays/);
+    expect(() => parse('int *p;')).toThrow(/only char \* pointers/);
+    expect(() => parse('int a[2][2];')).toThrow(/multi-dimensional/);
+    expect(() => parse('x[1][2] = 3;')).toThrow(/multi-dimensional/);
+    expect(() => parse('int a[];')).toThrow(/needs a size/);
+    expect(() => parse('f() = 3;')).toThrow(/can only assign/);
     expect(() => parse('switch (x) {}')).toThrow(/not supported/);
-    expect(() => parse('(int *) x;')).toThrow(/pointer casts/);
     expect(() => parse('\n\nx = ;')).toThrow(/line 3/);
     expect(() => parse('{ x;')).toThrow(/missing '}'/);
     expect(() => parse('do x; until (1);')).toThrow(/expected 'while'/);

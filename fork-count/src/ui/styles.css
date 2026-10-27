@@ -476,3 +476,21 @@ footer {
   font-size: 13px;
   margin-top: 24px;
 }
+
+.pipe-edge {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 1.6;
+  stroke-dasharray: 5 4;
+}
+.pipe-head {
+  fill: var(--accent);
+}
+.pipe-label {
+  font-size: 11px;
+  text-anchor: middle;
+  fill: var(--accent);
+}
+.notes .warn {
+  color: var(--bad);
+}

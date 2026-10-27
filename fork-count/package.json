@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Paste a short fork/wait/exit/printf C snippet and see every process it creates, every output the scheduler could produce, why other outputs are impossible, and verified exam questions. Entirely client-side.",
+  "description": "Paste a short fork/wait/exit/printf/pipe C snippet and see every process it creates, the data its pipes carry, every output the scheduler could produce (deadlocks included), why other outputs are impossible, and verified exam questions. Entirely client-side.",
   "license": "MIT",
   "engines": {
     "node": ">=20"

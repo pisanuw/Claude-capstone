@@ -114,6 +114,20 @@ const TEMPLATES: ((r: () => number) => Candidate)[] = [
     body += '    printf("parent\\n");\n';
     return { code: HEAD + body + TAIL, mode: 'line', token: 'start' };
   },
+  // A pipe as a one-way barrier: what the read orders and what it does not.
+  (r) => {
+    const childFirst = r() < 0.5;
+    const parentAfter = r() < 0.6;
+    const waits = r() < 0.5;
+    let body = '    int fd[2];\n    char c;\n    pipe(fd);\n    if (fork() == 0) {\n        close(fd[1]);\n';
+    if (childFirst) body += '        printf("C1\\n");\n';
+    body += '        read(fd[0], &c, 1);\n        printf("C2\\n");\n        exit(0);\n    }\n';
+    body += '    close(fd[0]);\n    printf("P1\\n");\n    write(fd[1], "x", 1);\n';
+    if (parentAfter) body += '    printf("P2\\n");\n';
+    body += '    close(fd[1]);\n';
+    if (waits) body += '    wait(NULL);\n    printf("P3\\n");\n';
+    return { code: HEAD + body + TAIL, mode: 'line', token: 'C' };
+  },
 ];
 
 function countOf(s: string, token: string): number {
