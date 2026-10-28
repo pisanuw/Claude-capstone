@@ -58,6 +58,12 @@ h2 small { color: var(--muted); font-weight: 400; font-size: 0.85rem; margin-lef
 .finding.kind-secret { border-left-color: #7c3aed; }
 .finding.kind-large { border-left-color: #a855f7; }
 .finding.off { opacity: 0.55; }
+.finding.covered { border-left-color: var(--good); }
+.finding.covered .badge { background: #dcfce7; color: #166534; }
+.finding .note { margin: 6px 0; font-size: 0.9rem; color: #475569; }
+.status { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.status.covered { background: #dcfce7; color: #166534; }
+.status.partial { background: #fef3c7; color: #92400e; }
 .finding header { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .finding h3 { font-size: 1rem; margin: 0; }
 .finding .bytes { margin-left: auto; font-weight: 600; font-variant-numeric: tabular-nums; }

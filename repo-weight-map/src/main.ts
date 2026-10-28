@@ -24,8 +24,9 @@ app.innerHTML = `
     </header>
     <p class="privacy">
       Pick a project folder. It is walked <strong>in this tab</strong> (file names and sizes only, nothing is read or uploaded),
-      drawn as a treemap, and checked against ecosystem rules for committed venvs, <code>node_modules</code>, build output,
-      caches, secrets, and stray datasets.
+      drawn as a treemap, and checked against ecosystem rules for venvs, <code>node_modules</code>, build output,
+      caches, secrets, and stray datasets. Your root <code>.gitignore</code> is read too, so anything it already
+      excludes is marked <em>already ignored</em> rather than counted against you.
     </p>
     <div class="drop" id="drop" tabindex="0" role="button" aria-label="Drop a folder here or use the buttons">
       <strong>Drop a folder here</strong>
@@ -75,7 +76,10 @@ app.innerHTML = `
     <footer class="site">
       Rules are deterministic pattern matches, so a folder named <code>build/</code> that you wrote by hand will be flagged
       too: that is what the tick boxes are for. Sizes are what the file system reports, so <code>.git</code> is counted
-      but never suggested for ignoring.
+      but never suggested for ignoring. &ldquo;Already ignored&rdquo; comes from the <strong>root</strong> .gitignore only:
+      a browser cannot read nested .gitignore files or your global excludes, and cannot run <code>git ls-files</code> to
+      tell an ignored file from one that is ignored <em>and</em> still tracked. <code>git status --ignored</code> is the
+      authoritative answer.
       <a href="https://github.com/pisanuw/Claude-capstone/tree/main/repo-weight-map">Source on GitHub</a>.
     </footer>
   </div>
@@ -128,11 +132,16 @@ function recompute(): void {
 
 function renderTiles(a: Analysis): void {
   const vcs = a.byCategory.vcs?.bytes ?? 0;
+  // The headline number is what still needs doing, not everything a rule matched: bytes your
+  // .gitignore already excludes are not a problem, and calling them one is what makes the tool lie.
+  const todo = a.actionableBytes > 0;
   $('tiles').innerHTML = `
     <div class="tile"><b>${formatBytes(a.totalBytes)}</b><span>${a.fileCount.toLocaleString()} files on disk</span></div>
-    <div class="tile warn"><b>${formatBytes(a.reclaimableBytes)}</b><span>should not be in git (${formatPct(a.reclaimableBytes, a.totalBytes)})</span></div>
-    <div class="tile good"><b>${formatBytes(a.afterBytes)}</b><span>working tree after cleanup</span></div>
-    <div class="tile"><b>${formatBytes(vcs)}</b><span>inside .git${vcs > a.afterBytes && vcs > 0 ? ' (bigger than the cleaned tree: history remembers)' : ''}</span></div>`;
+    <div class="tile ${todo ? 'warn' : 'good'}"><b>${formatBytes(a.actionableBytes)}</b><span>${
+      todo ? `not in .gitignore yet (${formatPct(a.actionableBytes, a.totalBytes)})` : 'left to ignore: your .gitignore covers it all'
+    }</span></div>
+    <div class="tile"><b>${formatBytes(a.ignoredBytes)}</b><span>flagged, but already ignored</span></div>
+    <div class="tile"><b>${formatBytes(vcs)}</b><span>inside .git${vcs > a.afterBytes && vcs > 0 ? ' (bigger than the tree that belongs in git: history remembers)' : ''}</span></div>`;
 }
 
 function renderMap(): void {
@@ -160,7 +169,10 @@ function renderMap(): void {
 function renderFindings(a: Analysis): void {
   $('findings').innerHTML = findingsHtml(a, disabled, true);
   const active = a.findings.filter((f) => !disabled.has(f.ruleId)).length;
-  $('findings-count').textContent = a.findings.length ? `${active} of ${a.findings.length} selected` : '';
+  const covered = a.findings.filter((f) => f.coverage === 'all').length;
+  $('findings-count').textContent = a.findings.length
+    ? `${active} of ${a.findings.length} selected${covered ? `, ${covered} already ignored` : ''}`
+    : '';
   for (const box of document.querySelectorAll<HTMLInputElement>('.rule-toggle')) {
     box.addEventListener('change', () => {
       const id = box.dataset.rule ?? '';
@@ -177,7 +189,7 @@ function renderGitignore(a: Analysis): void {
     ? `Already in your .gitignore: ${a.gitignore.alreadyPresent.join(', ')}`
     : gitignoreText
       ? 'Your existing .gitignore was read; none of the suggested lines are in it yet.'
-      : 'No .gitignore was found at the folder root.';
+      : 'No .gitignore was found at the folder root, so nothing here counts as already ignored.';
 }
 
 async function copy(text: string, btn: HTMLButtonElement): Promise<void> {

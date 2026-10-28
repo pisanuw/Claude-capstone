@@ -28,6 +28,9 @@ export interface TreeNode {
 
 export type FindingKind = 'ignore' | 'large' | 'secret';
 
+/** How much of a finding the folder's existing .gitignore already excludes. */
+export type Coverage = 'none' | 'partial' | 'all';
+
 export interface Rule {
   id: string;
   ecosystem: string;
@@ -63,6 +66,11 @@ export interface Finding {
   gitignore: string[];
   files: string[];
   bytes: number;
+  /** The subset of `files` the existing .gitignore already excludes, sorted. */
+  ignoredFiles: string[];
+  /** Bytes of `ignoredFiles`. */
+  ignoredBytes: number;
+  coverage: Coverage;
 }
 
 export interface GitignoreDiff {
@@ -83,8 +91,13 @@ export interface Analysis {
   byCategory: Record<Category, { bytes: number; files: number }>;
   findings: Finding[];
   largestFiles: FileRecord[];
-  /** Bytes that would leave the working tree if every selected finding were applied. */
+  /** Bytes of every selected finding: what does not belong in git, whether or not it is ignored. */
   reclaimableBytes: number;
+  /** The part of `reclaimableBytes` the existing .gitignore already excludes. */
+  ignoredBytes: number;
+  /** The part still needing a .gitignore entry: `reclaimableBytes - ignoredBytes`. */
+  actionableBytes: number;
+  /** What is left once the flagged bytes are gone: the part that belongs in git. */
   afterBytes: number;
   gitignore: GitignoreDiff;
 }

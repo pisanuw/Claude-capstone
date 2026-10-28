@@ -188,3 +188,6 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-27 [decision] fork-count: pipes modelled with one writer and one reader per pipe and each write() delivered whole, so reads are schedule-independent; runner suspends and re-runs readers.
 
 2026-10-27 [code] fork-count: added pipe/read/close/dup/dup2, int and char arrays, char * strings, exec filters (wc, sort, grep, tr, ...), deadlock detection, 24 pipe examples, a pipe quiz template.
+
+2026-10-27 [fix] repo-weight-map: findings were gitignore-blind — a rule fired on disk presence, so an already-ignored node_modules/ read as "Committed node_modules" and its bytes landed in the "should not be in git" tile. Added src/core/ignore.ts, a real gitignore matcher (anchoring, **, ?, classes, ! last-match-wins, no descent into excluded dirs), cross-checked against git check-ignore on 27 paths / 17 pattern forms.
+2026-10-27 [decision] repo-weight-map: findings now carry coverage none/partial/all from the root .gitignore; fully-covered ones stay visible badged "Already ignored" rather than disappearing, and the headline tile shows actionableBytes (flagged and not yet ignored) instead of all flagged bytes. Root .gitignore only: nested ignores, .git/info/exclude, global excludes and tracked-but-ignored files are out of a browser's reach and documented as such.

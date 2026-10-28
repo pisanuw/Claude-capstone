@@ -42,7 +42,7 @@ export const RULES: Rule[] = [
   {
     id: 'python-venv',
     ecosystem: 'Python',
-    title: 'Committed virtualenv',
+    title: 'Virtualenv in the tree',
     explanation:
       'A virtual environment is a machine-specific copy of every installed package. Ignore it and list the dependencies in requirements.txt or pyproject.toml so anyone can recreate it with one command.',
     gitignore: ['venv/', '.venv/', 'env/', 'ENV/'],
@@ -52,7 +52,7 @@ export const RULES: Rule[] = [
   {
     id: 'conda-env',
     ecosystem: 'Python',
-    title: 'Committed conda environment',
+    title: 'Conda environment in the tree',
     explanation: 'A conda environment directory is even larger than a venv. Export it with `conda env export > environment.yml` and ignore the directory.',
     gitignore: ['envs/', 'conda-meta/'],
     kind: 'ignore',
@@ -81,7 +81,7 @@ export const RULES: Rule[] = [
   {
     id: 'node-modules',
     ecosystem: 'Node',
-    title: 'Committed node_modules',
+    title: 'node_modules in the tree',
     explanation:
       'node_modules is reproduced exactly by `npm ci` from package-lock.json. It is often the single largest thing in a student repo, and it contains platform-specific binaries that break on other machines.',
     gitignore: ['node_modules/'],
