@@ -197,3 +197,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-28 [decision] pluck-lab: deterministic filter analysis (linearity, randomness, least-squares gain/phase per frequency, predicted T60) replaces the suggested Claude explanation; no backend.
 
 2026-10-28 [doc] CLAUDE.md: added pluck-lab to the commit scope list; ci: added pluck-lab job.
+
+2026-10-28 [code] pluck-lab: deployed to pluck-lab.netlify.app; siteId pinned.

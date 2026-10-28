@@ -21,4 +21,7 @@ netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
   siteName: pluck-lab
+  # Pinning the id skips the listSites lookup and the create-site fallback, so
+  # a deploy cannot fail by trying to re-create a name that is already taken.
+  siteId: 'ef5013d9-addb-43c5-a5dd-3623892dae38'
   accountSlug: yusuf-pisan
