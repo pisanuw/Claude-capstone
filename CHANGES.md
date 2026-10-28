@@ -191,3 +191,9 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 
 2026-10-27 [fix] repo-weight-map: findings were gitignore-blind — a rule fired on disk presence, so an already-ignored node_modules/ read as "Committed node_modules" and its bytes landed in the "should not be in git" tile. Added src/core/ignore.ts, a real gitignore matcher (anchoring, **, ?, classes, ! last-match-wins, no descent into excluded dirs), cross-checked against git check-ignore on 27 paths / 17 pattern forms.
 2026-10-27 [decision] repo-weight-map: findings now carry coverage none/partial/all from the root .gitignore; fully-covered ones stay visible badged "Already ignored" rather than disappearing, and the headline tile shows actionableBytes (flagged and not yet ignored) instead of all flagged bytes. Root .gitignore only: nested ignores, .git/info/exclude, global excludes and tracked-but-ignored files are out of a browser's reach and documented as such.
+
+2026-10-28 [decision] pluck-lab: vanilla TS + AudioWorklet, one Engine class shared by worklet, ScriptProcessor fallback and tests; views run a seeded mirror of the watched string so they can slow down.
+
+2026-10-28 [decision] pluck-lab: deterministic filter analysis (linearity, randomness, least-squares gain/phase per frequency, predicted T60) replaces the suggested Claude explanation; no backend.
+
+2026-10-28 [doc] CLAUDE.md: added pluck-lab to the commit scope list; ci: added pluck-lab job.

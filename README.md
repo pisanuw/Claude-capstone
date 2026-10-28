@@ -722,3 +722,19 @@ nothing leaves the browser. 29 vitest tests, 100% statement coverage on the
 core.
 Live: [study-buddy-matchmaker.netlify.app](https://study-buddy-matchmaker.netlify.app).
 See its [README](./study-buddy-matchmaker/README.md).
+
+### [`pluck-lab/`](./pluck-lab)
+
+A guitar strummed from the QWERTY keyboard (chord keys plus H/J strums) where
+every note is synthesized live by Karplus-Strong in an AudioWorklet: a delay
+line of seeded noise, a weighted two-point average, a first-order allpass for
+fractional tuning and a comb-filtered pick position. Shows the watched
+string's delay line, its harmonics and output, slowed down to one sample per
+frame if you like, with seven lecture scenes (noise to note, pitch
+quantization at 48 and 8 kHz, why high notes die faster, tone, pick position,
+strum timing) and an editable loop filter that is analysed deterministically
+(linearity, gain and delay per frequency, predicted ring times) instead of by
+an LLM. No samples, no backend. 53 vitest tests, 100% statement coverage on
+the core.
+Live: [pluck-lab.netlify.app](https://pluck-lab.netlify.app).
+See its [README](./pluck-lab/README.md).
