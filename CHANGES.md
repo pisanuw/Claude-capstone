@@ -199,3 +199,9 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-28 [doc] CLAUDE.md: added pluck-lab to the commit scope list; ci: added pluck-lab job.
 
 2026-10-28 [code] pluck-lab: deployed to pluck-lab.netlify.app; siteId pinned.
+
+2026-10-29 [decision] pull-the-pin: SAP-1 modules as idealized single chip packages; fault set = consistent-by-waveform-hash over a 3,810 single-fault catalog, computed in a Web Worker.
+
+2026-10-29 [decision] pull-the-pin: deterministic best-next-probe (min expected remaining faults) replaces the suggested Claude hints; attempts kept in localStorage instead of Supabase.
+
+2026-10-29 [doc] CLAUDE.md: added pull-the-pin to the commit scope list; ci: added pull-the-pin job.

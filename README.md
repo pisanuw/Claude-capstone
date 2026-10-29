@@ -738,3 +738,18 @@ an LLM. No samples, no backend. 53 vitest tests, 100% statement coverage on
 the core.
 Live: [pluck-lab.netlify.app](https://pluck-lab.netlify.app).
 See its [README](./pluck-lab/README.md).
+
+### [`pull-the-pin/`](./pull-the-pin)
+
+A Ben Eater style SAP-1 8-bit computer simulated pin by pin (11 chip packages,
+168 pins, 52 nets, 0/1/Z with wired-AND contention) with one hidden fault:
+a stuck net, an open pin, a bus short, a flipped microcode ROM bit or a dead
+chip. Students run test programs for free, spend a probe budget on a logic
+analyzer, and watch the set of the 3,810 catalog faults still consistent with
+their measurements shrink (every fault simulated per program in a Web Worker
+and compared by waveform hash). A deterministic "next probe" suggestion
+replaces the LLM tutor. Sandbox with healthy-vs-faulty diffs, seeded and
+hand-picked challenge links, local attempt log. No backend. 74 vitest tests,
+99% statement coverage on the core.
+Live: [pull-the-pin.netlify.app](https://pull-the-pin.netlify.app).
+See its [README](./pull-the-pin/README.md).
