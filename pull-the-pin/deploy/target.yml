@@ -20,5 +20,6 @@ envPassthrough: []
 netlify:
   # No serverless functions; the whole app is static.
   functionsDir: ''
-  siteName: pull-the-pin
+  # "pull-the-pin" is taken globally on Netlify by an unrelated site.
+  siteName: pull-the-pin-lab
   accountSlug: yusuf-pisan

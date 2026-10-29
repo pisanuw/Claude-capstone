@@ -751,5 +751,5 @@ and compared by waveform hash). A deterministic "next probe" suggestion
 replaces the LLM tutor. Sandbox with healthy-vs-faulty diffs, seeded and
 hand-picked challenge links, local attempt log. No backend. 74 vitest tests,
 99% statement coverage on the core.
-Live: [pull-the-pin.netlify.app](https://pull-the-pin.netlify.app).
+Live: [pull-the-pin-lab.netlify.app](https://pull-the-pin-lab.netlify.app).
 See its [README](./pull-the-pin/README.md).
