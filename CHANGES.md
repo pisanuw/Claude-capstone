@@ -205,3 +205,9 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-29 [decision] pull-the-pin: deterministic best-next-probe (min expected remaining faults) replaces the suggested Claude hints; attempts kept in localStorage instead of Supabase.
 
 2026-10-29 [doc] CLAUDE.md: added pull-the-pin to the commit scope list; ci: added pull-the-pin job.
+
+2026-10-31 [decision] Shared "built by" footer for every deployed app, injected at deploy time from scripts/site-footer.mjs instead of copied into 45 app sources; one edit changes all sites.
+
+2026-10-31 [code] deploy.mjs injects the footer after each Netlify build (`footer: false` opts out); mult-streak's build runs it for Render; deploy.yml redeploys every target once when it changes.
+
+2026-10-31 [code] emoji-lingua: body flex switched from row to column so the footer sits below the app. Checked footer on all 45 apps (desktop and mobile) in Playwright.

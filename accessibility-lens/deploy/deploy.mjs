@@ -24,6 +24,7 @@ import path from 'node:path';
 import os from 'node:os';
 import { fileURLToPath } from 'node:url';
 import { parse } from 'yaml';
+import { injectFooterIntoDir } from '../../scripts/site-footer.mjs';
 
 const args = process.argv.slice(2);
 const DRY_RUN = args.includes('--dry-run');
@@ -360,6 +361,7 @@ async function deployNetlify(cfg) {
     functionsDir,
     accountSlug: n.accountSlug || '(default team)',
     envVarsForwarded: Object.keys(env),
+    siteFooter: cfg.footer !== false,
   };
   log('Netlify plan:\n' + JSON.stringify(plan, null, 2));
 
@@ -381,6 +383,12 @@ async function deployNetlify(cfg) {
 
   // Netlify uploads a prebuilt directory, so build locally first.
   runBuild(cfg, appDir);
+  // The shared "built by" footer (scripts/site-footer.mjs). `footer: false`
+  // in target.yml opts an app out.
+  if (cfg.footer !== false) {
+    const added = injectFooterIntoDir(publishDir, cfg.projectName);
+    log(added ? 'Added the site footer to index.html.' : 'Site footer already present.');
+  }
 
   // Resolve the site id, in order of reliability:
   //   1. netlify.siteId in target.yml   2. NETLIFY_SITE_ID env

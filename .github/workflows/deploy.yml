@@ -5,10 +5,11 @@
 # deploys ONLY the targets whose target.yml changed in that push, so adding one
 # project does not redeploy the others. Everything is deployed only when the
 # workflow is run manually (workflow_dispatch) or the shared runner
-# (deploy.mjs) changed. Editing this file alone deploys nothing. If the push's
-# base commit is unavailable (force push), the diff falls back to the tip
-# commit's parent. Adding a new app needs no change here: just add its
-# directory with a deploy/target.yml.
+# (deploy.mjs) or the shared footer (scripts/site-footer.mjs) changed; even
+# then each target deploys once per push. Editing this file alone deploys
+# nothing. If the push's base commit is unavailable (force push), the diff
+# falls back to the tip commit's parent. Adding a new app needs no change here:
+# just add its directory with a deploy/target.yml.
 #
 # Required repo secrets (only those relevant to your targets are used):
 #   RENDER_API_KEY, NETLIFY_AUTH_TOKEN   deploy targets
@@ -25,6 +26,7 @@ on:
       - 'shortcut-sprint/**'
       - 'code-analogy-forge/**'
       - 'accessibility-lens/deploy/deploy.mjs'
+      - 'scripts/site-footer.mjs'
       - '.github/workflows/deploy.yml'
   workflow_dispatch:
 
@@ -61,8 +63,8 @@ jobs:
             fi
             changed=$(git diff --name-only "$base" "$AFTER_SHA")
             printf 'Changed files:\n%s\n' "$changed"
-            if printf '%s\n' "$changed" | grep -qx 'accessibility-lens/deploy/deploy\.mjs'; then
-              echo "Deploy runner changed: deploying every target."
+            if printf '%s\n' "$changed" | grep -qxE 'accessibility-lens/deploy/deploy\.mjs|scripts/site-footer\.mjs'; then
+              echo "Deploy runner or site footer changed: deploying every target."
               selected=$all
             else
               # Only the target.ymls touched by this push, skipping deleted ones.
