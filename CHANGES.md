@@ -205,3 +205,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-29 [decision] pull-the-pin: deterministic best-next-probe (min expected remaining faults) replaces the suggested Claude hints; attempts kept in localStorage instead of Supabase.
 
 2026-10-29 [doc] CLAUDE.md: added pull-the-pin to the commit scope list; ci: added pull-the-pin job.
+
+2026-10-31 [code] brocot-gear-finder, type-witness: fixed sideways page scroll on phones (convergents table in .table-wrap; wrapping toolbar and step controls). Checked at 320/360/390px.
