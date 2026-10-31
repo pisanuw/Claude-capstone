@@ -213,3 +213,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-31 [code] emoji-lingua: body flex switched from row to column so the footer sits below the app. Checked footer on all 45 apps (desktop and mobile) in Playwright.
 
 2026-10-31 [decision] Footer wording set by the owner: "I build apps like this one..." signed "Professor Yusuf Pisan"; emitted as ASCII entities so it survives pages without a UTF-8 charset.
+
+2026-10-31 [code] brocot-gear-finder, type-witness: fixed sideways page scroll on phones (convergents table in .table-wrap; wrapping toolbar and step controls). Checked at 320/360/390px.

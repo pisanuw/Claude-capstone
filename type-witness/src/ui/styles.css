@@ -51,6 +51,7 @@ body {
 
 .toolbar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
 }
@@ -195,13 +196,17 @@ button:disabled {
 
 .controls {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
 }
 
+/* A range input will not shrink below its default width unless told to; on a
+   narrow phone the slider and counter wrap to their own line instead. */
 .controls input[type='range'] {
-  flex: 1;
+  flex: 1 1 100px;
+  min-width: 100px;
   accent-color: var(--accent);
 }
 
@@ -210,6 +215,7 @@ button:disabled {
   font-size: 12px;
   color: var(--muted);
   min-width: 64px;
+  margin-left: auto;
   text-align: right;
 }
 
