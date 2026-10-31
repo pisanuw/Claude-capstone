@@ -305,26 +305,30 @@ export function mountApp(root: HTMLElement): void {
         el('span', { class: 'hint' }, ' (R = go right toward larger fractions, L = left; each run is one continued-fraction term)'),
       ),
       el(
-        'table',
-        { class: 'approx' },
+        'div',
+        { class: 'table-wrap' },
         el(
-          'thead',
-          {},
-          el('tr', {}, el('th', {}, 'Convergent'), el('th', {}, 'Error'), el('th', {}, 'Buildable?')),
-        ),
-        el(
-          'tbody',
-          {},
-          ...approx.map((a) => {
-            const k = buildableStages(a.p, a.q, state.limits);
-            return el(
-              'tr',
-              {},
-              el('td', { class: 'mono' }, `${a.p}/${a.q}`),
-              el('td', {}, formatError(a.error)),
-              el('td', { class: k ? 'good' : 'muted' }, k ? `yes, ${k} stage${k > 1 ? 's' : ''}` : 'no, not within these limits'),
-            );
-          }),
+          'table',
+          { class: 'approx' },
+          el(
+            'thead',
+            {},
+            el('tr', {}, el('th', {}, 'Convergent'), el('th', {}, 'Error'), el('th', {}, 'Buildable?')),
+          ),
+          el(
+            'tbody',
+            {},
+            ...approx.map((a) => {
+              const k = buildableStages(a.p, a.q, state.limits);
+              return el(
+                'tr',
+                {},
+                el('td', { class: 'mono' }, `${a.p}/${a.q}`),
+                el('td', {}, formatError(a.error)),
+                el('td', { class: k ? 'good' : 'muted' }, k ? `yes, ${k} stage${k > 1 ? 's' : ''}` : 'no, not within these limits'),
+              );
+            }),
+          ),
         ),
       ),
       el(
