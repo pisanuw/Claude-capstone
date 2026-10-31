@@ -37,6 +37,17 @@ Change `provider`, `projectName`, or any setting in `target.yml`, commit, and
 push. The workflow does the rest. To deploy without changing the file, trigger
 "Deploy (config-driven)" manually from the Actions tab.
 
+## Site footer
+
+Every Netlify deploy adds the shared "built by" footer from
+[`scripts/site-footer.mjs`](../../scripts/site-footer.mjs) to the built
+`index.html`, right after the build and before the upload. The footer is not in
+any app's source, so local dev servers do not show it. Set `footer: false` at the
+top level of an app's `target.yml` to opt that app out. Render apps cannot be
+injected here (Render builds server-side), so `mult-streak` runs the same script
+from its own build. Changing `scripts/site-footer.mjs` redeploys every target
+once.
+
 ## Try it safely first
 
 The runner has a dry-run mode that prints exactly what it would do and makes no

@@ -5,6 +5,10 @@
 Capstone projects built by Claude from prompts in
 [`pisanuw/daily-project-ideas`](https://github.com/pisanuw/daily-project-ideas).
 
+Every deployed app ends with the same "built by" footer, added at deploy time
+from [`scripts/site-footer.mjs`](./scripts/site-footer.mjs); see the
+[deploy README](./accessibility-lens/deploy/README.md#site-footer).
+
 ## Projects
 
 ### [`accessibility-lens/`](./accessibility-lens)
