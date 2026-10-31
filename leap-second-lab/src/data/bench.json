@@ -1,0 +1,314 @@
+{
+  "recordedOn": "2026-10-31",
+  "runtimes": {
+    "date": "Node.js v22.23.4 Date",
+    "temporal": "@js-temporal/polyfill 0.4.4 on Node.js v22.23.4",
+    "python": "CPython 3.11.18",
+    "postgres": "PostgreSQL 16.15 (Ubuntu 16.15-0ubuntu0.24.04.1)"
+  },
+  "cases": [
+    {
+      "id": "parse-leap",
+      "title": "Parse the 2016 leap second",
+      "input": "2016-12-31T23:59:60Z",
+      "snippets": {
+        "date": "return new Date('2016-12-31T23:59:60Z').toISOString()",
+        "temporal": "return Temporal.Instant.from('2016-12-31T23:59:60Z').toString()",
+        "python": "datetime.fromisoformat('2016-12-31T23:59:60+00:00').isoformat()",
+        "postgres": "'2016-12-31 23:59:60+00'::timestamptz"
+      },
+      "results": {
+        "date": {
+          "ok": false,
+          "output": "RangeError: Invalid time value"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "2016-12-31T23:59:59Z"
+        },
+        "python": {
+          "ok": false,
+          "output": "ValueError: second must be in 0..59"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "2017-01-01 00:00:00+00"
+        }
+      }
+    },
+    {
+      "id": "parse-leap-frac",
+      "title": "Half a second into the leap second",
+      "input": "2016-12-31T23:59:60.500Z",
+      "snippets": {
+        "date": "return new Date('2016-12-31T23:59:60.500Z').toISOString()",
+        "temporal": "return Temporal.Instant.from('2016-12-31T23:59:60.500Z').toString()",
+        "python": "datetime.strptime('2016-12-31T23:59:60.500', '%Y-%m-%dT%H:%M:%S.%f').isoformat()",
+        "postgres": "'2016-12-31 23:59:60.5+00'::timestamptz"
+      },
+      "results": {
+        "date": {
+          "ok": false,
+          "output": "RangeError: Invalid time value"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "2016-12-31T23:59:59.5Z"
+        },
+        "python": {
+          "ok": false,
+          "output": "ValueError: second must be in 0..59"
+        },
+        "postgres": {
+          "ok": false,
+          "output": "ERROR: date/time field value out of range: \"2016-12-31 23:59:60.5+00\""
+        }
+      }
+    },
+    {
+      "id": "unix-of-leap",
+      "title": "Unix seconds for 23:59:60",
+      "input": "2016-12-31T23:59:60Z",
+      "snippets": {
+        "date": "return Date.UTC(2016, 11, 31, 23, 59, 60) / 1000",
+        "temporal": "return Temporal.Instant.from('2016-12-31T23:59:60Z').epochSeconds",
+        "python": "calendar.timegm(time.strptime('2016-12-31 23:59:60', '%Y-%m-%d %H:%M:%S'))",
+        "postgres": "extract(epoch from '2016-12-31 23:59:60+00'::timestamptz)"
+      },
+      "results": {
+        "date": {
+          "ok": true,
+          "output": "1483228800"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "1483228799"
+        },
+        "python": {
+          "ok": true,
+          "output": "1483228800"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "1483228800.000000"
+        }
+      }
+    },
+    {
+      "id": "fake-leap",
+      "title": "A :60 that never happened",
+      "input": "2017-06-30T23:59:60Z",
+      "snippets": {
+        "date": "return new Date('2017-06-30T23:59:60Z').toISOString()",
+        "temporal": "return Temporal.Instant.from('2017-06-30T23:59:60Z').toString()",
+        "python": "calendar.timegm(time.strptime('2017-06-30 23:59:60', '%Y-%m-%d %H:%M:%S'))",
+        "postgres": "'2017-06-30 23:59:60+00'::timestamptz"
+      },
+      "results": {
+        "date": {
+          "ok": false,
+          "output": "RangeError: Invalid time value"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "2017-06-30T23:59:59Z"
+        },
+        "python": {
+          "ok": true,
+          "output": "1498867200"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "2017-07-01 00:00:00+00"
+        }
+      }
+    },
+    {
+      "id": "duration-across",
+      "title": "Seconds from 23:59:59 to midnight",
+      "input": "2016-12-31T23:59:59Z → 2017-01-01T00:00:00Z",
+      "truth": {
+        "from": "2016-12-31T23:59:59Z",
+        "to": "2017-01-01T00:00:00Z"
+      },
+      "snippets": {
+        "date": "return (Date.parse('2017-01-01T00:00:00Z') - Date.parse('2016-12-31T23:59:59Z')) / 1000",
+        "temporal": "return Temporal.Instant.from('2016-12-31T23:59:59Z').until(Temporal.Instant.from('2017-01-01T00:00:00Z')).total('seconds')",
+        "python": "(datetime(2017, 1, 1, tzinfo=timezone.utc) - datetime(2016, 12, 31, 23, 59, 59, tzinfo=timezone.utc)).total_seconds()",
+        "postgres": "extract(epoch from '2017-01-01 00:00:00+00'::timestamptz - '2016-12-31 23:59:59+00'::timestamptz)"
+      },
+      "results": {
+        "date": {
+          "ok": true,
+          "output": "1"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "1"
+        },
+        "python": {
+          "ok": true,
+          "output": "1.0"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "1.000000"
+        }
+      }
+    },
+    {
+      "id": "duration-year",
+      "title": "Seconds in 2016",
+      "input": "2016-01-01T00:00:00Z → 2017-01-01T00:00:00Z",
+      "truth": {
+        "from": "2016-01-01T00:00:00Z",
+        "to": "2017-01-01T00:00:00Z"
+      },
+      "snippets": {
+        "date": "return (Date.parse('2017-01-01T00:00:00Z') - Date.parse('2016-01-01T00:00:00Z')) / 1000",
+        "temporal": "return Temporal.Instant.from('2016-01-01T00:00:00Z').until(Temporal.Instant.from('2017-01-01T00:00:00Z')).total('seconds')",
+        "python": "(datetime(2017, 1, 1, tzinfo=timezone.utc) - datetime(2016, 1, 1, tzinfo=timezone.utc)).total_seconds()",
+        "postgres": "extract(epoch from '2017-01-01 00:00:00+00'::timestamptz - '2016-01-01 00:00:00+00'::timestamptz)"
+      },
+      "results": {
+        "date": {
+          "ok": true,
+          "output": "31622400"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "31622400"
+        },
+        "python": {
+          "ok": true,
+          "output": "31622400.0"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "31622400.000000"
+        }
+      }
+    },
+    {
+      "id": "add-day",
+      "title": "Add 86,400 seconds across the leap",
+      "input": "2016-12-31T12:00:00Z + 86400 s",
+      "snippets": {
+        "date": "return new Date(Date.parse('2016-12-31T12:00:00Z') + 86400 * 1000).toISOString()",
+        "temporal": "return Temporal.Instant.from('2016-12-31T12:00:00Z').add({ seconds: 86400 }).toString()",
+        "python": "(datetime(2016, 12, 31, 12, tzinfo=timezone.utc) + timedelta(seconds=86400)).isoformat()",
+        "postgres": "'2016-12-31 12:00:00+00'::timestamptz + interval '86400 seconds'"
+      },
+      "results": {
+        "date": {
+          "ok": true,
+          "output": "2017-01-01T12:00:00.000Z"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "2017-01-01T12:00:00Z"
+        },
+        "python": {
+          "ok": true,
+          "output": "2017-01-01T12:00:00+00:00"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "2017-01-01 12:00:00+00"
+        }
+      }
+    },
+    {
+      "id": "neg-label",
+      "title": "Hypothetical negative leap: 23:59:59 is removed",
+      "input": "2029-12-31T23:59:59Z (if 2029-12-31 had a negative leap second)",
+      "snippets": {
+        "date": "return new Date('2029-12-31T23:59:59Z').toISOString()",
+        "temporal": "return Temporal.Instant.from('2029-12-31T23:59:59Z').toString()",
+        "python": "datetime.fromisoformat('2029-12-31T23:59:59+00:00').isoformat()",
+        "postgres": "'2029-12-31 23:59:59+00'::timestamptz"
+      },
+      "results": {
+        "date": {
+          "ok": true,
+          "output": "2029-12-31T23:59:59.000Z"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "2029-12-31T23:59:59Z"
+        },
+        "python": {
+          "ok": true,
+          "output": "2029-12-31T23:59:59+00:00"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "2029-12-31 23:59:59+00"
+        }
+      }
+    },
+    {
+      "id": "neg-duration",
+      "title": "Hypothetical negative leap: 23:59:58 to midnight",
+      "input": "2029-12-31T23:59:58Z → 2030-01-01T00:00:00Z",
+      "truth": {
+        "from": "2029-12-31T23:59:58Z",
+        "to": "2030-01-01T00:00:00Z",
+        "negative": "2029-12-31"
+      },
+      "snippets": {
+        "date": "return (Date.parse('2030-01-01T00:00:00Z') - Date.parse('2029-12-31T23:59:58Z')) / 1000",
+        "temporal": "return Temporal.Instant.from('2029-12-31T23:59:58Z').until(Temporal.Instant.from('2030-01-01T00:00:00Z')).total('seconds')",
+        "python": "(datetime(2030, 1, 1, tzinfo=timezone.utc) - datetime(2029, 12, 31, 23, 59, 58, tzinfo=timezone.utc)).total_seconds()",
+        "postgres": "extract(epoch from '2030-01-01 00:00:00+00'::timestamptz - '2029-12-31 23:59:58+00'::timestamptz)"
+      },
+      "results": {
+        "date": {
+          "ok": true,
+          "output": "2"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "2"
+        },
+        "python": {
+          "ok": true,
+          "output": "2.0"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "2.000000"
+        }
+      }
+    },
+    {
+      "id": "sort-strings",
+      "title": "Sort parsed timestamps around the leap",
+      "input": "['2017-01-01T00:00:00Z', '2016-12-31T23:59:60Z', '2016-12-31T23:59:59Z']",
+      "snippets": {
+        "date": "return ['2017-01-01T00:00:00Z', '2016-12-31T23:59:60Z', '2016-12-31T23:59:59Z'].map((s) => [s, Date.parse(s) / 1000]).sort((a, b) => a[1] - b[1]).map((p) => p[0] + ' = ' + p[1]).join(', ')",
+        "temporal": "return ['2017-01-01T00:00:00Z', '2016-12-31T23:59:60Z', '2016-12-31T23:59:59Z'].map((s) => [s, Temporal.Instant.from(s)]).sort((a, b) => Temporal.Instant.compare(a[1], b[1])).map((p) => p[0] + ' = ' + p[1].epochSeconds).join(', ')",
+        "python": "', '.join(s + ' = ' + str(k) for k, s in sorted([(calendar.timegm(time.strptime(s, '%Y-%m-%dT%H:%M:%SZ')), s) for s in ['2017-01-01T00:00:00Z', '2016-12-31T23:59:60Z', '2016-12-31T23:59:59Z']], key=lambda p: p[0]))",
+        "postgres": "(select string_agg(s || ' = ' || extract(epoch from s::timestamptz)::bigint, ', ' order by s::timestamptz) from unnest(array['2017-01-01T00:00:00Z', '2016-12-31T23:59:60Z', '2016-12-31T23:59:59Z']) with ordinality as t(s, i))"
+      },
+      "results": {
+        "date": {
+          "ok": true,
+          "output": "2017-01-01T00:00:00Z = 1483228800, 2016-12-31T23:59:60Z = NaN, 2016-12-31T23:59:59Z = 1483228799"
+        },
+        "temporal": {
+          "ok": true,
+          "output": "2016-12-31T23:59:60Z = 1483228799, 2016-12-31T23:59:59Z = 1483228799, 2017-01-01T00:00:00Z = 1483228800"
+        },
+        "python": {
+          "ok": true,
+          "output": "2016-12-31T23:59:59Z = 1483228799, 2017-01-01T00:00:00Z = 1483228800, 2016-12-31T23:59:60Z = 1483228800"
+        },
+        "postgres": {
+          "ok": true,
+          "output": "2016-12-31T23:59:59Z = 1483228799, 2017-01-01T00:00:00Z = 1483228800, 2016-12-31T23:59:60Z = 1483228800"
+        }
+      }
+    }
+  ]
+}

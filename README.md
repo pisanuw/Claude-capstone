@@ -757,3 +757,16 @@ hand-picked challenge links, local attempt log. No backend. 74 vitest tests,
 99% statement coverage on the core.
 Live: [pull-the-pin-lab.netlify.app](https://pull-the-pin-lab.netlify.app).
 See its [README](./pull-the-pin/README.md).
+
+### [`leap-second-lab/`](./leap-second-lab)
+
+23:59:60, a timekeeping lab: TAI, UTC, GPS, Unix and UT1 on one zoomable
+timeline with a continuous-UTC projection, a step vs 24 h smear vs UTC-SLS vs
+monotonic simulator with a seeded two-host log replay (reordered lines,
+receives before sends, backwards clocks), and a library bench of ten
+leap-second edge cases recorded from real JS Date, Temporal, Python and
+Postgres runs. Four fix-the-bug exercises run hidden tests in a Web Worker.
+Hand-written notes replace the LLM explainer. No backend. 47 vitest tests,
+99.7% statement coverage on the core.
+Live: [leap-second-lab.netlify.app](https://leap-second-lab.netlify.app).
+See its [README](./leap-second-lab/README.md).
