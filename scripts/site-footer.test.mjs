@@ -16,6 +16,11 @@ test('footer links the projects page and email, naming the app in the subject', 
   assert.ok(html.includes(`href="mailto:${CONTACT_EMAIL}?subject=Project%20idea%20(via%20pluck-lab)"`));
   assert.ok(html.includes('<template shadowrootmode="open">'));
   assert.ok(html.includes('aria-label="About the builder"'));
+  assert.ok(html.includes('<p>Professor Yusuf Pisan</p>'));
+});
+
+test('footer markup is ASCII, so it survives a page without a UTF-8 charset', () => {
+  assert.match(footerHtml('app'), /^[\x20-\x7e]*$/);
 });
 
 test('app names cannot break out of the href', () => {

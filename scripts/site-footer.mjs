@@ -29,6 +29,7 @@ const STYLE = `
 :host { display: block; box-sizing: border-box; width: 100%; grid-column: 1 / -1; align-self: stretch; clear: both; }
 aside { box-sizing: border-box; max-width: 46rem; margin: 2.5rem auto 0; padding: 1rem 16px 1.5rem; border-top: 1px solid color-mix(in srgb, currentColor 22%, transparent); font: 13px/1.55 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; text-align: center; overflow-wrap: anywhere; }
 p { margin: 0; }
+p + p { margin-top: 0.4em; }
 a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 a:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 @media print { :host { display: none; } }
@@ -46,10 +47,11 @@ export function footerHtml(app) {
   return (
     `<site-footer ${MARKER}><template shadowrootmode="open"><style>${STYLE}</style>` +
     `<aside aria-label="About the builder"><p>` +
-    `Built by Yusuf Pisan for fun and to learn. See <a href="${PROJECTS_URL}">all my projects</a>. ` +
-    `Have a project you'd like built? Email <a href="${mailto}">${CONTACT_EMAIL}</a> and I might just do it. ` +
-    `Commercial or complex projects may need funding.` +
-    `</p></aside></template></site-footer>`
+    `I build apps like this one for fun and to learn. ` +
+    `You can see all my projects at <a href="${PROJECTS_URL}">${PROJECTS_URL}</a>. ` +
+    `If you have a project you&#8217;d like built, contact me at <a href="${mailto}">${CONTACT_EMAIL}</a> ` +
+    `and I might just do it &#x1F609;. Commercial/complex projects may require funding.` +
+    `</p><p>Professor Yusuf Pisan</p></aside></template></site-footer>`
   );
 }
 

@@ -211,3 +211,5 @@ Format: `YYYY-MM-DD [type] description` (max 200 chars). Types: decision, plan, 
 2026-10-31 [code] deploy.mjs injects the footer after each Netlify build (`footer: false` opts out); mult-streak's build runs it for Render; deploy.yml redeploys every target once when it changes.
 
 2026-10-31 [code] emoji-lingua: body flex switched from row to column so the footer sits below the app. Checked footer on all 45 apps (desktop and mobile) in Playwright.
+
+2026-10-31 [decision] Footer wording set by the owner: "I build apps like this one..." signed "Professor Yusuf Pisan"; emitted as ASCII entities so it survives pages without a UTF-8 charset.
